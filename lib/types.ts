@@ -1,4 +1,10 @@
+export type Frontmatter = {
+	proficiencyBonus: number;
+	proficiencies: string[];
+}
+
 export type AbilityBlock = {
+	id?: string;
 	abilities: AbilityScores;
 	modifiers: AbilityModifier[];
 }
@@ -45,4 +51,5 @@ export type SavingThrowsBlock = {
 	abilityScores: AbilityScores;
 	proficiencies: Array<keyof AbilityScores>;
 	bonuses?: Record<keyof AbilityScores, number>;
+	abilityBlockId?: string;
 }

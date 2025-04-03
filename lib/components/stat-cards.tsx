@@ -1,9 +1,9 @@
 import { StatItem, StatsBlock } from "../types";
 import { ReactNode } from 'react';
 
-export function StatCard({ item }: { item: StatItem }) {
+export function StatCard({ item }: { item: StatItem & { isProficient?: boolean } }) {
 	return (
-		<div className="generic-card">
+		<div className={`generic-card ${item.isProficient ? 'proficient' : ''}`}>
 			<div className="generic-card-label">{item.label}</div>
 			<div className="generic-card-value">{item.value}</div>
 			{item.sublabel && (

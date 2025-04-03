@@ -7,7 +7,7 @@ import * as AbilityService from "lib/domains/abilities"
 export class AbilityScoreView extends BaseView {
 	public codeblock = "ability";
 
-	public render(source: string, _: MarkdownPostProcessorContext): string {
+	public render(source: string, __: HTMLElement, _: MarkdownPostProcessorContext): string {
 		const abilityBlock = AbilityService.parseAbilityBlock(source);
 		return Tmpl.Render(Components.AbilityView(abilityBlock));
 	}
