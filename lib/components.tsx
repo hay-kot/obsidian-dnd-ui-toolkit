@@ -1,5 +1,7 @@
-import { AbilityBlock, AbilityModifier, AbilityScores } from "./types";
-import { StatGrid } from "./components/stat-cards";
+import { AbilityBlock, AbilityScores, SavingThrowsBlock } from "./types";
+import { StatGrid, StatCard } from "./components/stat-cards";
+import * as AbilityService from "./domains/abilities";
+import { calculateSavingThrow } from "./domains/saving-throws";
 
 export function AbilityView(data: AbilityBlock) {
 	const { abilities, modifiers } = data;
@@ -9,64 +11,42 @@ export function AbilityView(data: AbilityBlock) {
 		return name.substring(0, 3).toUpperCase();
 	}
 
-	// Calculate ability modifier according to D&D 5e rules
-	const calculateModifier = (score: number): number => {
-		return Math.floor((score - 10) / 2);
-	}
-
-	// Format the modifier with + or - sign
-	const formatModifier = (modifier: number): string => {
-		return modifier >= 0 ? `+${modifier}` : `${modifier}`;
-	}
-
-	// Get modifiers for a specific ability
-	const getModifiersForAbility = (ability: keyof AbilityScores): AbilityModifier[] => {
-		return modifiers.filter(mod => mod.target === ability);
-	}
-
-	// Calculate total score including modifiers
-	const getTotalScore = (baseScore: number, ability: keyof AbilityScores): number => {
-		const abilityModifiers = getModifiersForAbility(ability);
-		const modifierTotal = abilityModifiers.reduce((sum, mod) => sum + mod.value, 0);
-		return baseScore + modifierTotal;
-	}
-
 	const items = [
 		{
 			name: "Strength",
 			baseValue: strength,
-			totalValue: getTotalScore(strength, "strength"),
-			modifiers: getModifiersForAbility("strength")
+			totalValue: AbilityService.getTotalScore(strength, "strength", modifiers),
+			modifiers: AbilityService.getModifiersForAbility(modifiers, "strength")
 		},
 		{
 			name: "Dexterity",
 			baseValue: dexterity,
-			totalValue: getTotalScore(dexterity, "dexterity"),
-			modifiers: getModifiersForAbility("dexterity")
+			totalValue: AbilityService.getTotalScore(dexterity, "dexterity", modifiers),
+			modifiers: AbilityService.getModifiersForAbility(modifiers, "dexterity")
 		},
 		{
 			name: "Constitution",
 			baseValue: constitution,
-			totalValue: getTotalScore(constitution, "constitution"),
-			modifiers: getModifiersForAbility("constitution")
+			totalValue: AbilityService.getTotalScore(constitution, "constitution", modifiers),
+			modifiers: AbilityService.getModifiersForAbility(modifiers, "constitution")
 		},
 		{
 			name: "Intelligence",
 			baseValue: intelligence,
-			totalValue: getTotalScore(intelligence, "intelligence"),
-			modifiers: getModifiersForAbility("intelligence")
+			totalValue: AbilityService.getTotalScore(intelligence, "intelligence", modifiers),
+			modifiers: AbilityService.getModifiersForAbility(modifiers, "intelligence")
 		},
 		{
 			name: "Wisdom",
 			baseValue: wisdom,
-			totalValue: getTotalScore(wisdom, "wisdom"),
-			modifiers: getModifiersForAbility("wisdom")
+			totalValue: AbilityService.getTotalScore(wisdom, "wisdom", modifiers),
+			modifiers: AbilityService.getModifiersForAbility(modifiers, "wisdom")
 		},
 		{
 			name: "Charisma",
 			baseValue: charisma,
-			totalValue: getTotalScore(charisma, "charisma"),
-			modifiers: getModifiersForAbility("charisma")
+			totalValue: AbilityService.getTotalScore(charisma, "charisma", modifiers),
+			modifiers: AbilityService.getModifiersForAbility(modifiers, "charisma")
 		},
 	];
 
@@ -80,11 +60,51 @@ export function AbilityView(data: AbilityBlock) {
 							<p className="ability-value">{item.totalValue}</p>
 						</div>
 						<p className="ability-modifier">
-							{formatModifier(calculateModifier(item.totalValue))}
+							{AbilityService.formatModifier(AbilityService.calculateModifier(item.totalValue))}
 						</p>
 					</div>
 				))}
 			</StatGrid>
 		</div>
 	)
+}
+
+export function SavingThrowsComponent({ data }: { data: SavingThrowsBlock }) {
+	const { abilityScores, proficiencyBonus, proficiencies, bonuses = {} } = data;
+	const abilities: Array<{ key: keyof AbilityScores, name: string, abbr: string }> = [
+		{ key: "strength", name: "Strength", abbr: "STR" },
+		{ key: "dexterity", name: "Dexterity", abbr: "DEX" },
+		{ key: "constitution", name: "Constitution", abbr: "CON" },
+		{ key: "intelligence", name: "Intelligence", abbr: "INT" },
+		{ key: "wisdom", name: "Wisdom", abbr: "WIS" },
+		{ key: "charisma", name: "Charisma", abbr: "CHA" }
+	];
+
+	const savingThrows = abilities.map(ability => {
+		const isProficient = proficiencies.includes(ability.key);
+		// @ts-expect-error - TypeScript doesn't know that ability.key is a key of AbilityScores
+		const bonus = bonuses[ability.key] || 0;
+		const savingThrowValue = calculateSavingThrow(
+			ability.key,
+			abilityScores,
+			proficiencyBonus,
+			isProficient,
+			bonus
+		);
+
+		return {
+			label: `${ability.name} Save`,
+			value: AbilityService.formatModifier(savingThrowValue),
+			sublabel: isProficient ? "Proficient" : undefined,
+			isProficient
+		};
+	});
+
+	return (
+		<StatGrid cols={3}>
+			{savingThrows.map((item, index) => (
+				<StatCard item={item} key={index} />
+			))}
+		</StatGrid>
+	);
 }

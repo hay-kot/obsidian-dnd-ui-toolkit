@@ -8,7 +8,7 @@ import { parse } from 'yaml';
 export class StatsView extends BaseView {
 	public codeblock = "stats";
 
-	public render(source: string, _: MarkdownPostProcessorContext): string {
+	public render(source: string, __: HTMLElement, _: MarkdownPostProcessorContext): string {
 		const parsed = parse(source);
 		const items = Array.isArray(parsed.items) ? parsed.items : [];
 		const grid = parsed.grid || {};
