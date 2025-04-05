@@ -1,94 +1,119 @@
-# Obsidian Sample Plugin
+# Obsidian DnD UI Toolkit
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+This plugin provides modern UI elements for playing Dungeons and Dragons that provide building blocks for you to build
+a beautiful markdown driven character sheet.
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+I built this plugin because I was tired of working with PDFs and online tools to manage my characters. I wanted to keep my notes, spells, and character state (Spell Slots, HP, etc..) all in my notebook. I'm building this plugin to make that process easier.
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+> [!WARNING]
+> This plugin is in early development, things may be broken or change.
 
-## First time developing plugins?
+## Features
 
-Quick starting guide for new plugin devs:
+- Display character information with grid of cards
+- Display Ability Scores and saving throws
+- Display Skills calculated off ability scores
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+## Road Map
 
-## Releasing new releases
+- [ ] Static Widgets
+- [ ] Interactive Widgets
+  - [ ] HP Widget: Track your characters HP and hit dice (also support for monsters)
+  - [ ] Spell Slot Widget: Track your spell slot usage
+  - [ ] Generic Consumables Widget: Track anything like Luck Points, Arcane Recovery, Magic Item Charges, or whatever!
+  - [ ] Buttons for Short Rest and Long Rest: Connects with HP Widget, Spell Slots, and Consumables (as configured) so that when you press Short or Long Rest your consumables automatically get restored to their default states.
+- [ ] Themeable and/or read from Obsidian styles
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+## Components
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+### Ability Scores
 
-## Adding your plugin to the community plugin list
+The `ability` block is used to generate a 6 column grid of your ability scores and their savings throws. Fill in the code block with your abilities, proficiencies, and any bonuses that are applied to saving throws.
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+> [!NOTE]
+> Bonuses apply to the saving throws modifier so if the value of the bonus is +2 strength it would add +2 to your saving throw value. If you just want to add a bonus to your strength score, you can increment the number and leave yourself a comment in the code block.
 
-## How to use
+![Rendered Example](./docs/images/example-ability-scores.webp)
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+#### Example
 
-## Manually installing the plugin
+````yaml
+```ability
+abilities:
+  strength: 9
+  dexterity: 14
+  constitution: 14
+  intelligence: 19
+  wisdom: 12
+  charisma: 10
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+bonuses:
+  - name: Right of Power
+    target: strength
+	value: 2
 
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
-
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
+proficiencies:
+  - intelligence
+  - wisdom
 ```
+````
 
-If you have multiple URLs, you can also do:
+### Skills
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
+the `skills` block is used for automatically calculating your skills modifier. It pulls from the first `abilities` block it can find in your file and calculates your scores based on those values.
+
+You can set your proficiencies using the `proficiencies` key and the skills name. Comparisons are case-insensitive.
+
+Additional bonuses can be added to checks for magic items or similar.
+
+![Rendered Example](./docs/images/examples-skills.webp)
+
+#### Example
+
+````yaml
+```skills
+proficiencies:
+  - arcana
+  - deception
+  - history
+  - insight
+  - investigation
+
+bonuses:
+  - name: Right of Arcana
+    target: arcana
+	value: 2
 ```
+````
 
-## API Documentation
+### Stats
 
-See https://github.com/obsidianmd/obsidian-api
+Stats are a generic card components that can be used to display all kinds of data like
+
+- Armor Class
+- Initiative
+- Spell Save DC
+
+Or really anything you'd like. The `sublabel` property is also supported for displaying additional information below the value.
+
+![Rendered Example](./docs/images/example-stat-cards.webp)
+
+_Note that the example is two stat grids stacked on top of each other_
+
+### Example
+
+````yaml
+```stats
+items:
+  - label: Armor Class
+    sublabel: Mage Armor (16)
+    value: 13
+  - label: Initiative
+    value: '+2'
+  - label: Spell DC
+    value: 14
+
+grid:
+  columns: 3
+```
+````
