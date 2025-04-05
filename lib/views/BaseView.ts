@@ -3,7 +3,6 @@ import { MarkdownPostProcessorContext } from "obsidian";
 
 const FrontMatterKeys: Record<keyof Frontmatter, string[]> = {
 	"proficiencyBonus": ["proficiencyBonus", "Proficiency Bonus",],
-	"proficiencies": ["Proficiencies", "Proficient"],
 };
 
 export abstract class BaseView {
@@ -35,10 +34,8 @@ export abstract class BaseView {
 	}
 
 	public frontmatter(ctx: MarkdownPostProcessorContext): Frontmatter {
-
 		const frontmatter: Frontmatter = {
 			proficiencyBonus: 2,
-			proficiencies: [],
 		}
 
 		// @ts-ignore

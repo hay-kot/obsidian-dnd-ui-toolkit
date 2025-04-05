@@ -1,12 +1,11 @@
 export type Frontmatter = {
 	proficiencyBonus: number;
-	proficiencies: string[];
 }
 
 export type AbilityBlock = {
-	id?: string;
 	abilities: AbilityScores;
-	modifiers: AbilityModifier[];
+	bonuses: GenericBonus[];
+	proficiencies: string[];
 }
 
 export type AbilityScores = {
@@ -18,10 +17,10 @@ export type AbilityScores = {
 	charisma: number;
 }
 
-// An AbilityModifier is an additional property for the ability block
+// An GenericBonus is an additional property for the ability block
 // that allows for custom additions to score points. This helps users
 // add things from feats, or other sources that might modify the score.
-export type AbilityModifier = {
+export type GenericBonus = {
 	name: string;
 	target: keyof AbilityScores;
 	value: number;
@@ -40,16 +39,9 @@ export type StatsBlock = {
 	};
 }
 
-export type SavingThrow = {
-	ability: keyof AbilityScores;
-	proficient: boolean;
-	bonus: number;
+export type SkillsBlock = {
+	proficiencies: string[]
+	bonuses: SkillsBlockBonus[]
 }
 
-export type SavingThrowsBlock = {
-	proficiencyBonus: number;
-	abilityScores: AbilityScores;
-	proficiencies: Array<keyof AbilityScores>;
-	bonuses?: Record<keyof AbilityScores, number>;
-	abilityBlockId?: string;
-}
+export type SkillsBlockBonus = GenericBonus

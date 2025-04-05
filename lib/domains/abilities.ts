@@ -1,5 +1,6 @@
-import { AbilityBlock, AbilityModifier, AbilityScores } from 'lib/types';
+import { AbilityBlock, GenericBonus, AbilityScores } from 'lib/types';
 import { MarkdownPostProcessorContext } from 'obsidian';
+import * as Utils from "lib/utils/utils";
 import { parse } from 'yaml';
 
 export function parseAbilityBlockFromDocument(el: HTMLElement, ctx: MarkdownPostProcessorContext): AbilityBlock {
@@ -21,38 +22,21 @@ export function parseAbilityBlockFromDocument(el: HTMLElement, ctx: MarkdownPost
 }
 
 export function parseAbilityBlock(yamlString: string): AbilityBlock {
-	const parsed = parse(yamlString);
-	const abilities = parsed.abilities || {};
-	const modifiersArray = parsed.modifiers || [];
-	const orZero = (value?: number) => {
-		if (value === undefined) {
-			return 0;
-		}
-		return value
+	const def: AbilityBlock = {
+		abilities: {
+			strength: 0,
+			dexterity: 0,
+			constitution: 0,
+			intelligence: 0,
+			wisdom: 0,
+			charisma: 0,
+		},
+		bonuses: [],
+		proficiencies: [],
 	}
-	const abilityScores: AbilityScores = {
-		strength: orZero(abilities.strength),
-		dexterity: orZero(abilities.dexterity),
-		constitution: orZero(abilities.constitution),
-		intelligence: orZero(abilities.intelligence),
-		wisdom: orZero(abilities.wisdom),
-		charisma: orZero(abilities.charisma),
-	};
-	// Parse modifiers
-	const modifiers: AbilityModifier[] = Array.isArray(modifiersArray)
-		? modifiersArray.filter(mod =>
-			mod &&
-			typeof mod.name === 'string' &&
-			typeof mod.target === 'string' &&
-			typeof mod.value === 'number' &&
-			['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].includes(mod.target)
-		)
-		: [];
-	return {
-		id: parsed.id,
-		abilities: abilityScores,
-		modifiers: modifiers
-	};
+
+	const parsed = parse(yamlString);
+	return Utils.mergeWithDefaults(parsed, def);
 }
 
 // Calculate ability modifier according to D&D 5e rules
@@ -66,12 +50,12 @@ export function formatModifier(modifier: number): string {
 }
 
 // Get modifiers for a specific ability
-export function getModifiersForAbility(modifiers: AbilityModifier[], ability: keyof AbilityScores): AbilityModifier[] {
+export function getModifiersForAbility(modifiers: GenericBonus[], ability: keyof AbilityScores): GenericBonus[] {
 	return modifiers.filter(mod => mod.target === ability);
 }
 
 // Calculate total score including modifiers
-export function getTotalScore(baseScore: number, ability: keyof AbilityScores, modifiers: AbilityModifier[]): number {
+export function getTotalScore(baseScore: number, ability: keyof AbilityScores, modifiers: GenericBonus[]): number {
 	const abilityModifiers = getModifiersForAbility(modifiers, ability);
 	const modifierTotal = abilityModifiers.reduce((sum, mod) => sum + mod.value, 0);
 	return baseScore + modifierTotal;

@@ -2,7 +2,7 @@ import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { StatsView } from 'lib/views/StatsView';
 import { AbilityScoreView } from 'lib/views/AbilityScoreView';
 import { BaseView } from 'lib/views/BaseView';
-import { SavingThrowsView } from 'lib/views/SavingThrows';
+import { SkillsView } from 'lib/views/SkillsView';
 
 interface DndUIToolkitSettings {
 	mySetting: string;
@@ -22,7 +22,7 @@ export default class DndUIToolkitPlugin extends Plugin {
 		const views: BaseView[] = [
 			new StatsView(),
 			new AbilityScoreView(),
-			new SavingThrowsView(),
+			new SkillsView(),
 		];
 
 		for (const view of views) {
