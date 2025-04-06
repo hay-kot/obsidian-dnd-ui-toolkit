@@ -5,11 +5,12 @@ import { HealthCard } from "lib/components/health-card";
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { KeyValueStore } from "lib/kv";
+import { HealthState } from "lib/domains/healthpoints";
 
 export class HealthView extends BaseView {
 	public codeblock = "healthpoints";
 
-	private kv: KeyValueStore
+	private kv: KeyValueStore;
 
 	constructor(kv: KeyValueStore) {
 		super();
@@ -17,23 +18,58 @@ export class HealthView extends BaseView {
 	}
 
 	public render(source: string, el: HTMLElement, _: MarkdownPostProcessorContext): void {
-		const healthBock = HealthService.parseHealthBlock(source);
-		console.debug("Health Block", healthBock);
+		const healthBlock = HealthService.parseHealthBlock(source);
+		console.debug("Health Block", healthBlock);
 
-		const data = {
-			static: healthBock,
-			state: {
-				current: 12,
-				temporary: 10,
-				hitdiceUsed: 2,
-			},
-		}
+		// Generate a unique state key if not provided
+		const stateKey = healthBlock.state_key || `health_${Date.now()}`;
 
-		ReactDOM.createRoot(el)
-		// Render the React component
-		const root = ReactDOM.createRoot(el);
-		root.render(React.createElement(HealthCard, data));
-		return
+		// Initialize with default values
+		const defaultState = HealthService.getDefaultHealthState(healthBlock);
+
+		// Handler for state changes
+		const handleStateChange = async (newState: HealthState) => {
+			try {
+				// Update state in KV store
+				await this.kv.set(stateKey, newState);
+
+				// Rerender component with new state
+				renderComponent(newState);
+			} catch (error) {
+				console.error("Error saving health state:", error);
+			}
+		};
+
+		// Function to render component with current state
+		const renderComponent = (state: HealthState) => {
+			const data = {
+				static: healthBlock,
+				state: state,
+				onStateChange: handleStateChange,
+			};
+
+			// Render the React component
+			const root = ReactDOM.createRoot(el);
+			root.render(React.createElement(HealthCard, data));
+		};
+
+		// Load the initial state
+		this.kv.get<HealthState>(stateKey).then(savedState => {
+			const healthState = savedState || defaultState;
+
+			// If no saved state exists, save the default state
+			if (!savedState) {
+				this.kv.set(stateKey, defaultState).catch(error => {
+					console.error("Error saving initial health state:", error);
+				});
+			}
+
+			// Render with the state we have
+			renderComponent(healthState);
+		}).catch(error => {
+			console.error("Error loading health state:", error);
+			// Fallback to default state if there's an error
+			renderComponent(defaultState);
+		});
 	}
 }
-

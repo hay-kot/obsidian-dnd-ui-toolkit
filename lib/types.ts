@@ -47,6 +47,7 @@ export type SkillsBlock = {
 export type SkillsBlockBonus = GenericBonus
 
 export type HealthBlock = {
+	state_key?: string;
 	health: number;
 	hitdice: {
 		dice: string;

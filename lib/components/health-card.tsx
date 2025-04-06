@@ -1,13 +1,11 @@
 import { useState } from 'react';
 import type { HealthBlock } from "lib/types";
+import { HealthState } from "lib/domains/healthpoints";
 
 export type HealthCardProps = {
 	static: HealthBlock;
-	state: {
-		current: number;
-		temporary: number;
-		hitdiceUsed: number;
-	}
+	state: HealthState;
+	onStateChange: (newState: HealthState) => void;
 }
 
 export function HealthCard(props: HealthCardProps) {
@@ -15,6 +13,80 @@ export function HealthCard(props: HealthCardProps) {
 
 	// Calculate health percentage for progress bar
 	const healthPercentage = Math.max(0, Math.min(100, (props.state.current / props.static.health) * 100));
+
+	// Event handlers for health actions
+	const handleHeal = () => {
+		const value = parseInt(inputValue) || 0;
+		if (value <= 0) return;
+
+		const newCurrent = Math.min(props.state.current + value, props.static.health);
+		props.onStateChange({
+			...props.state,
+			current: newCurrent
+		});
+		setInputValue("");
+	};
+
+	const handleDamage = () => {
+		const value = parseInt(inputValue) || 0;
+		if (value <= 0) return;
+
+		let newTemp = props.state.temporary;
+		let newCurrent = props.state.current;
+
+		// Apply damage to temporary HP first
+		if (newTemp > 0) {
+			if (value <= newTemp) {
+				newTemp -= value;
+			} else {
+				const remainingDamage = value - newTemp;
+				newTemp = 0;
+				newCurrent = Math.max(0, newCurrent - remainingDamage);
+			}
+		} else {
+			newCurrent = Math.max(0, newCurrent - value);
+		}
+
+		props.onStateChange({
+			...props.state,
+			current: newCurrent,
+			temporary: newTemp
+		});
+		setInputValue("");
+	};
+
+	const handleTempHP = () => {
+		const value = parseInt(inputValue) || 0;
+		if (value <= 0) return;
+
+		// Only replace temporary HP if the new value is higher
+		const newTemp = Math.max(props.state.temporary, value);
+		
+		props.onStateChange({
+			...props.state,
+			temporary: newTemp
+		});
+		setInputValue("");
+	};
+
+	// Handle hit dice interaction
+	const toggleHitDie = (index: number) => {
+		const isUsed = index < props.state.hitdiceUsed;
+		let newHitDiceUsed = props.state.hitdiceUsed;
+		
+		if (isUsed) {
+			// Uncheck this die and all dice after it
+			newHitDiceUsed = index;
+		} else {
+			// Check this die and all dice before it
+			newHitDiceUsed = index + 1;
+		}
+		
+		props.onStateChange({
+			...props.state,
+			hitdiceUsed: newHitDiceUsed
+		});
+	};
 
 	// Handle hit dice rendering
 	const renderHitDice = () => {
@@ -27,6 +99,7 @@ export function HealthCard(props: HealthCardProps) {
 						checked={i < props.state.hitdiceUsed}
 						id={`hit-dice-${i}`}
 						className="hit-dice-checkbox"
+						onChange={() => toggleHitDie(i)}
 					/>
 					<label
 						htmlFor={`hit-dice-${i}`}
@@ -69,9 +142,27 @@ export function HealthCard(props: HealthCardProps) {
 					placeholder="0"
 					aria-label="Health points"
 				/>
-				<button type="button" className="health-button health-heal"> Heal </button>
-				<button type="button" className="health-button health-damage"> Damage </button>
-				<button type="button" className="health-button health-temp"> Temp HP </button>
+				<button 
+					type="button" 
+					className="health-button health-heal"
+					onClick={handleHeal}
+				>
+					Heal
+				</button>
+				<button 
+					type="button" 
+					className="health-button health-damage"
+					onClick={handleDamage}
+				>
+					Damage
+				</button>
+				<button 
+					type="button" 
+					className="health-button health-temp"
+					onClick={handleTempHP}
+				>
+					Temp HP
+				</button>
 			</div>
 
 			<div className="health-divider" />
