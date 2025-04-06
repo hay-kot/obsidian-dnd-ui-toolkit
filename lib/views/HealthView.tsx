@@ -1,11 +1,12 @@
 import { BaseView } from "./BaseView";
-import { MarkdownPostProcessorContext } from "obsidian";
+import { MarkdownPostProcessorContext, MarkdownRenderChild } from "obsidian";
 import * as HealthService from "lib/domains/healthpoints";
 import { HealthCard } from "lib/components/health-card";
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { KeyValueStore } from "lib/kv";
 import { HealthState } from "lib/domains/healthpoints";
+import { HealthBlock } from "lib/types";
 
 export class HealthView extends BaseView {
 	public codeblock = "healthpoints";
@@ -17,8 +18,25 @@ export class HealthView extends BaseView {
 		this.kv = kv;
 	}
 
-	public render(source: string, el: HTMLElement, _: MarkdownPostProcessorContext): void {
-		const healthBlock = HealthService.parseHealthBlock(source);
+	public render(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): void {
+		const healthMarkdown = new HealthMarkdown(el, source, this.kv);
+		ctx.addChild(healthMarkdown);
+	}
+}
+
+class HealthMarkdown extends MarkdownRenderChild {
+	private reactRoot: ReactDOM.Root | null = null;
+	private source: string;
+	private kv: KeyValueStore;
+
+	constructor(el: HTMLElement, source: string, kv: KeyValueStore) {
+		super(el);
+		this.source = source;
+		this.kv = kv;
+	}
+
+	async onload() {
+		const healthBlock = HealthService.parseHealthBlock(this.source);
 
 		const stateKey = healthBlock.state_key;
 		if (!stateKey) {
@@ -28,49 +46,75 @@ export class HealthView extends BaseView {
 		// Initialize with default values
 		const defaultState = HealthService.getDefaultHealthState(healthBlock);
 
-		// Handler for state changes
-		const handleStateChange = async (newState: HealthState) => {
-			try {
-				// Update state in KV store
-				await this.kv.set(stateKey, newState);
-
-				// Rerender component with new state
-				renderComponent(newState);
-			} catch (error) {
-				console.error("Error saving health state:", error);
-			}
-		};
-
-		// Function to render component with current state
-		const renderComponent = (state: HealthState) => {
-			const data = {
-				static: healthBlock,
-				state: state,
-				onStateChange: handleStateChange,
-			};
-
-			// Render the React component
-			const root = ReactDOM.createRoot(el);
-			root.render(React.createElement(HealthCard, data));
-		};
-
-		// Load the initial state
-		this.kv.get<HealthState>(stateKey).then(savedState => {
+		try {
+			// Load the initial state
+			const savedState = await this.kv.get<HealthState>(stateKey);
 			const healthState = savedState || defaultState;
 
 			// If no saved state exists, save the default state
 			if (!savedState) {
-				this.kv.set(stateKey, defaultState).catch(error => {
+				try {
+					await this.kv.set(stateKey, defaultState);
+				} catch (error) {
 					console.error("Error saving initial health state:", error);
-				});
+				}
 			}
 
 			// Render with the state we have
-			renderComponent(healthState);
-		}).catch(error => {
+			this.renderComponent(healthBlock, healthState);
+		} catch (error) {
 			console.error("Error loading health state:", error);
 			// Fallback to default state if there's an error
-			renderComponent(defaultState);
-		});
+			this.renderComponent(healthBlock, defaultState);
+		}
+	}
+
+	private renderComponent(healthBlock: HealthBlock, state: HealthState) {
+		const stateKey = healthBlock.state_key;
+		if (!stateKey) return;
+
+		const data = {
+			static: healthBlock,
+			state: state,
+			onStateChange: (newState: HealthState) => {
+				// Update the state first
+				this.handleStateChange(healthBlock, newState);
+
+				// Re-render with the new state
+				this.renderComponent(healthBlock, newState);
+			},
+		};
+
+		// Create or reuse a React root
+		if (!this.reactRoot) {
+			this.reactRoot = ReactDOM.createRoot(this.containerEl);
+		}
+
+		this.reactRoot.render(React.createElement(HealthCard, data));
+	}
+
+	private async handleStateChange(healthBlock: HealthBlock, newState: HealthState) {
+		const stateKey = healthBlock.state_key;
+		if (!stateKey) return;
+
+		try {
+			// Update state in KV store
+			await this.kv.set(stateKey, newState);
+		} catch (error) {
+			console.error(`Error saving health state for ${stateKey}:`, error);
+		}
+	}
+
+	onunload() {
+		// Clean up React root to prevent memory leaks
+		if (this.reactRoot) {
+			try {
+				this.reactRoot.unmount();
+			} catch (e) {
+				console.error('Error unmounting React component:', e);
+			}
+			this.reactRoot = null;
+			console.debug('Unmounted React component in HealthMarkdown');
+		}
 	}
 }
