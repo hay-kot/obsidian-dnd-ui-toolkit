@@ -349,10 +349,6 @@
 	box-shadow: 0 0 0 2px rgba(109, 124, 186, 0.5);
 }
 
-.hit-dice-button:hover {
-	background-color: #363b4a;
-}
-
 /*
  * Consumable Component
  * */
