@@ -55,3 +55,9 @@ export type HealthBlock = {
 		value: number;
 	};
 }
+
+export type ConsumableBlock = {
+	label: string;
+	state_key: string;
+	uses: number;
+}
