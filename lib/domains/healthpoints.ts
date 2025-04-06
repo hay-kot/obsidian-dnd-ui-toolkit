@@ -10,11 +10,11 @@ export interface HealthState {
 
 export function parseHealthBlock(yamlString: string): HealthBlock & { state_key?: string } {
 	const def: HealthBlock = {
+		label: "Hit Points",
+		// @ts-expect-error - no viable default for state_key
+		state_key: undefined,
 		health: 6,
-		hitdice: {
-			dice: "d6",
-			value: 1,
-		},
+		hitdice: undefined
 	}
 
 	const parsed = parse(yamlString);

@@ -19,10 +19,11 @@ export class HealthView extends BaseView {
 
 	public render(source: string, el: HTMLElement, _: MarkdownPostProcessorContext): void {
 		const healthBlock = HealthService.parseHealthBlock(source);
-		console.debug("Health Block", healthBlock);
 
-		// Generate a unique state key if not provided
-		const stateKey = healthBlock.state_key || `health_${Date.now()}`;
+		const stateKey = healthBlock.state_key;
+		if (!stateKey) {
+			throw new Error("Health block must contain a 'state_key' property.");
+		}
 
 		// Initialize with default values
 		const defaultState = HealthService.getDefaultHealthState(healthBlock);

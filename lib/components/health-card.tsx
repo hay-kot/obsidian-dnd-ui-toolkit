@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { HealthBlock } from "lib/types";
 import { HealthState } from "lib/domains/healthpoints";
+import { Checkbox } from "lib/components/checkbox";
 
 export type HealthCardProps = {
 	static: HealthBlock;
@@ -61,7 +62,7 @@ export function HealthCard(props: HealthCardProps) {
 
 		// Only replace temporary HP if the new value is higher
 		const newTemp = Math.max(props.state.temporary, value);
-		
+
 		props.onStateChange({
 			...props.state,
 			temporary: newTemp
@@ -73,7 +74,7 @@ export function HealthCard(props: HealthCardProps) {
 	const toggleHitDie = (index: number) => {
 		const isUsed = index < props.state.hitdiceUsed;
 		let newHitDiceUsed = props.state.hitdiceUsed;
-		
+
 		if (isUsed) {
 			// Uncheck this die and all dice after it
 			newHitDiceUsed = index;
@@ -81,7 +82,7 @@ export function HealthCard(props: HealthCardProps) {
 			// Check this die and all dice before it
 			newHitDiceUsed = index + 1;
 		}
-		
+
 		props.onStateChange({
 			...props.state,
 			hitdiceUsed: newHitDiceUsed
@@ -90,22 +91,13 @@ export function HealthCard(props: HealthCardProps) {
 
 	// Handle hit dice rendering
 	const renderHitDice = () => {
+		if (!props.static.hitdice) return null;
+
+
 		const hitDiceArray = [];
 		for (let i = 0; i < props.static.hitdice.value; i++) {
 			hitDiceArray.push(
-				<div key={i} className="hit-dice-wrapper">
-					<input
-						type="checkbox"
-						checked={i < props.state.hitdiceUsed}
-						id={`hit-dice-${i}`}
-						className="hit-dice-checkbox"
-						onChange={() => toggleHitDie(i)}
-					/>
-					<label
-						htmlFor={`hit-dice-${i}`}
-						className="hit-dice-box"
-					/>
-				</div>
+				<Checkbox key={i} checked={i < props.state.hitdiceUsed} id={`hit-dice-${i}`} onChange={() => toggleHitDie(i)} />
 			);
 		}
 		return hitDiceArray;
@@ -114,7 +106,9 @@ export function HealthCard(props: HealthCardProps) {
 	return (
 		<div className="health-card generic-card">
 			<div className="health-card-header">
-				<div className="generic-card-label">Hit Points</div>
+				<div className="generic-card-label">
+					{props.static.label || "Hit Points"}
+				</div>
 				<div className="health-value">
 					{props.state.current}
 					<span className="health-max">
@@ -142,22 +136,22 @@ export function HealthCard(props: HealthCardProps) {
 					placeholder="0"
 					aria-label="Health points"
 				/>
-				<button 
-					type="button" 
+				<button
+					type="button"
 					className="health-button health-heal"
 					onClick={handleHeal}
 				>
 					Heal
 				</button>
-				<button 
-					type="button" 
+				<button
+					type="button"
 					className="health-button health-damage"
 					onClick={handleDamage}
 				>
 					Damage
 				</button>
-				<button 
-					type="button" 
+				<button
+					type="button"
 					className="health-button health-temp"
 					onClick={handleTempHP}
 				>
@@ -165,18 +159,21 @@ export function HealthCard(props: HealthCardProps) {
 				</button>
 			</div>
 
-			<div className="health-divider" />
-
-			<div className="hit-dice-container">
-				<div style={{ display: "flex", alignItems: "center" }}>
-					<p className="hit-dice-label">
-						Hit Dice ({props.static.hitdice.dice})
-					</p>
-					<div className="hit-dice-boxes">
-						{renderHitDice()}
+			{props.static.hitdice && (
+				<>
+					<div className="health-divider" />
+					<div className="hit-dice-container">
+						<div style={{ display: "flex", alignItems: "center" }}>
+							<p className="hit-dice-label">
+								Hit Dice ({props.static.hitdice.dice})
+							</p>
+							<div className="hit-dice-boxes">
+								{renderHitDice()}
+							</div>
+						</div>
 					</div>
-				</div>
-			</div>
+				</>
+			)}
 		</div>
 	)
 }
