@@ -13,12 +13,14 @@ I built this plugin because I was tired of working with PDFs and online tools to
 - Display character information with grid of cards
 - Display Ability Scores and saving throws
 - Display Skills calculated off ability scores
+- HP Widget: Track your characters HP and hit dice (also support for monsters)
 
 ## Road Map
 
 - [ ] Static Widgets
+  - [ ] Generic 'Badge' for smaller display of Key Value dat
 - [ ] Interactive Widgets
-  - [ ] HP Widget: Track your characters HP and hit dice (also support for monsters)
+  - [x] HP Widget: Track your characters HP and hit dice (also support for monsters)
   - [ ] Spell Slot Widget: Track your spell slot usage
   - [ ] Generic Consumables Widget: Track anything like Luck Points, Arcane Recovery, Magic Item Charges, or whatever!
   - [ ] Buttons for Short Rest and Long Rest: Connects with HP Widget, Spell Slots, and Consumables (as configured) so that when you press Short or Long Rest your consumables automatically get restored to their default states.
@@ -100,7 +102,7 @@ Or really anything you'd like. The `sublabel` property is also supported for dis
 
 _Note that the example is two stat grids stacked on top of each other_
 
-### Example
+#### Example
 
 ````yaml
 ```stats
@@ -115,5 +117,29 @@ items:
 
 grid:
   columns: 3
+```
+````
+
+## Healthpoints
+
+Healthpoints can be tracked using the `healthpoints` widget. This widget requires a `state_key` be
+provided so that the plugin and save the characters state within the Obsidian plugin data. Note
+that each `state_key` defined in **any** component needs to be unique as they are all stored within
+the same key value store internally.
+
+You can also provide a custom `label` key to override the default `Hit Points`, this is useful if you're
+creating an encounter want to track HP of several monsters on a single notebook.
+
+You can also omit the `hitdice` and that part of the component will be omitted from view.
+
+#### Example
+
+````yaml
+```healthpoints
+state_key: din_health
+health: 24
+hitdice:
+  dice: d6
+  value: 4
 ```
 ````
