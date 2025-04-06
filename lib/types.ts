@@ -61,3 +61,12 @@ export type ConsumableBlock = {
 	state_key: string;
 	uses: number;
 }
+
+export type BadgeItem = {
+	label: string;
+	value: string;
+}
+
+export type BadgesBlock = {
+	items: BadgeItem[];
+}

@@ -5,6 +5,7 @@ import { BaseView } from 'lib/views/BaseView';
 import { SkillsView } from 'lib/views/SkillsView';
 import { HealthView } from 'lib/views/HealthView';
 import { ConsumableView } from 'lib/views/ConsumableView';
+import { BadgesView } from 'lib/views/BadgesView';
 import { KeyValueStore } from 'lib/kv';
 
 interface DndUIToolkitSettings {
@@ -30,6 +31,7 @@ export default class DndUIToolkitPlugin extends Plugin {
 			new SkillsView(),
 			new HealthView(kv),
 			new ConsumableView(kv),
+			new BadgesView(),
 		];
 
 		for (const view of views) {

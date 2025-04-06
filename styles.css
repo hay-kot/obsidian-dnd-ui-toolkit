@@ -387,3 +387,35 @@
 	gap: 0.3rem;
 	align-items: center;
 }
+
+/*
+ * Badges Component
+ * */
+.badges-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+.badge-item {
+	display: flex;
+	align-items: center;
+	gap: 0.3rem;
+	padding: 0.25rem 0.5rem;
+	background-color: #323748;
+	border-radius: 0.25rem;
+	border: 1px solid #383e54;
+	font-size: 0.8rem;
+}
+
+.badge-label {
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	color: #a0a0d0;
+}
+
+.badge-value {
+	font-weight: bold;
+	color: #ffffff;
+}
