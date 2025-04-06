@@ -326,16 +326,8 @@
 	display: inline-block;
 }
 
-.hit-dice-checkbox {
-	position: absolute;
-	opacity: 0;
-	width: 0;
-	height: 0;
-}
-
-.hit-dice-box {
-	position: absolute;
-	top: 0.1rem;
+.hit-dice-button {
+	position: relative;
 	display: block;
 	width: 1.2rem;
 	height: 1.2rem;
@@ -343,18 +335,21 @@
 	border-radius: 0.2rem;
 	cursor: pointer;
 	background-color: #323748;
-	transition: background-color 0.2s ease;
+	transition: background-color 0.1s ease;
+	padding: 0;
+	margin: 0;
 }
 
-.hit-dice-checkbox:checked+.hit-dice-box {
+.hit-dice-button[aria-pressed="true"] {
 	background-color: #6d7cba;
 }
 
-.hit-dice-checkbox:focus+.hit-dice-box {
+.hit-dice-button:focus {
+	outline: none;
 	box-shadow: 0 0 0 2px rgba(109, 124, 186, 0.5);
 }
 
-.hit-dice-box:hover {
+.hit-dice-button:hover {
 	background-color: #363b4a;
 }
 
