@@ -8,23 +8,44 @@ I built this plugin because I was tired of working with PDFs and online tools to
 > [!WARNING]
 > This plugin is in early development, things may be broken or change.
 
+## Quick Start
+
+An easy way to get started is to look at an example in the [examples](./docs/examples/) folder and see how those are laid out.
+
+> [!TIP]
+> Want to add a new example for your class? Submit a PR with a template!
+
+> [!WARNING]
+> We haven't published to the obsidian store yet, if you want to use this plugin you must install it using the [BRAT](https://github.com/TfTHacker/obsidian42-brat) plugin to load the plugin from a git repository.
+>
+> If you have issues installing with BRAT, try pinning the version to the latest release.
+
 ## Features
 
 - Display character information with grid of cards
 - Display Ability Scores and saving throws
 - Display Skills calculated off ability scores
 - HP Widget: Track your characters HP and hit dice (also support for monsters)
+- Spell Slot Tracking
+- General Consumables Tracking
 
 ## Road Map
 
-- [ ] Static Widgets
-  - [ ] Generic 'Badge' for smaller display of Key Value dat
+- [x] Static Widgets
+  - [x] Generic 'Badge' for smaller display of Key Value dat
 - [ ] Interactive Widgets
   - [x] HP Widget: Track your characters HP and hit dice (also support for monsters)
-  - [ ] Spell Slot Widget: Track your spell slot usage
-  - [ ] Generic Consumables Widget: Track anything like Luck Points, Arcane Recovery, Magic Item Charges, or whatever!
+  - [x] Spell Slot Widget: Track your spell slot usage
+  - [x] Generic Consumables Widget: Track anything like Luck Points, Arcane Recovery, Magic Item Charges, or whatever!
   - [ ] Buttons for Short Rest and Long Rest: Connects with HP Widget, Spell Slots, and Consumables (as configured) so that when you press Short or Long Rest your consumables automatically get restored to their default states.
 - [ ] Themeable and/or read from Obsidian styles
+
+### Dev
+
+- [ ] Prefix all styles
+- [ ] Determine if i should prefix code blocks
+- [ ] Breakup CSS file
+- [ ] Submit for approval to obsidian store
 
 ## Components
 
