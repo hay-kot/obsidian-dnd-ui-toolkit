@@ -10,7 +10,6 @@
 	display: grid;
 	gap: 0.5rem;
 	align-items: start;
-	margin-bottom: 1rem;
 }
 
 /*
@@ -182,4 +181,179 @@
 	font-size: 0.7rem;
 	color: #a0c7d0;
 	margin-top: 0.3rem;
+}
+
+/* Health Card Styles */
+.health-card {
+	display: flex;
+	flex-direction: column;
+	gap: var(--std-gap);
+	padding: 0.75rem;
+	width: 100%;
+}
+
+.health-card p {
+	margin-block-start: 0 !important;
+	margin-block-end: 0 !important;
+}
+
+.health-card-header {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	width: 100%;
+}
+
+.health-value {
+	font-size: 1.5rem;
+	font-weight: bold;
+	color: #ffffff;
+	display: flex;
+	align-items: baseline;
+	gap: 0.2rem;
+}
+
+.health-max {
+	font-size: 1rem;
+	color: #b8b8d0;
+}
+
+.health-temp {
+	font-size: 0.8rem;
+	color: #64d8cb;
+	margin-left: 0.3rem;
+}
+
+.health-progress-container {
+	width: 100%;
+	height: 0.5rem;
+	background-color: #323748;
+	border-radius: 0.25rem;
+	overflow: hidden;
+	margin: 0.3rem 0;
+}
+
+.health-progress-bar {
+	height: 100%;
+	background-color: #6d7cba;
+	transition: width 0.3s ease;
+}
+
+.health-controls {
+	display: flex;
+	gap: 0.3rem;
+	width: 100%;
+	margin: 0.3rem 0;
+	flex-wrap: wrap;
+}
+
+.health-input {
+	width: 6rem;
+	background-color: #323748;
+	border: 1px solid #383e54;
+	border-radius: 0.25rem;
+	color: #e0e0e0;
+	padding: 0.3rem;
+	text-align: center;
+}
+
+.health-button {
+	flex: 0.8;
+	min-width: fit-content;
+	background-color: #323748;
+	border: 1px solid #383e54;
+	border-radius: 0.25rem;
+	color: #e0e0e0;
+	padding: 0.3rem 0.4rem;
+	font-size: 0.8rem;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+}
+
+.health-button:hover {
+	background-color: #363b4a;
+}
+
+.health-heal {
+	border-color: #64d8cb;
+	color: #64d8cb;
+}
+
+.health-damage {
+	border-color: #e57373;
+	color: #e57373;
+}
+
+.health-temp {
+	border-color: #b39ddb;
+	color: #b39ddb;
+}
+
+.health-divider {
+	width: 100%;
+	height: 1px;
+	background-color: #383e54;
+	margin: 0.5rem 0;
+}
+
+.hit-dice-container {
+	width: 100%;
+	margin-top: 0.3rem;
+	margin-bottom: 0.3rem;
+}
+
+.hit-dice-label {
+	font-size: 0.8rem;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	color: #a0a0d0;
+	margin-bottom: 0 !important;
+	text-align: left;
+}
+
+.hit-dice-boxes {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+	margin-left: 1rem;
+	align-items: center;
+}
+
+.hit-dice-wrapper {
+	position: relative;
+	width: 1.2rem;
+	height: 1.2rem;
+	display: inline-block;
+}
+
+.hit-dice-checkbox {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.hit-dice-box {
+	position: absolute;
+	top: 0.1rem;
+	display: block;
+	width: 1.2rem;
+	height: 1.2rem;
+	border: 1px solid #6d7cba;
+	border-radius: 0.2rem;
+	cursor: pointer;
+	background-color: #323748;
+	transition: background-color 0.2s ease;
+}
+
+.hit-dice-checkbox:checked+.hit-dice-box {
+	background-color: #6d7cba;
+}
+
+.hit-dice-checkbox:focus+.hit-dice-box {
+	box-shadow: 0 0 0 2px rgba(109, 124, 186, 0.5);
+}
+
+.hit-dice-box:hover {
+	background-color: #363b4a;
 }

@@ -3,6 +3,8 @@ import { StatsView } from 'lib/views/StatsView';
 import { AbilityScoreView } from 'lib/views/AbilityScoreView';
 import { BaseView } from 'lib/views/BaseView';
 import { SkillsView } from 'lib/views/SkillsView';
+import { HealthView } from 'lib/views/HealthView';
+import { KeyValueStore } from 'lib/kv';
 
 interface DndUIToolkitSettings {
 	mySetting: string;
@@ -18,11 +20,14 @@ export default class DndUIToolkitPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
+		const kv = new KeyValueStore(this);
+
 		// In your plugin's onload method
 		const views: BaseView[] = [
 			new StatsView(),
 			new AbilityScoreView(),
 			new SkillsView(),
+			new HealthView(kv),
 		];
 
 		for (const view of views) {

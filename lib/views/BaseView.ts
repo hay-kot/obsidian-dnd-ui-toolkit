@@ -22,7 +22,7 @@ export abstract class BaseView {
 			} else if (typeof result === 'string') {
 				div.innerHTML = result;
 			} else {
-				throw new Error("Render function did not return a valid HTMLElement or string");
+				console.debug("No result to render");
 			}
 		} catch (e) {
 			console.error("Error rendering code block", e);
