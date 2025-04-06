@@ -132,6 +132,8 @@ creating an encounter want to track HP of several monsters on a single notebook.
 
 You can also omit the `hitdice` and that part of the component will be omitted from view.
 
+![Rendered Example](./docs/images/example-hp-widget.webp)
+
 #### Example
 
 ````yaml
@@ -141,5 +143,48 @@ health: 24
 hitdice:
   dice: d6
   value: 4
+```
+````
+
+## Badges
+
+The badges component can be used to display any generic Key/Value data in a more condensed view.
+
+![Rendered Example](./docs/images/example-badges.webp)
+
+````yaml
+```badges
+items:
+  - label: Level
+    value: '3'
+  - label: Initiative
+    value: '+2'
+  - label: Spell Save
+    value: 14
+  - label: AC
+    value: 13
+  - label: AC (Mage Armor)
+    value: 15
+```
+````
+
+## Consumables
+
+The `consumable` component allows you to create generic trackers for different states of your character. This can be
+for anything like Spell Slots, Luck Points, or Channel Divinity.
+
+Note that the labels field is optional.
+
+![Rendered Example](./docs/images/example-consumable.webp)
+
+````yaml
+```consumable
+items:
+  - label: "Level 1"
+    state_key: din_luck_spell_1
+    uses: 4
+  - label: "Level 2"
+    state_key: din_luck_spell_2
+    uses: 2
 ```
 ````
