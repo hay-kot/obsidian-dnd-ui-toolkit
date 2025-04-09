@@ -37,6 +37,7 @@ An easy way to get started is to look at an example in the [examples](./docs/exa
   - [x] HP Widget: Track your characters HP and hit dice (also support for monsters)
   - [x] Spell Slot Widget: Track your spell slot usage
   - [x] Generic Consumables Widget: Track anything like Luck Points, Arcane Recovery, Magic Item Charges, or whatever!
+  - [x] Initiative Tracker: Track combat initiative, AC, and HP for players and monsters
   - [ ] Buttons for Short Rest and Long Rest: Connects with HP Widget, Spell Slots, and Consumables (as configured) so that when you press Short or Long Rest your consumables automatically get restored to their default states.
 - [ ] Themeable and/or read from Obsidian styles
 
@@ -207,5 +208,54 @@ items:
   - label: "Level 2"
     state_key: din_luck_spell_2
     uses: 2
+```
+````
+
+## Initiative Tracker
+
+The `initiative` component allows you to track combat encounters by managing initiative order, AC, and optionally HP for each combatant. The tracker automatically sorts combatants by their initiative rolls, and provides controls to move through the combat order.
+
+### Basic Example
+For single creatures or grouped creatures that share a single HP pool:
+
+````yaml
+```initiative
+state_key: forest_encounter
+items:
+  - name: Thordak (Fighter)
+    ac: 18
+    hp: 45
+    link: thordak-character-sheet
+  - name: Elf Wizard
+    ac: 15
+    hp: 28
+    link: wizard-npc
+  - name: Goblin Warriors (x3)
+    ac: 14
+    hp: 21
+```
+````
+
+### Monster Groups Example
+For groups of monsters with individual HP tracking:
+
+````yaml
+```initiative
+state_key: dungeon_encounter
+items:
+  - name: Party Fighter
+    ac: 18
+    hp: 45
+  - name: Goblin Squad
+    ac: 14
+    hp:
+      Goblin 1: 12
+      Goblin 2: 12
+      Goblin 3: 12
+  - name: Skeleton Archers
+    ac: 13
+    hp:
+      Archer 1: 10
+      Archer 2: 10
 ```
 ````

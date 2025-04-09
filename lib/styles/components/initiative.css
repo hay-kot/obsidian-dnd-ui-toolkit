@@ -1,0 +1,279 @@
+/* Initiative Tracker Styles */
+.initiative-tracker {
+	display: grid;
+	gap: var(--std-gap);
+}
+
+.initiative-tracker-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	margin-bottom: 0.5rem;
+}
+
+.initiative-tracker-controls {
+	display: flex;
+	align-items: end;
+	justify-items: end;
+	margin: var(--std-gap) 0;
+	gap: 0.3rem;
+}
+
+.initiative-control-button {
+	background-color: #323748;
+	border: 1px solid #383e54;
+	border-radius: 0.25rem;
+	color: #e0e0e0;
+	padding: 0.3rem 0.5rem;
+	font-size: 0.8rem;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+}
+
+.initiative-control-button:hover {
+	background-color: #363b4a;
+}
+
+.initiative-prev {
+	margin-left: auto;
+}
+
+.initiative-prev,
+.initiative-next {
+	border-color: #6d7cba;
+	color: #a0a0d0;
+}
+
+.initiative-reset {
+	border-color: #e57373;
+	color: #e57373;
+}
+
+.initiative-list {
+	width: 100%;
+}
+
+.initiative-items {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+	width: 100%;
+}
+
+.initiative-item {
+	display: flex;
+	flex-direction: column;
+	padding: 0.5rem;
+	border-radius: 0.3rem;
+	background-color: #323748;
+	border: 1px solid #383e54;
+	transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.initiative-item-active {
+	background-color: #3a4055;
+	border-color: #6d7cba;
+}
+
+.initiative-item-main {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	width: 100%;
+}
+
+.initiative-roll {
+	flex: 0 0 3rem;
+}
+
+.initiative-input {
+	width: 3rem;
+	background-color: #262a36;
+	border: 1px solid #383e54;
+	border-radius: 0.25rem;
+	color: #e0e0e0;
+	padding: 0.2rem;
+	text-align: center;
+	font-size: 0.9rem;
+}
+
+.initiative-name {
+	flex: 1;
+	font-weight: bold;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.initiative-link {
+	color: #6d7cba;
+	text-decoration: none;
+}
+
+.initiative-link:hover {
+	text-decoration: underline;
+}
+
+.initiative-ac {
+	display: flex;
+	align-items: center;
+	gap: 0.2rem;
+	flex: 0 0 auto;
+	padding: 0.2rem 0.4rem;
+	background-color: #262a36;
+	border-radius: 0.25rem;
+	font-size: 0.8rem;
+}
+
+.initiative-ac-label {
+	color: #a0a0d0;
+}
+
+.initiative-ac-value {
+	font-weight: bold;
+}
+
+.initiative-hp {
+	display: flex;
+	align-items: center;
+	gap: 0.2rem;
+	flex: 0 0 auto;
+	padding: 0.2rem 0.4rem;
+	background-color: #262a36;
+	border-radius: 0.25rem;
+	font-size: 0.8rem;
+}
+
+.initiative-hp-value {
+	font-weight: bold;
+	color: #e0e0e0;
+}
+
+.initiative-hp-separator {
+	color: #6d7cba;
+}
+
+.initiative-hp-max {
+	color: #a0a0d0;
+}
+
+.initiative-item-actions {
+	display: flex;
+	gap: 0.3rem;
+	margin-top: 0.3rem;
+	padding-top: 0.3rem;
+	border-top: 1px solid #383e54;
+}
+
+.initiative-hp-input {
+	width: 3rem;
+	background-color: #262a36;
+	border: 1px solid #383e54;
+	border-radius: 0.25rem;
+	color: #e0e0e0;
+	padding: 0.2rem;
+	text-align: center;
+	font-size: 0.8rem;
+}
+
+.initiative-hp-button {
+	flex: 1;
+	background-color: #262a36;
+	border: 1px solid #383e54;
+	border-radius: 0.25rem;
+	color: #e0e0e0;
+	padding: 0.2rem;
+	font-size: 0.8rem;
+	cursor: pointer;
+}
+
+.initiative-damage {
+	border-color: #e57373;
+	color: #e57373;
+}
+
+.initiative-heal {
+	border-color: #64d8cb;
+	color: #64d8cb;
+}
+
+.initiative-empty-state {
+	padding: 1rem;
+	text-align: center;
+	color: #a0a0d0;
+	font-style: italic;
+}
+
+/* Group monster styles */
+.initiative-group-container {
+	margin-top: 0.3rem;
+	width: 100%;
+}
+
+.initiative-group-hp {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	width: 100%;
+}
+
+.initiative-monster {
+	flex: 1 1 48%;
+	min-width: 220px;
+	background-color: #262a36;
+	border-radius: 0.25rem;
+	padding: 0.3rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+}
+
+.initiative-monster-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 0.2rem;
+}
+
+.initiative-monster-name {
+	font-size: 0.8rem;
+	font-weight: bold;
+}
+
+.initiative-monster-hp {
+	display: flex;
+	align-items: center;
+	gap: 0.2rem;
+	font-size: 0.8rem;
+}
+
+.initiative-monster-actions {
+	display: flex;
+	gap: 0.3rem;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 600px) {
+	.initiative-item-main {
+		flex-wrap: wrap;
+	}
+
+	.initiative-roll {
+		flex: 0 0 2.5rem;
+	}
+
+	.initiative-name {
+		flex: 1 1 calc(100% - 7rem);
+	}
+
+	.initiative-ac,
+	.initiative-hp {
+		flex: 0 0 auto;
+	}
+
+	.initiative-monster {
+		flex: 1 1 100%;
+	}
+}
