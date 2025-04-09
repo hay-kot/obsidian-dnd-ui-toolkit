@@ -1,0 +1,57 @@
+/*
+ * Skills Grid Cards
+ * */
+
+.skills-grid {
+	column-count: 2;
+	column-gap: 2rem;
+	align-items: start;
+	background-color: #262a36;
+	color: #e0e0e0;
+	border: 1px solid #383e54;
+	overflow: hidden;
+	border-radius: 0.4rem;
+	padding: .5rem;
+}
+
+.skill-card p {
+	margin-block-start: 0 !important;
+	margin-block-end: 0 !important;
+}
+
+.skill-card {
+	display: flex;
+	justify-content: space-between;
+	gap: .2rem;
+	padding: 0.25rem 0.5rem;
+	transition: background-color 0.2s ease;
+	border-radius: 0.25rem;
+	position: relative;
+}
+
+.skill-card:hover {
+	background-color: #363b4a;
+}
+
+.skill-card.proficient::before {
+	content: "•";
+	position: absolute;
+	left: -0.25rem;
+	color: #64d8cb;
+	font-size: 1.2rem;
+	line-height: 1;
+}
+
+.skills-values-container {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.skill-ability {
+	font-size: 0.8rem;
+	color: #b8b8d0;
+	border-radius: 3px;
+	width: 1.8rem;
+	margin-right: 0.2rem;
+}

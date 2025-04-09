@@ -1,0 +1,51 @@
+/*
+ * Utility Styles
+ * */
+:root {
+	--std-gap: 0.3rem;
+	--ability-card-padding: 0.3rem;
+}
+
+.card-grid {
+	display: grid;
+	gap: 0.5rem;
+	align-items: start;
+}
+
+/*
+ * Generic Card Styles
+ * */
+
+.generic-card {
+	display: flex;
+	height: 100%;
+	flex-direction: column;
+	align-items: center;
+	justify-content: start;
+	padding: 0.75rem;
+	border-radius: 0.4rem;
+	background-color: #262a36;
+	color: #e0e0e0;
+	border: 1px solid #383e54;
+	min-height: 80px;
+}
+
+.generic-card-label {
+	font-size: 0.8rem;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	color: #a0a0d0;
+	margin-bottom: 0.5rem;
+}
+
+.generic-card-value {
+	font-size: 1.2rem;
+	font-weight: bold;
+	color: #ffffff;
+}
+
+.generic-card-sublabel {
+	font-size: 0.7rem;
+	color: #a0c7d0;
+	margin-top: 0.3rem;
+}

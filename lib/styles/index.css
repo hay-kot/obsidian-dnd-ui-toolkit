@@ -1,1 +1,8 @@
-@import './styles.css';
+@import './common.css';
+
+/* Components */
+@import './components/skill-card.css';
+@import './components/ability-cards.css';
+@import './components/health-card.css';
+@import './components/badge.css';
+@import './components/consumables.css';
