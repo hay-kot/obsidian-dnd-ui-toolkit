@@ -12,6 +12,14 @@
 	margin-bottom: 0.5rem;
 }
 
+.initiative-tracker-title {
+	font-size: 1rem;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	color: #a0a0d0;
+	margin: 0;
+}
+
 .initiative-tracker-controls {
 	display: flex;
 	align-items: end;
@@ -83,19 +91,23 @@
 	width: 100%;
 }
 
+/* Make initiative roll more prominent */
 .initiative-roll {
-	flex: 0 0 3rem;
+	flex: 0 0 3.5rem;
+	position: relative;
 }
 
 .initiative-input {
-	width: 3rem;
+	width: 100%;
 	background-color: #262a36;
 	border: 1px solid #383e54;
 	border-radius: 0.25rem;
 	color: #e0e0e0;
-	padding: 0.2rem;
+	padding: 0.5rem 1rem;
 	text-align: center;
-	font-size: 0.9rem;
+	font-size: 1.6rem !important;
+	height: 100% !important;
+	/* Larger initiative font */
 }
 
 .initiative-name {
@@ -104,30 +116,28 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	font-size: 1.2rem;
+}
+
+.divider {
+	width: 100%;
+	height: 1px;
+	background-color: white;
+	margin: 0.4rem 0rem;
 }
 
 .initiative-link {
-	color: #6d7cba;
-	text-decoration: none;
+	color: white;
 }
+
 
 .initiative-link:hover {
 	text-decoration: underline;
 }
 
 .initiative-ac {
-	display: flex;
-	align-items: center;
-	gap: 0.2rem;
-	flex: 0 0 auto;
-	padding: 0.2rem 0.4rem;
-	background-color: #262a36;
-	border-radius: 0.25rem;
+	font-style: italic;
 	font-size: 0.8rem;
-}
-
-.initiative-ac-label {
-	color: #a0a0d0;
 }
 
 .initiative-ac-value {
@@ -142,7 +152,9 @@
 	padding: 0.2rem 0.4rem;
 	background-color: #262a36;
 	border-radius: 0.25rem;
-	font-size: 0.8rem;
+	font-size: 1.1rem;
+	margin-bottom: auto;
+	margin-left: auto;
 }
 
 .initiative-hp-value {
@@ -163,7 +175,8 @@
 	gap: 0.3rem;
 	margin-top: 0.3rem;
 	padding-top: 0.3rem;
-	border-top: 1px solid #383e54;
+	align-items: center;
+	margin-left: auto;
 }
 
 .initiative-hp-input {
@@ -177,15 +190,26 @@
 	font-size: 0.8rem;
 }
 
+/* More subtle action buttons with icons */
 .initiative-hp-button {
-	flex: 1;
-	background-color: #262a36;
+	flex: 0 0 auto;
+	background-color: transparent;
 	border: 1px solid #383e54;
 	border-radius: 0.25rem;
 	color: #e0e0e0;
-	padding: 0.2rem;
+	width: 1.8rem;
+	height: 1.8rem;
 	font-size: 0.8rem;
+	padding: 0;
 	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.2s ease;
+}
+
+.initiative-hp-button:hover {
+	background-color: #303440;
 }
 
 .initiative-damage {
@@ -211,47 +235,72 @@
 	width: 100%;
 }
 
+/* Group name header */
+.initiative-group-header {
+	padding: 0.3rem 0.5rem;
+	margin-bottom: 0.5rem;
+	background-color: #2d334a;
+	border-radius: 0.25rem;
+	font-weight: bold;
+	font-size: 0.9rem;
+	color: #b8c4ff;
+	letter-spacing: 0.5px;
+}
+
 .initiative-group-hp {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 	gap: 0.5rem;
 	width: 100%;
 }
 
 .initiative-monster {
-	flex: 1 1 48%;
-	min-width: 220px;
 	background-color: #262a36;
 	border-radius: 0.25rem;
-	padding: 0.3rem;
+	padding: 0.3rem 0.5rem;
 	display: flex;
-	flex-direction: column;
-	gap: 0.3rem;
+	align-items: center;
+	gap: 0.5rem;
+	border: 1px solid #383e54;
 }
 
 .initiative-monster-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 0.2rem;
+	flex: 1;
 }
 
 .initiative-monster-name {
-	font-size: 0.8rem;
+	font-size: 0.85rem;
 	font-weight: bold;
+	color: #e0e0e0;
 }
 
 .initiative-monster-hp {
 	display: flex;
 	align-items: center;
 	gap: 0.2rem;
+	background-color: #303440;
+	padding: 0.1rem 0.3rem;
+	border-radius: 0.2rem;
 	font-size: 0.8rem;
 }
 
 .initiative-monster-actions {
 	display: flex;
+	align-items: center;
 	gap: 0.3rem;
+}
+
+/* Status indicators for monsters */
+.monster-status-dead {
+	text-decoration: line-through;
+	opacity: 0.5;
+}
+
+.monster-status-injured {
+	color: #e57373;
 }
 
 /* Responsive adjustments for mobile */
@@ -273,7 +322,7 @@
 		flex: 0 0 auto;
 	}
 
-	.initiative-monster {
-		flex: 1 1 100%;
+	.initiative-group-hp {
+		grid-template-columns: 1fr;
 	}
 }

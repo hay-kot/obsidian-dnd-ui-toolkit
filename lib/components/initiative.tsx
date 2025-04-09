@@ -15,7 +15,7 @@ export type InitiativeProps = {
 }
 
 export function Initiative(props: InitiativeProps) {
-	const [inputValue, setInputValue] = useState<string>("");
+	const [inputValue, setInputValue] = useState<string>("1");
 
 	const sortedItems = getSortedInitiativeItems(
 		props.static.items,
@@ -150,11 +150,21 @@ export function Initiative(props: InitiativeProps) {
 	// Render a single monster's HP
 	const renderMonsterHp = (index: number, monsterKey: string, monsterLabel: string, maxHp: number) => {
 		const currentHp = props.state.hp[index.toString()]?.[monsterKey] || 0;
+		// Add status class based on health percentage
+		const healthPercent = maxHp > 0 ? (currentHp / maxHp) * 100 : 0;
+		let statusClass = '';
+		if (currentHp <= 0) {
+			statusClass = 'monster-status-dead';
+		} else if (healthPercent <= 33) {
+			statusClass = 'monster-status-injured';
+		} else if (healthPercent >= 90) {
+			statusClass = 'monster-status-healthy';
+		}
 
 		return (
 			<div key={`${index}-${monsterKey}`} className="initiative-monster">
 				<div className="initiative-monster-header">
-					<span className="initiative-monster-name">{monsterLabel}</span>
+					<span className={`initiative-monster-name ${statusClass}`}>{monsterLabel}</span>
 					<span className="initiative-monster-hp">
 						<span className="initiative-hp-value">{currentHp}</span>
 						<span className="initiative-hp-separator">/</span>
@@ -172,19 +182,21 @@ export function Initiative(props: InitiativeProps) {
 						className="initiative-hp-button initiative-damage"
 						onClick={() => {
 							handleDamage(index, monsterKey, inputValue);
-							setInputValue("");
+							setInputValue("1");
 						}}
+						title="Damage"
 					>
-						Dmg
+						−
 					</button>
 					<button
 						className="initiative-hp-button initiative-heal"
 						onClick={() => {
 							handleHeal(index, monsterKey, inputValue);
-							setInputValue("");
+							setInputValue("1");
 						}}
+						title="Heal"
 					>
-						Heal
+						+
 					</button>
 				</div>
 			</div>
@@ -213,8 +225,17 @@ export function Initiative(props: InitiativeProps) {
 			const maxHp = getMaxHp(item);
 			const currentHp = itemHp[monsterKey] || 0;
 
+			// Status class based on health percentage
+			const healthPercent = maxHp > 0 ? (currentHp / maxHp) * 100 : 0;
+			let statusClass = '';
+			if (currentHp <= 0) {
+				statusClass = 'monster-status-dead';
+			} else if (healthPercent <= 33) {
+				statusClass = 'monster-status-injured';
+			}
+
 			return (
-				<div className="initiative-hp">
+				<div className={`initiative-hp ${statusClass}`}>
 					<span className="initiative-hp-value">{currentHp}</span>
 					<span className="initiative-hp-separator">/</span>
 					<span className="initiative-hp-max">{maxHp}</span>
@@ -250,19 +271,21 @@ export function Initiative(props: InitiativeProps) {
 						className="initiative-hp-button initiative-damage"
 						onClick={() => {
 							handleDamage(index, monsterKey, inputValue);
-							setInputValue("");
+							setInputValue("1");
 						}}
+						title="Damage"
 					>
-						Dmg
+						−
 					</button>
 					<button
 						className="initiative-hp-button initiative-heal"
 						onClick={() => {
 							handleHeal(index, monsterKey, inputValue);
-							setInputValue("");
+							setInputValue("1");
 						}}
+						title="Heal"
 					>
-						Heal
+						+
 					</button>
 				</div>
 			);
@@ -320,25 +343,34 @@ export function Initiative(props: InitiativeProps) {
 												placeholder="Init"
 											/>
 										</div>
-										<div className="initiative-name">
-											{item.link ? (
-												<a href={item.link} className="initiative-link">{item.name}</a>
-											) : item.name}
-										</div>
-										<div className="initiative-ac">
-											<span className="initiative-ac-label">AC</span>
-											<span className="initiative-ac-value">{item.ac}</span>
+										<div>
+											<div className="initiative-name">
+												{item.link ? (
+													<a href={item.link} className="initiative-link">{item.name}</a>
+												) : item.name}
+											</div>
+											<div className="initiative-ac">
+												AC: <span className="initiative-ac-value">{item.ac}</span>
+											</div>
 										</div>
 
 										{hasHp && !isGroupMonster && renderHpSection(item, index)}
 									</div>
 
-									{hasHp && !isGroupMonster && renderHpActions(item, index)}
+									{hasHp && !isGroupMonster && (
+										<>
+											<div className="divider"></div>
+											{renderHpActions(item, index)}
+										</>
+									)}
 
 									{isGroupMonster && (
-										<div className="initiative-group-container">
-											{renderHpSection(item, index)}
-										</div>
+										<>
+											<div className="divider"></div>
+											<div className="initiative-group-container">
+												{renderHpSection(item, index)}
+											</div>
+										</>
 									)}
 								</div>
 							);
