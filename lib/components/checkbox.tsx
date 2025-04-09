@@ -7,14 +7,12 @@ export type CheckboxProps = {
 
 export function Checkbox({ id, checked, onChange }: CheckboxProps) {
 	return (
-		<div className="hit-dice-wrapper">
-			<button
-				id={id}
-				className="hit-dice-button"
-				onClick={onChange}
-				aria-pressed={checked}
-				type="button"
-			/>
-		</div>
+		<button
+			id={id}
+			className="checkbox-button clickable-icon"
+			onClick={onChange}
+			aria-pressed={checked}
+			type="button"
+		/>
 	)
 }

@@ -1,4 +1,3 @@
-import { StatGrid } from "./components/stat-cards";
 import * as AbilityService from "./domains/abilities";
 
 export type Ability = {
@@ -11,8 +10,8 @@ export type Ability = {
 
 export function AbilityView(data: Ability[]) {
 	return (
-		<div>
-			<StatGrid cols={6}>
+		<div className="ability-scores-container">
+			<div className="ability-scores-grid">
 				{data.map((item) => (
 					<div
 						className={`ability-score-card ${item.isProficient ? 'proficient' : ''}`}
@@ -32,7 +31,7 @@ export function AbilityView(data: Ability[]) {
 						</div>
 					</div>
 				))}
-			</StatGrid>
+			</div>
 		</div>
 	)
 }

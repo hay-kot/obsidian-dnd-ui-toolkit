@@ -133,32 +133,3 @@
 	align-items: center;
 }
 
-.hit-dice-wrapper {
-	position: relative;
-	width: 1.2rem;
-	height: 1.2rem;
-	display: inline-block;
-}
-
-.hit-dice-button {
-	position: relative;
-	display: block;
-	width: 1.2rem;
-	height: 1.2rem;
-	border: 1px solid #6d7cba;
-	border-radius: 0.2rem;
-	cursor: pointer;
-	background-color: #323748;
-	transition: background-color 0.1s ease;
-	padding: 0;
-	margin: 0;
-}
-
-.hit-dice-button[aria-pressed="true"] {
-	background-color: #6d7cba;
-}
-
-.hit-dice-button:focus {
-	outline: none;
-	box-shadow: 0 0 0 2px rgba(109, 124, 186, 0.5);
-}

@@ -14,6 +14,13 @@
 	padding: .5rem;
 }
 
+/* on small screens on render single column */
+@media (max-width: 600px) {
+	.skills-grid {
+		column-count: 1;
+	}
+}
+
 .skill-card p {
 	margin-block-start: 0 !important;
 	margin-block-end: 0 !important;

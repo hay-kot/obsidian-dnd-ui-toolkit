@@ -8,7 +8,7 @@
 .consumable-container {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: var(--std-grid-gap);
 	margin: 0.2rem 0;
 }
 

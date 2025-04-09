@@ -4,11 +4,12 @@
 :root {
 	--std-gap: 0.3rem;
 	--ability-card-padding: 0.3rem;
+	--std-grid-gap: 0.5rem;
 }
 
 .card-grid {
 	display: grid;
-	gap: 0.5rem;
+	gap: var(--std-grid-gap);
 	align-items: start;
 }
 

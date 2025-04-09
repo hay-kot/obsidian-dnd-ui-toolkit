@@ -5,7 +5,7 @@
 .ability-scores-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-	gap: 0.5rem;
+	gap: var(--std-grid-gap);
 	align-items: start;
 }
 
@@ -13,7 +13,6 @@
 	margin-block-start: 0 !important;
 	margin-block-end: 0 !important;
 }
-
 
 .ability-score-card {
 	display: flex;
