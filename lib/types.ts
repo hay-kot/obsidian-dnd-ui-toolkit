@@ -70,3 +70,16 @@ export type BadgeItem = {
 export type BadgesBlock = {
 	items: BadgeItem[];
 }
+
+
+export type InitiativeBlock = {
+	state_key: string;
+	items: InitiativeItem[];
+}
+
+export type InitiativeItem = {
+	name: string;
+	ac: number;
+	link?: string;
+	hp?: number | Record<string, number>;
+}
