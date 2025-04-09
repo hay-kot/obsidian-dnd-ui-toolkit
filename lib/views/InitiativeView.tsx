@@ -6,7 +6,7 @@ import { KeyValueStore } from "lib/kv";
 import { InitiativeBlock } from "lib/types";
 
 export class InitiativeView extends BaseView {
-	public codeblock = "consumable";
+	public codeblock = "initiative";
 
 	private kv: KeyValueStore;
 
