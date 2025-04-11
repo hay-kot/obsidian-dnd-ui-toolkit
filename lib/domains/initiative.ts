@@ -6,6 +6,7 @@ export interface InitiativeState {
 	activeIndex: number;
 	initiatives: Record<string, number>;
 	hp: Record<string, Record<string, number>>;
+	round: number;
 }
 
 export function parseInitiativeBlock(yamlString: string): InitiativeBlock & { state_key?: string } {
@@ -44,7 +45,8 @@ export function getDefaultInitiativeState(block: InitiativeBlock): InitiativeSta
 	return {
 		activeIndex: -1, // No active combatant at first
 		initiatives,
-		hp
+		hp,
+		round: 1, // Start at round 1
 	};
 }
 

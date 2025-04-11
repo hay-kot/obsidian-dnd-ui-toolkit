@@ -23,3 +23,5 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Views:** Place UI views in lib/views/; extend BaseView where applicable
 - **Formatting:** Use consistent indentation (2 spaces), trailing commas, and semi-colons
 - **State Management:** Use React hooks (useState) for component state
+- **CSS:** Prefix all styles with plugin namespace; place component styles in lib/styles/components/
+- **File Structure:** Keep code aligned with domain separation (domains, components, views)

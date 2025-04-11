@@ -6,6 +6,7 @@ export type InitiativeState = {
 	activeIndex: number;
 	initiatives: Record<string, number>;
 	hp: Record<string, Record<string, number>>;
+	round: number;
 }
 
 export type InitiativeProps = {
@@ -79,6 +80,7 @@ export function Initiative(props: InitiativeProps) {
 
 		const currentActiveIndex = props.state.activeIndex;
 		let nextActiveIndex = -1;
+		let newRound = props.state.round;
 
 		// Find the index of the current active item in the sorted list
 		const currentActiveItemIndex = sortedItems.findIndex(item => item.index === currentActiveIndex);
@@ -86,6 +88,10 @@ export function Initiative(props: InitiativeProps) {
 		if (currentActiveItemIndex === -1 || currentActiveItemIndex === sortedItems.length - 1) {
 			// If no active item or at the end of the list, go to the first item
 			nextActiveIndex = sortedItems[0].index;
+			// Increment round when cycling back to the beginning
+			if (currentActiveItemIndex !== -1) {
+				newRound = props.state.round + 1;
+			}
 		} else {
 			// Otherwise, go to the next item
 			nextActiveIndex = sortedItems[currentActiveItemIndex + 1].index;
@@ -93,7 +99,8 @@ export function Initiative(props: InitiativeProps) {
 
 		props.onStateChange({
 			...props.state,
-			activeIndex: nextActiveIndex
+			activeIndex: nextActiveIndex,
+			round: newRound
 		});
 	};
 
@@ -102,6 +109,7 @@ export function Initiative(props: InitiativeProps) {
 
 		const currentActiveIndex = props.state.activeIndex;
 		let prevActiveIndex = -1;
+		let newRound = props.state.round;
 
 		// Find the index of the current active item in the sorted list
 		const currentActiveItemIndex = sortedItems.findIndex(item => item.index === currentActiveIndex);
@@ -109,6 +117,10 @@ export function Initiative(props: InitiativeProps) {
 		if (currentActiveItemIndex === -1 || currentActiveItemIndex === 0) {
 			// If no active item or at the beginning of the list, go to the last item
 			prevActiveIndex = sortedItems[sortedItems.length - 1].index;
+			// Decrement round when cycling back to the end
+			if (currentActiveItemIndex !== -1 && props.state.round > 1) {
+				newRound = props.state.round - 1;
+			}
 		} else {
 			// Otherwise, go to the previous item
 			prevActiveIndex = sortedItems[currentActiveItemIndex - 1].index;
@@ -116,7 +128,8 @@ export function Initiative(props: InitiativeProps) {
 
 		props.onStateChange({
 			...props.state,
-			activeIndex: prevActiveIndex
+			activeIndex: prevActiveIndex,
+			round: newRound
 		});
 	};
 
@@ -143,7 +156,8 @@ export function Initiative(props: InitiativeProps) {
 			...props.state,
 			activeIndex: -1,
 			initiatives: newInitiatives,
-			hp: newHp
+			hp: newHp,
+			round: 1 // Reset to round 1
 		});
 	};
 
@@ -295,6 +309,9 @@ export function Initiative(props: InitiativeProps) {
 	return (
 		<div className="initiative-tracker">
 			<div className="initiative-tracker-controls">
+				<div className="initiative-round-counter">
+					Round: <span className="initiative-round-value">{props.state.round}</span>
+				</div>
 				<button
 					className="initiative-control-button initiative-prev"
 					onClick={handlePrev}

@@ -22,10 +22,23 @@
 
 .initiative-tracker-controls {
 	display: flex;
-	align-items: end;
-	justify-items: end;
+	align-items: center;
 	margin: var(--std-gap) 0;
 	gap: 0.3rem;
+}
+
+.initiative-round-counter {
+	font-size: 0.9rem;
+	color: #a0a0d0;
+	padding: 0.3rem 0.6rem;
+	background-color: #323748;
+	border: 1px solid #383e54;
+	border-radius: 0.25rem;
+}
+
+.initiative-round-value {
+	font-weight: bold;
+	color: #e0e0e0;
 }
 
 .initiative-control-button {
