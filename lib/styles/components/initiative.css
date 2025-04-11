@@ -138,6 +138,7 @@
 .initiative-ac {
 	font-style: italic;
 	font-size: 0.8rem;
+	opacity: 70%;
 }
 
 .initiative-ac-value {
