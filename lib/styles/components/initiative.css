@@ -121,19 +121,19 @@
 
 .divider {
 	width: 100%;
-	height: 1px;
+	height: 1.5px;
 	background-color: white;
-	margin: 0.4rem 0rem;
+	margin-top: 0.75rem;
+	margin-bottom: 0.5rem;
+	opacity: 25%;
 }
 
 .initiative-link {
+	font-weight: bold;
 	color: white;
+	text-decoration: none !important;
 }
 
-
-.initiative-link:hover {
-	text-decoration: underline;
-}
 
 .initiative-ac {
 	font-style: italic;

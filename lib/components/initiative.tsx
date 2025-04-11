@@ -340,7 +340,7 @@ export function Initiative(props: InitiativeProps) {
 												value={initiative || ""}
 												onChange={(e) => handleSetInitiative(index, e.target.value)}
 												className="initiative-input"
-												placeholder="Init"
+												placeholder="0"
 											/>
 										</div>
 										<div>
