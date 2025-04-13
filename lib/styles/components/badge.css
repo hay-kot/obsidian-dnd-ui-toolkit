@@ -8,6 +8,15 @@
 	align-items: center;
 }
 
+.badges-row.dense {
+	gap: 0.3rem;
+}
+
+.badges-row.dense .badge-item {
+	padding: 0.15rem 0.3rem;
+	font-size: 0.7rem;
+}
+
 .badge-item {
 	display: flex;
 	align-items: center;

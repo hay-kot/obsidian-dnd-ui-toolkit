@@ -18,10 +18,10 @@ export function Badge({ item }: { item: BadgeItem }) {
 }
 
 export function BadgesRow({ data }: { data: BadgesBlock }) {
-	const { items } = data;
+	const { items, dense } = data;
 
 	return (
-		<div className="badges-row">
+		<div className={`badges-row${dense ? ' dense' : ''}`}>
 			{items.map((item, index) => (
 				<Badge item={item} key={index} />
 			))}

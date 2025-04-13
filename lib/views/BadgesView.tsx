@@ -17,7 +17,8 @@ export class BadgesView extends BaseView {
 				reverse: Boolean(item.reverse),
 				label: String(item.label || ''),
 				value: String(item.value || '')
-			}))
+			})),
+			dense: Boolean(parsed.dense)
 		};
 
 		return Tmpl.Render(BadgesRow({ data: badgesBlock }));

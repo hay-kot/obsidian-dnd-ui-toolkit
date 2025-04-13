@@ -158,13 +158,14 @@ hitdice:
 
 The badges component can be used to display any generic Key/Value data in a more condensed view. Badges
 also support a `reverse` property, when true it reverses the order of the label and value. You can also
-omit the value or label property and it will only render what is provided. This gives you a lot of 
+omit the value or label property and it will only render what is provided. This gives you a lot of
 flexibility in how they are rendered.
 
 ![Rendered Example](./docs/images/example-badges.webp)
 
 ````yaml
 ```badges
+dense: false # optional property, when true makes the badges smaller
 items:
   - label: Level
     value: '3'

@@ -71,6 +71,7 @@ export type BadgeItem = {
 
 export type BadgesBlock = {
 	items: BadgeItem[];
+	dense?: boolean;
 }
 
 
