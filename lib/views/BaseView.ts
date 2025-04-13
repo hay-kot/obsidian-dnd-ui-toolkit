@@ -42,29 +42,40 @@ export abstract class BaseView {
 		const frontmatter: Frontmatter = {
 			proficiencyBonus: 2,
 		}
-
 		const fm = this.app.metadataCache.getCache(ctx.sourcePath)?.frontmatter
 		if (!fm) {
 			return frontmatter
 		}
-
 		for (const key in FrontMatterKeys) {
 			const keys = FrontMatterKeys[key as keyof Frontmatter]
-
 			for (const k of keys) {
 				if (fm[k] !== undefined) {
-					frontmatter[key as keyof Frontmatter] = fm[k];
+					// Check if default value is a number and current value is a string
+					if (typeof frontmatter[key as keyof Frontmatter] === 'number' && typeof fm[k] === 'string') {
+						// Try to parse the string to a number
+						const parsedValue = Number(fm[k])
+						// If parsing succeeded (not NaN), use the parsed number, otherwise use the original value
+						frontmatter[key as keyof Frontmatter] = !isNaN(parsedValue) ? parsedValue : fm[k];
+					} else {
+						frontmatter[key as keyof Frontmatter] = fm[k];
+					}
 					break;
 				}
-
 				const lowered = k.toLowerCase();
 				if (fm[lowered] !== undefined) {
-					frontmatter[key as keyof Frontmatter] = fm[lowered];
+					// Check if default value is a number and current value is a string
+					if (typeof frontmatter[key as keyof Frontmatter] === 'number' && typeof fm[lowered] === 'string') {
+						// Try to parse the string to a number
+						const parsedValue = Number(fm[lowered])
+						// If parsing succeeded (not NaN), use the parsed number, otherwise use the original value
+						frontmatter[key as keyof Frontmatter] = !isNaN(parsedValue) ? parsedValue : fm[lowered];
+					} else {
+						frontmatter[key as keyof Frontmatter] = fm[lowered];
+					}
 					break;
 				}
 			}
 		}
-
 		return frontmatter
 	}
 }
