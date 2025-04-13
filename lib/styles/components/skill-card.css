@@ -6,9 +6,9 @@
 	column-count: 2;
 	column-gap: 2rem;
 	align-items: start;
-	background-color: #262a36;
-	color: #e0e0e0;
-	border: 1px solid #383e54;
+	background-color: var(--color-bg-primary);
+	color: var(--color-text-primary);
+	border: 1px solid var(--color-border-primary);
 	overflow: hidden;
 	border-radius: 0.4rem;
 	padding: .5rem;
@@ -37,14 +37,14 @@
 }
 
 .skill-card:hover {
-	background-color: #363b4a;
+	background-color: var(--color-bg-hover);
 }
 
 .skill-card.proficient::before {
 	content: "•";
 	position: absolute;
 	left: -0.25rem;
-	color: #64d8cb;
+	color: var(--color-accent-teal);
 	font-size: 1.2rem;
 	line-height: 1;
 }
@@ -57,7 +57,7 @@
 
 .skill-ability {
 	font-size: 0.8rem;
-	color: #b8b8d0;
+	color: var(--color-text-muted);
 	border-radius: 3px;
 	width: 1.8rem;
 	margin-right: 0.2rem;

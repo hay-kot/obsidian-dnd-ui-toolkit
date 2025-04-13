@@ -3,20 +3,20 @@
 	display: block;
 	width: 1.2rem;
 	height: 1.2rem;
-	border: 1px solid #6d7cba;
+	border: 1px solid var(--color-border-active);
 	border-radius: 0.2rem;
 	cursor: pointer;
-	background-color: #323748;
+	background-color: var(--color-bg-secondary);
 	transition: background-color 0.1s ease;
 	padding: 0;
 	margin: 0;
 }
 
 .checkbox-button[aria-pressed="true"] {
-	background-color: #6d7cba;
+	background-color: var(--color-border-active);
 }
 
 .checkbox-button:focus {
 	outline: none;
-	box-shadow: 0 0 0 2px rgba(109, 124, 186, 0.5);
+	box-shadow: 0 0 0 2px var(--color-border-focus);
 }

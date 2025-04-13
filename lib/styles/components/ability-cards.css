@@ -20,15 +20,15 @@
 	align-items: center;
 	gap: var(--std-gap);
 	border-radius: 0.4rem;
-	background-color: #262a36;
-	color: #e0e0e0;
-	border: 1px solid #383e54;
+	background-color: var(--color-bg-primary);
+	color: var(--color-text-primary);
+	border: 1px solid var(--color-border-primary);
 	overflow: hidden;
 }
 
 .ability-score-card.proficient {
-	border: 1px solid #6d7cba;
-	background-color: #2d3343;
+	border: 1px solid var(--color-border-active);
+	background-color: var(--color-bg-proficient);
 }
 
 .ability-header {
@@ -37,7 +37,7 @@
 	width: 100%;
 	justify-content: space-between;
 	align-items: center;
-	background-color: #323748;
+	background-color: var(--color-bg-secondary);
 }
 
 .ability-name {
@@ -45,19 +45,19 @@
 	font-size: 0.8rem;
 	text-transform: uppercase;
 	letter-spacing: 1px;
-	color: #b8b8d0;
+	color: var(--color-text-muted);
 }
 
 .ability-value {
 	font-size: 0.8rem;
-	color: #b8b8d0;
+	color: var(--color-text-muted);
 	border-radius: 3px;
 	text-decoration: underline;
 }
 
 .ability-modifier {
 	font-size: 1.5rem;
-	color: #ffffff;
+	color: var(--color-text-bright);
 	border-radius: 3px;
 	padding: 0.2rem;
 	justify-content: center;
@@ -67,7 +67,7 @@
 
 .ability-modifier-saving {
 	font-size: 0.7rem;
-	color: #a0c7d0;
+	color: var(--color-text-sublabel);
 	margin-top: var(--std-gap);
 	padding-bottom: var(--ability-card-padding);
 }

@@ -22,7 +22,7 @@
 .health-value {
 	font-size: 1.5rem;
 	font-weight: bold;
-	color: #ffffff;
+	color: var(--color-text-bright);
 	display: flex;
 	align-items: baseline;
 	gap: 0.2rem;
@@ -30,18 +30,18 @@
 
 .health-max {
 	font-size: 1rem;
-	color: #b8b8d0;
+	color: var(--color-text-muted);
 }
 
 .health-temp {
 	font-size: 0.8rem;
-	color: #64d8cb;
+	color: var(--color-accent-teal);
 }
 
 .health-progress-container {
 	width: 100%;
 	height: 0.5rem;
-	background-color: #323748;
+	background-color: var(--color-bg-secondary);
 	border-radius: 0.25rem;
 	overflow: hidden;
 	margin: 0.3rem 0;
@@ -49,7 +49,7 @@
 
 .health-progress-bar {
 	height: 100%;
-	background-color: #6d7cba;
+	background-color: var(--color-border-active);
 	transition: width 0.3s ease;
 }
 
@@ -63,10 +63,10 @@
 
 .health-input {
 	width: 5rem;
-	background-color: #323748;
-	border: 1px solid #6E7CBA;
+	background-color: var(--color-bg-secondary);
+	border: 1px solid var(--color-border-active);
 	border-radius: 0.25rem;
-	color: #e0e0e0;
+	color: var(--color-text-primary);
 	padding: 0.3rem;
 	text-align: center;
 }
@@ -74,10 +74,10 @@
 .health-button {
 	flex: 0.8;
 	min-width: fit-content;
-	background-color: #323748;
-	border: 1px solid #383e54;
+	background-color: var(--color-bg-secondary);
+	border: 1px solid var(--color-border-primary);
 	border-radius: 0.25rem;
-	color: #e0e0e0;
+	color: var(--color-text-primary);
 	padding: 0.3rem 0.4rem;
 	font-size: 0.8rem;
 	cursor: pointer;
@@ -85,28 +85,28 @@
 }
 
 .health-button:hover {
-	background-color: #363b4a;
+	background-color: var(--color-bg-hover);
 }
 
 .health-heal {
-	border-color: #64d8cb;
-	color: #64d8cb;
+	border-color: var(--color-accent-teal);
+	color: var(--color-accent-teal);
 }
 
 .health-damage {
-	border-color: #e57373;
-	color: #e57373;
+	border-color: var(--color-accent-red);
+	color: var(--color-accent-red);
 }
 
 .health-temp {
-	border-color: #b39ddb;
-	color: #b39ddb;
+	border-color: var(--color-accent-purple);
+	color: var(--color-accent-purple);
 }
 
 .health-divider {
 	width: 100%;
 	height: 1px;
-	background-color: #383e54;
+	background-color: var(--color-border-primary);
 	margin: 0.5rem 0;
 }
 
@@ -120,7 +120,7 @@
 	font-size: 0.8rem;
 	text-transform: uppercase;
 	letter-spacing: 1px;
-	color: #a0a0d0;
+	color: var(--color-text-secondary);
 	margin-bottom: 0 !important;
 	text-align: left;
 }

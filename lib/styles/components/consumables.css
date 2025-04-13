@@ -15,7 +15,7 @@
 .consumable-label {
 	font-size: 0.9rem;
 	font-weight: 500;
-	color: #e0e0e0;
+	color: var(--color-text-primary);
 	display: inline-block;
 	width: var(--consumable-label-width, 3.5rem);
 	text-align: left;
