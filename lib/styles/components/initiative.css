@@ -16,7 +16,7 @@
 	font-size: 1rem;
 	text-transform: uppercase;
 	letter-spacing: 1px;
-	color: #a0a0d0;
+	color: var(--color-text-secondary);
 	margin: 0;
 }
 
@@ -29,23 +29,23 @@
 
 .initiative-round-counter {
 	font-size: 0.9rem;
-	color: #a0a0d0;
+	color: var(--color-text-secondary);
 	padding: 0.3rem 0.6rem;
-	background-color: #323748;
-	border: 1px solid #383e54;
+	background-color: var(--color-bg-secondary);
+	border: 1px solid var(--color-border-primary);
 	border-radius: 0.25rem;
 }
 
 .initiative-round-value {
 	font-weight: bold;
-	color: #e0e0e0;
+	color: var(--color-text-primary);
 }
 
 .initiative-control-button {
-	background-color: #323748;
-	border: 1px solid #383e54;
+	background-color: var(--color-bg-secondary);
+	border: 1px solid var(--color-border-primary);
 	border-radius: 0.25rem;
-	color: #e0e0e0;
+	color: var(--color-text-primary);
 	padding: 0.3rem 0.5rem;
 	font-size: 0.8rem;
 	cursor: pointer;
@@ -53,7 +53,7 @@
 }
 
 .initiative-control-button:hover {
-	background-color: #363b4a;
+	background-color: var(--color-bg-hover);
 }
 
 .initiative-prev {
@@ -62,13 +62,13 @@
 
 .initiative-prev,
 .initiative-next {
-	border-color: #6d7cba;
-	color: #a0a0d0;
+	border-color: var(--color-border-active);
+	color: var(--color-text-secondary);
 }
 
 .initiative-reset {
-	border-color: #e57373;
-	color: #e57373;
+	border-color: var(--color-accent-red);
+	color: var(--color-accent-red);
 }
 
 .initiative-list {
@@ -87,14 +87,14 @@
 	flex-direction: column;
 	padding: 0.5rem;
 	border-radius: 0.3rem;
-	background-color: #323748;
-	border: 1px solid #383e54;
+	background-color: var(--color-bg-secondary);
+	border: 1px solid var(--color-border-primary);
 	transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .initiative-item-active {
-	background-color: #3a4055;
-	border-color: #6d7cba;
+	background-color: var(--color-bg-tertiary);
+	border-color: var(--color-border-active);
 }
 
 .initiative-item-main {
@@ -112,10 +112,10 @@
 
 .initiative-input {
 	width: 100%;
-	background-color: #262a36;
-	border: 1px solid #383e54;
+	background-color: var(--color-bg-primary);
+	border: 1px solid var(--color-border-primary);
 	border-radius: 0.25rem;
-	color: #e0e0e0;
+	color: var(--color-text-primary);
 	padding: 0.5rem 1rem;
 	text-align: center;
 	font-size: 1.6rem !important;
@@ -135,7 +135,7 @@
 .divider {
 	width: 100%;
 	height: 1.5px;
-	background-color: white;
+	background-color: var(--color-text-bright);
 	margin-top: 0.75rem;
 	margin-bottom: 0.5rem;
 	opacity: 25%;
@@ -143,7 +143,7 @@
 
 .initiative-link {
 	font-weight: bold;
-	color: white;
+	color: var(--color-text-bright);
 	text-decoration: none !important;
 }
 
@@ -164,7 +164,7 @@
 	gap: 0.2rem;
 	flex: 0 0 auto;
 	padding: 0.2rem 0.4rem;
-	background-color: #262a36;
+	background-color: var(--color-bg-primary);
 	border-radius: 0.25rem;
 	font-size: 1.1rem;
 	margin-bottom: auto;
@@ -173,15 +173,15 @@
 
 .initiative-hp-value {
 	font-weight: bold;
-	color: #e0e0e0;
+	color: var(--color-text-primary);
 }
 
 .initiative-hp-separator {
-	color: #6d7cba;
+	color: var(--color-border-active);
 }
 
 .initiative-hp-max {
-	color: #a0a0d0;
+	color: var(--color-text-secondary);
 }
 
 .initiative-item-actions {
@@ -195,10 +195,10 @@
 
 .initiative-hp-input {
 	width: 3rem;
-	background-color: #262a36;
-	border: 1px solid #383e54;
+	background-color: var(--color-bg-primary);
+	border: 1px solid var(--color-border-primary);
 	border-radius: 0.25rem;
-	color: #e0e0e0;
+	color: var(--color-text-primary);
 	padding: 0.2rem;
 	text-align: center;
 	font-size: 0.8rem;
@@ -208,9 +208,9 @@
 .initiative-hp-button {
 	flex: 0 0 auto;
 	background-color: transparent;
-	border: 1px solid #383e54;
+	border: 1px solid var(--color-border-primary);
 	border-radius: 0.25rem;
-	color: #e0e0e0;
+	color: var(--color-text-primary);
 	width: 1.8rem;
 	height: 1.8rem;
 	font-size: 0.8rem;
@@ -223,23 +223,23 @@
 }
 
 .initiative-hp-button:hover {
-	background-color: #303440;
+	background-color: var(--color-bg-darker);
 }
 
 .initiative-damage {
-	border-color: #e57373;
-	color: #e57373;
+	border-color: var(--color-accent-red);
+	color: var(--color-accent-red);
 }
 
 .initiative-heal {
-	border-color: #64d8cb;
-	color: #64d8cb;
+	border-color: var(--color-accent-teal);
+	color: var(--color-accent-teal);
 }
 
 .initiative-empty-state {
 	padding: 1rem;
 	text-align: center;
-	color: #a0a0d0;
+	color: var(--color-text-secondary);
 	font-style: italic;
 }
 
@@ -253,11 +253,11 @@
 .initiative-group-header {
 	padding: 0.3rem 0.5rem;
 	margin-bottom: 0.5rem;
-	background-color: #2d334a;
+	background-color: var(--color-bg-group);
 	border-radius: 0.25rem;
 	font-weight: bold;
 	font-size: 0.9rem;
-	color: #b8c4ff;
+	color: var(--color-text-group);
 	letter-spacing: 0.5px;
 }
 
@@ -269,13 +269,13 @@
 }
 
 .initiative-monster {
-	background-color: #262a36;
+	background-color: var(--color-bg-primary);
 	border-radius: 0.25rem;
 	padding: 0.3rem 0.5rem;
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
-	border: 1px solid #383e54;
+	border: 1px solid var(--color-border-primary);
 }
 
 .initiative-monster-header {
@@ -288,14 +288,14 @@
 .initiative-monster-name {
 	font-size: 0.85rem;
 	font-weight: bold;
-	color: #e0e0e0;
+	color: var(--color-text-primary);
 }
 
 .initiative-monster-hp {
 	display: flex;
 	align-items: center;
 	gap: 0.2rem;
-	background-color: #303440;
+	background-color: var(--color-bg-darker);
 	padding: 0.1rem 0.3rem;
 	border-radius: 0.2rem;
 	font-size: 0.8rem;
@@ -314,7 +314,7 @@
 }
 
 .monster-status-injured {
-	color: #e57373;
+	color: var(--color-accent-red);
 }
 
 /* Responsive adjustments for mobile */

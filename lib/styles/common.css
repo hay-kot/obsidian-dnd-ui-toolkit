@@ -2,9 +2,34 @@
  * Utility Styles
  * */
 :root {
+	/* Spacing */
 	--std-gap: 0.3rem;
 	--ability-card-padding: 0.3rem;
 	--std-grid-gap: 0.5rem;
+
+	/* Colors: Base */
+	--color-bg-primary: #262a36;
+	--color-bg-secondary: #323748;
+	--color-bg-tertiary: #3a4055;
+	--color-bg-hover: #363b4a;
+	--color-bg-darker: #303440;
+	--color-bg-group: #2d334a;
+	--color-bg-proficient: #2d3343;
+
+	--color-text-primary: #e0e0e0;
+	--color-text-secondary: #a0a0d0;
+	--color-text-sublabel: #a0c7d0;
+	--color-text-bright: #ffffff;
+	--color-text-muted: #b8b8d0;
+	--color-text-group: #b8c4ff;
+
+	--color-border-primary: #383e54;
+	--color-border-active: #6d7cba;
+	--color-border-focus: rgba(109, 124, 186, 0.5);
+
+	--color-accent-teal: #64d8cb;
+	--color-accent-red: #e57373;
+	--color-accent-purple: #b39ddb;
 }
 
 .card-grid {
@@ -25,9 +50,9 @@
 	justify-content: start;
 	padding: 0.75rem;
 	border-radius: 0.4rem;
-	background-color: #262a36;
-	color: #e0e0e0;
-	border: 1px solid #383e54;
+	background-color: var(--color-bg-primary);
+	color: var(--color-text-primary);
+	border: 1px solid var(--color-border-primary);
 	min-height: 80px;
 }
 
@@ -35,18 +60,18 @@
 	font-size: 0.8rem;
 	text-transform: uppercase;
 	letter-spacing: 1px;
-	color: #a0a0d0;
+	color: var(--color-text-secondary);
 	margin-bottom: 0.5rem;
 }
 
 .generic-card-value {
 	font-size: 1.2rem;
 	font-weight: bold;
-	color: #ffffff;
+	color: var(--color-text-bright);
 }
 
 .generic-card-sublabel {
 	font-size: 0.7rem;
-	color: #a0c7d0;
+	color: var(--color-text-sublabel);
 	margin-top: 0.3rem;
 }
