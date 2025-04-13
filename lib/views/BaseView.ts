@@ -1,12 +1,18 @@
 import { Frontmatter } from "lib/types";
 import { MarkdownPostProcessorContext } from "obsidian";
+import { App } from "obsidian";
 
 const FrontMatterKeys: Record<keyof Frontmatter, string[]> = {
 	"proficiencyBonus": ["proficiencyBonus", "Proficiency Bonus",],
 };
 
 export abstract class BaseView {
+	private app: App
 	public abstract codeblock: string;
+
+	constructor(app: App) {
+		this.app = app;
+	}
 
 	// Changed return type from string to HTMLElement or void
 	public abstract render(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): HTMLElement | string | void;
@@ -37,8 +43,11 @@ export abstract class BaseView {
 			proficiencyBonus: 2,
 		}
 
-		// @ts-ignore
-		const fm = app.metadataCache.getCache(ctx.sourcePath).frontmatter
+		const fm = this.app.metadataCache.getCache(ctx.sourcePath)?.frontmatter
+		if (!fm) {
+			return frontmatter
+		}
+
 		for (const key in FrontMatterKeys) {
 			const keys = FrontMatterKeys[key as keyof Frontmatter]
 
@@ -57,6 +66,5 @@ export abstract class BaseView {
 		}
 
 		return frontmatter
-
 	}
 }

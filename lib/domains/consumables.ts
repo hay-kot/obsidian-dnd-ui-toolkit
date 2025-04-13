@@ -49,6 +49,6 @@ export function parseConsumablesBlock(yamlString: string): ConsumablesBlock {
 
 export function getDefaultConsumableState(block: ConsumableBlock): ConsumableState {
 	return {
-		value: block.uses,
+		value: 0,
 	};
 }

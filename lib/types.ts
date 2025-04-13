@@ -41,6 +41,7 @@ export type StatsBlock = {
 
 export type SkillsBlock = {
 	proficiencies: string[]
+	expertise: string[]
 	bonuses: SkillsBlockBonus[]
 }
 
@@ -63,6 +64,7 @@ export type ConsumableBlock = {
 }
 
 export type BadgeItem = {
+	reverse?: boolean;
 	label: string;
 	value: string;
 }

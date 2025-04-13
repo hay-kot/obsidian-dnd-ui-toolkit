@@ -28,25 +28,11 @@ An easy way to get started is to look at an example in the [examples](./docs/exa
 - HP Widget: Track your characters HP and hit dice (also support for monsters)
 - Spell Slot Tracking
 - General Consumables Tracking
+- Initiative Tracker: Combat management with AC, HP, and initiative order
 
 ## Road Map
 
-- [x] Static Widgets
-  - [x] Generic 'Badge' for smaller display of Key Value dat
-- [ ] Interactive Widgets
-  - [x] HP Widget: Track your characters HP and hit dice (also support for monsters)
-  - [x] Spell Slot Widget: Track your spell slot usage
-  - [x] Generic Consumables Widget: Track anything like Luck Points, Arcane Recovery, Magic Item Charges, or whatever!
-  - [x] Initiative Tracker: Track combat initiative, AC, and HP for players and monsters
-  - [ ] Buttons for Short Rest and Long Rest: Connects with HP Widget, Spell Slots, and Consumables (as configured) so that when you press Short or Long Rest your consumables automatically get restored to their default states.
-- [ ] Themeable and/or read from Obsidian styles
-
-### Dev
-
-- [ ] Prefix all styles
-- [ ] Determine if i should prefix code blocks
-- [ ] Breakup CSS file
-- [ ] Submit for approval to obsidian store
+Check out the [GitHub Issues](https://github.com/hay-kot/obsidian-dnd-ui-toolkit/issues) for current development plans and progress.
 
 ## Components
 
@@ -170,7 +156,10 @@ hitdice:
 
 ## Badges
 
-The badges component can be used to display any generic Key/Value data in a more condensed view.
+The badges component can be used to display any generic Key/Value data in a more condensed view. Badges
+also support a `reverse` property, when true it reverses the order of the label and value. You can also
+omit the value or label property and it will only render what is provided. This gives you a lot of 
+flexibility in how they are rendered.
 
 ![Rendered Example](./docs/images/example-badges.webp)
 
@@ -179,6 +168,7 @@ The badges component can be used to display any generic Key/Value data in a more
 items:
   - label: Level
     value: '3'
+    reverse: true
   - label: Initiative
     value: '+2'
   - label: Spell Save

@@ -1,10 +1,10 @@
 import { BaseView } from "./BaseView";
-import { MarkdownPostProcessorContext, MarkdownRenderChild } from "obsidian";
+import { App, MarkdownPostProcessorContext, MarkdownRenderChild } from "obsidian";
 import * as ConsumableService from "lib/domains/consumables";
 import { ConsumableCheckboxes } from "lib/components/consumable-checkboxes";
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
-import { KeyValueStore } from "lib/kv";
+import { KeyValueStore } from "lib/services/kv/kv";
 import { ConsumableState } from "lib/domains/consumables";
 
 export class ConsumableView extends BaseView {
@@ -12,8 +12,8 @@ export class ConsumableView extends BaseView {
 
 	private kv: KeyValueStore;
 
-	constructor(kv: KeyValueStore) {
-		super();
+	constructor(app: App, kv: KeyValueStore) {
+		super(app);
 		this.kv = kv;
 	}
 

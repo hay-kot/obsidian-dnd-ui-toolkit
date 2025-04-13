@@ -22,13 +22,20 @@ export class SkillsView extends BaseView {
 				return x.toLowerCase() === skill.label.toLowerCase()
 			}) !== undefined;
 
+			const isExpert = skillsBlock.expertise.find((x) => {
+				return x.toLowerCase() === skill.label.toLowerCase()
+			}) !== undefined;
+
 			const skillAbility = abilityBlock.abilities[skill.ability as keyof AbilityBlock["abilities"]];
 			if (!skillAbility) {
 				throw new Error(`Skill ${skill.ability} not found in Skills list`);
 			}
 
 			let skillCheckValue = AbilityService.calculateModifier(skillAbility)
-			if (isProficient) {
+			if (isExpert) {
+				skillCheckValue += frontmatter.proficiencyBonus * 2;
+			}
+			else if (isProficient) {
 				skillCheckValue += frontmatter.proficiencyBonus;
 			}
 

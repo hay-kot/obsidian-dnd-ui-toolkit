@@ -1,10 +1,10 @@
 import { BaseView } from "./BaseView";
-import { MarkdownPostProcessorContext, MarkdownRenderChild } from "obsidian";
+import { App, MarkdownPostProcessorContext, MarkdownRenderChild } from "obsidian";
 import * as HealthService from "lib/domains/healthpoints";
 import { HealthCard } from "lib/components/health-card";
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
-import { KeyValueStore } from "lib/kv";
+import { KeyValueStore } from "lib/services/kv/kv";
 import { HealthState } from "lib/domains/healthpoints";
 import { HealthBlock } from "lib/types";
 
@@ -13,8 +13,8 @@ export class HealthView extends BaseView {
 
 	private kv: KeyValueStore;
 
-	constructor(kv: KeyValueStore) {
-		super();
+	constructor(app: App, kv: KeyValueStore) {
+		super(app);
 		this.kv = kv;
 	}
 
