@@ -160,7 +160,7 @@ export default class DndUIToolkitPlugin extends Plugin {
 		);
 	}
 
-	onunload() {}
+	onunload() { }
 
 	async loadSettings() {
 		this.settings = Object.assign(
@@ -207,47 +207,26 @@ class DndSettingsTab extends PluginSettingTab {
 					})
 			);
 
+
+		containerEl.createEl("h3", { text: "Styles" });
+
 		// Add color inputs for each color variable
-		this.addColorSetting(
-			containerEl,
-			"Background Primary",
-			"colorBgPrimary"
-		);
-		this.addColorSetting(
-			containerEl,
-			"Background Secondary",
-			"colorBgSecondary"
-		);
-		this.addColorSetting(
-			containerEl,
-			"Background Tertiary",
-			"colorBgTertiary"
-		);
+		this.addColorSetting(containerEl, "Background Primary", "colorBgPrimary");
+		this.addColorSetting(containerEl, "Background Secondary", "colorBgSecondary");
+		this.addColorSetting(containerEl, "Background Tertiary", "colorBgTertiary");
 		this.addColorSetting(containerEl, "Background Hover", "colorBgHover");
 		this.addColorSetting(containerEl, "Background Darker", "colorBgDarker");
 		this.addColorSetting(containerEl, "Background Group", "colorBgGroup");
-		this.addColorSetting(
-			containerEl,
-			"Background Proficient",
-			"colorBgProficient"
-		);
+		this.addColorSetting(containerEl, "Background Proficient", "colorBgProficient");
 
 		this.addColorSetting(containerEl, "Text Primary", "colorTextPrimary");
-		this.addColorSetting(
-			containerEl,
-			"Text Secondary",
-			"colorTextSecondary"
-		);
+		this.addColorSetting(containerEl, "Text Secondary", "colorTextSecondary");
 		this.addColorSetting(containerEl, "Text Sublabel", "colorTextSublabel");
 		this.addColorSetting(containerEl, "Text Bright", "colorTextBright");
 		this.addColorSetting(containerEl, "Text Muted", "colorTextMuted");
 		this.addColorSetting(containerEl, "Text Group", "colorTextGroup");
 
-		this.addColorSetting(
-			containerEl,
-			"Border Primary",
-			"colorBorderPrimary"
-		);
+		this.addColorSetting(containerEl, "Border Primary", "colorBorderPrimary");
 		this.addColorSetting(containerEl, "Border Active", "colorBorderActive");
 		this.addColorSetting(containerEl, "Border Focus", "colorBorderFocus");
 
