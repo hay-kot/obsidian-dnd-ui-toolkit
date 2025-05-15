@@ -3,6 +3,7 @@ dotenv:
   - .env
 tasks:
   build:
+    desc: Runs the build, supports '--watch' flag
     cmds:
       - npm run build
       # Copy output to $PLUGIN_DIR, forcibly overwriting existing files
