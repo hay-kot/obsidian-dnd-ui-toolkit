@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { InitiativeBlock, InitiativeItem } from "lib/types";
-import { getSortedInitiativeItems, getMaxHp } from "lib/domains/initiative";
+import { getSortedInitiativeItems, getMaxHp, itemHashKey } from "lib/domains/initiative";
 
 export type InitiativeState = {
 	activeIndex: number;
@@ -15,6 +15,7 @@ export type InitiativeProps = {
 	onStateChange: (newState: InitiativeState) => void;
 }
 
+
 export function Initiative(props: InitiativeProps) {
 	const [inputValue, setInputValue] = useState<string>("1");
 
@@ -23,56 +24,48 @@ export function Initiative(props: InitiativeProps) {
 		props.state.initiatives
 	);
 
-	const handleSetInitiative = (index: number, value: string) => {
+	const handleSetInitiative = (item: InitiativeItem, value: string) => {
+		const itemHash = itemHashKey(item)
 		const initiativeValue = parseInt(value) || 0;
 		const newInitiatives = { ...props.state.initiatives };
-		newInitiatives[index.toString()] = initiativeValue;
 
+		newInitiatives[itemHash] = initiativeValue;
 		props.onStateChange({
 			...props.state,
 			initiatives: newInitiatives
 		});
 	};
 
-	const handleDamage = (index: number, monsterKey: string, value: string) => {
-		const damageValue = parseInt(value) || 0;
-		if (damageValue <= 0) return;
+	const handleDamage = (item: InitiativeItem, monsterKey: string, value: string, type: "damage" | "heal" = "damage") => {
+		const parsedValue = parseInt(value) || 0;
+		if (parsedValue <= 0) {
+			return
+		}
+
+		const itemHash = itemHashKey(item)
+
 
 		const newHp = { ...props.state.hp };
-		if (!newHp[index.toString()]) newHp[index.toString()] = {};
+		if (!newHp[itemHash]) {
+			newHp[itemHash] = {};
+		}
 
-		const currentHp = newHp[index.toString()][monsterKey] || 0;
-		newHp[index.toString()] = {
-			...newHp[index.toString()],
-			[monsterKey]: Math.max(0, currentHp - damageValue)
+		const currentHp = newHp[itemHash][monsterKey] || 0;
+
+		let applyValue = 0
+		if (type === "damage") {
+			applyValue = Math.max(0, currentHp - parsedValue)
+		} else {
+			const maxHp = getMaxHp(item, monsterKey);
+			applyValue = Math.min(maxHp, currentHp + parsedValue)
+		}
+
+		newHp[itemHash] = {
+			...newHp[itemHash],
+			[monsterKey]: applyValue
 		};
 
-		props.onStateChange({
-			...props.state,
-			hp: newHp
-		});
-	};
-
-	const handleHeal = (index: number, monsterKey: string, value: string) => {
-		const healValue = parseInt(value) || 0;
-		if (healValue <= 0) return;
-
-		const newHp = { ...props.state.hp };
-		if (!newHp[index.toString()]) newHp[index.toString()] = {};
-
-		const currentHp = newHp[index.toString()][monsterKey] || 0;
-		const item = props.static.items[index];
-		const maxHp = getMaxHp(item, monsterKey);
-
-		newHp[index.toString()] = {
-			...newHp[index.toString()],
-			[monsterKey]: Math.min(maxHp, currentHp + healValue)
-		};
-
-		props.onStateChange({
-			...props.state,
-			hp: newHp
-		});
+		props.onStateChange({ ...props.state, hp: newHp });
 	};
 
 	const handleNext = () => {
@@ -138,8 +131,8 @@ export function Initiative(props: InitiativeProps) {
 		const newInitiatives = { ...props.state.initiatives };
 		const newHp: Record<string, Record<string, number>> = {};
 
-		props.static.items.forEach((item, index) => {
-			const indexStr = index.toString();
+		props.static.items.forEach((item) => {
+			const indexStr = itemHashKey(item)
 			newInitiatives[indexStr] = 0;
 			newHp[indexStr] = {};
 
@@ -162,8 +155,8 @@ export function Initiative(props: InitiativeProps) {
 	};
 
 	// Render a single monster's HP
-	const renderMonsterHp = (index: number, monsterKey: string, monsterLabel: string, maxHp: number) => {
-		const currentHp = props.state.hp[index.toString()]?.[monsterKey] || 0;
+	const renderMonsterHp = (item: InitiativeItem, index: number, monsterKey: string, monsterLabel: string, maxHp: number) => {
+		const currentHp = props.state.hp[itemHashKey(item)]?.[monsterKey] || 0;
 		// Add status class based on health percentage
 		const healthPercent = maxHp > 0 ? (currentHp / maxHp) * 100 : 0;
 		let statusClass = '';
@@ -195,7 +188,7 @@ export function Initiative(props: InitiativeProps) {
 					<button
 						className="initiative-hp-button initiative-damage"
 						onClick={() => {
-							handleDamage(index, monsterKey, inputValue);
+							handleDamage(props.static.items[index], monsterKey, inputValue);
 							setInputValue("1");
 						}}
 						title="Damage"
@@ -205,7 +198,7 @@ export function Initiative(props: InitiativeProps) {
 					<button
 						className="initiative-hp-button initiative-heal"
 						onClick={() => {
-							handleHeal(index, monsterKey, inputValue);
+							handleDamage(props.static.items[index], monsterKey, inputValue, "heal");
 							setInputValue("1");
 						}}
 						title="Heal"
@@ -221,7 +214,9 @@ export function Initiative(props: InitiativeProps) {
 	const renderHpSection = (item: InitiativeItem, index: number) => {
 		if (!item.hp) return null;
 
-		const itemHp = props.state.hp[index.toString()] || {};
+		const hashKey = itemHashKey(item)
+
+		const itemHp = props.state.hp[hashKey] || {};
 		const isGroup = typeof item.hp === 'object' && Object.keys(item.hp).length > 1;
 
 		if (isGroup) {
@@ -229,7 +224,7 @@ export function Initiative(props: InitiativeProps) {
 			return (
 				<div className="initiative-group-hp">
 					{Object.entries(item.hp as Record<string, number>).map(([key, maxHp]) =>
-						renderMonsterHp(index, key, key, maxHp)
+						renderMonsterHp(item, index, key, key, maxHp)
 					)}
 				</div>
 			);
@@ -262,7 +257,9 @@ export function Initiative(props: InitiativeProps) {
 	const renderHpActions = (item: InitiativeItem, index: number) => {
 		if (!item.hp) return null;
 
-		const itemHp = props.state.hp[index.toString()] || {};
+		const itemHash = itemHashKey(item)
+
+		const itemHp = props.state.hp[itemHash] || {};
 		const isGroup = typeof item.hp === 'object' && Object.keys(item.hp).length > 1;
 
 		if (isGroup) {
@@ -284,7 +281,7 @@ export function Initiative(props: InitiativeProps) {
 					<button
 						className="initiative-hp-button initiative-damage"
 						onClick={() => {
-							handleDamage(index, monsterKey, inputValue);
+							handleDamage(props.static.items[index], monsterKey, inputValue);
 							setInputValue("1");
 						}}
 						title="Damage"
@@ -294,7 +291,7 @@ export function Initiative(props: InitiativeProps) {
 					<button
 						className="initiative-hp-button initiative-heal"
 						onClick={() => {
-							handleHeal(index, monsterKey, inputValue);
+							handleDamage(props.static.items[index], monsterKey, inputValue, "heal");
 							setInputValue("1");
 						}}
 						title="Heal"
@@ -355,7 +352,7 @@ export function Initiative(props: InitiativeProps) {
 											<input
 												type="number"
 												value={initiative || ""}
-												onChange={(e) => handleSetInitiative(index, e.target.value)}
+												onChange={(e) => handleSetInitiative(props.static.items[index], e.target.value)}
 												className="initiative-input"
 												placeholder="0"
 											/>

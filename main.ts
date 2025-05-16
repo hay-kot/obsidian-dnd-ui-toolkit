@@ -233,6 +233,39 @@ class DndSettingsTab extends PluginSettingTab {
 		this.addColorSetting(containerEl, "Accent Teal", "colorAccentTeal");
 		this.addColorSetting(containerEl, "Accent Red", "colorAccentRed");
 		this.addColorSetting(containerEl, "Accent Purple", "colorAccentPurple");
+
+		new Setting(containerEl).setName("Reset Styles").addButton((b) => {
+			b.setButtonText("Reset").onClick(async () => {
+				const colors: (keyof DndUIToolkitSettings)[] = [
+					"colorBgPrimary",
+					"colorBgSecondary",
+					"colorBgTertiary",
+					"colorBgHover",
+					"colorBgDarker",
+					"colorBgGroup",
+					"colorBgProficient",
+					"colorTextPrimary",
+					"colorTextSecondary",
+					"colorTextSublabel",
+					"colorTextBright",
+					"colorTextMuted",
+					"colorTextGroup",
+					"colorBorderPrimary",
+					"colorBorderActive",
+					"colorBorderFocus",
+					"colorAccentTeal",
+					"colorAccentRed",
+					"colorAccentPurple",
+				]
+
+				for (const colorKey of colors) {
+					this.plugin.settings[colorKey] = DEFAULT_SETTINGS[colorKey];
+				}
+				await this.plugin.saveSettings();
+				this.plugin.applyColorSettings();
+			})
+		})
+
 	}
 
 	// Helper method to add color picker setting
@@ -240,7 +273,6 @@ class DndSettingsTab extends PluginSettingTab {
 		containerEl: HTMLElement,
 		name: string,
 		settingKey: keyof DndUIToolkitSettings,
-		description?: string,
 	): void {
 		new Setting(containerEl).setName(name).addColorPicker((colorPicker) =>
 			colorPicker

@@ -50,6 +50,10 @@ export function getDefaultInitiativeState(block: InitiativeBlock): InitiativeSta
 	};
 }
 
+export function itemHashKey(item: InitiativeItem): string {
+	return item.name
+}
+
 // Sort items by initiative value, higher values first
 export function getSortedInitiativeItems(
 	items: InitiativeItem[],
@@ -59,7 +63,7 @@ export function getSortedInitiativeItems(
 		.map((item, index) => ({
 			item,
 			index,
-			initiative: initiativeValues[index.toString()] || 0
+			initiative: initiativeValues[itemHashKey(item)] || 0
 		}))
 		.sort((a, b) => b.initiative - a.initiative);
 }
