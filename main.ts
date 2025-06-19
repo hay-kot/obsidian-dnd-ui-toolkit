@@ -97,14 +97,19 @@ export default class DndUIToolkitPlugin extends Plugin {
 	dataStore: JsonDataStore;
 
 	applyColorSettings(): void {
-		const root = document.documentElement;
-
-		Object.entries(this.settings).forEach(([key, value]) => {
-			if (key.startsWith("color")) {
-				const cssVarName = `--${key
-					.replace(/([A-Z])/g, "-$1")
-					.toLowerCase()}`;
-				root.style.setProperty(cssVarName, value as string);
+		// Apply to all open windows
+		this.app.workspace.iterateAllLeaves((leaf) => {
+			const windowDoc = leaf.view.containerEl.ownerDocument;
+			if (windowDoc) {
+				const root = windowDoc.documentElement;
+				Object.entries(this.settings).forEach(([key, value]) => {
+					if (key.startsWith("color")) {
+						const cssVarName = `--${key
+							.replace(/([A-Z])/g, "-$1")
+							.toLowerCase()}`;
+						root.style.setProperty(cssVarName, value as string);
+					}
+				});
 			}
 		});
 	}
@@ -114,6 +119,14 @@ export default class DndUIToolkitPlugin extends Plugin {
 
 		// Apply color settings on load
 		this.applyColorSettings();
+
+		// Listen for new windows and apply settings to them
+		this.registerEvent(
+			this.app.workspace.on('window-open', () => {
+				// Use setTimeout to ensure the window is fully initialized
+				setTimeout(() => this.applyColorSettings(), 100);
+			})
+		);
 
 		// Initialize the JsonDataStore with the configured path
 		this.initDataStore();
