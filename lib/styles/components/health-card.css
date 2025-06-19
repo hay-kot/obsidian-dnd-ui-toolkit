@@ -1,6 +1,7 @@
 /* Health Card Styles */
 .health-card {
 	display: flex;
+	height: fit-content;
 	flex-direction: column;
 	gap: var(--std-gap);
 	padding: 0.75rem;
