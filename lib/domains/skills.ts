@@ -27,6 +27,7 @@ export function parseSkillsBlock(yamlString: string): SkillsBlock {
 	const def: SkillsBlock = {
 		proficiencies: [],
 		expertise: [],
+		half_proficiencies: [],
 		bonuses: [],
 	}
 

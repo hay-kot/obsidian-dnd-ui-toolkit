@@ -42,6 +42,7 @@ export type StatsBlock = {
 export type SkillsBlock = {
 	proficiencies: string[]
 	expertise: string[]
+	half_proficiencies: string[]
 	bonuses: SkillsBlockBonus[]
 }
 

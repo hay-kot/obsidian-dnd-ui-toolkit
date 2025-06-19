@@ -6,6 +6,8 @@ export type SkillGridProps = {
 
 export type SkillItem = {
 	isProficient?: boolean;
+	isExpert?: boolean;
+	isHalfProficient?: boolean;
 	ability: string;
 	label: string;
 	modifier: number;
@@ -22,8 +24,20 @@ export function SkillGrid(props: SkillGridProps) {
 }
 
 function SkillItem({ item }: { item: SkillItem }) {
+	const getSkillCardClasses = () => {
+		const classes = ['skill-card'];
+		if (item.isExpert) {
+			classes.push('expert');
+		} else if (item.isProficient) {
+			classes.push('proficient');
+		} else if (item.isHalfProficient) {
+			classes.push('half-proficient');
+		}
+		return classes.join(' ');
+	};
+
 	return (
-		<div className={`skill-card ${item.isProficient ? 'proficient' : ''}`}>
+		<div className={getSkillCardClasses()}>
 			<div className="skills-values-container">
 				<p className="skill-ability">
 					<em>

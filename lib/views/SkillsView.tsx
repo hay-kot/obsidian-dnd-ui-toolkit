@@ -18,6 +18,10 @@ export class SkillsView extends BaseView {
 		const frontmatter = this.frontmatter(ctx)
 
 		for (const skill of SkillsService.Skills) {
+			const isHalfProficient = skillsBlock.half_proficiencies.find((x) => {
+				return x.toLowerCase() === skill.label.toLowerCase()
+			}) !== undefined;
+
 			const isProficient = skillsBlock.proficiencies.find((x) => {
 				return x.toLowerCase() === skill.label.toLowerCase()
 			}) !== undefined;
@@ -25,6 +29,7 @@ export class SkillsView extends BaseView {
 			const isExpert = skillsBlock.expertise.find((x) => {
 				return x.toLowerCase() === skill.label.toLowerCase()
 			}) !== undefined;
+
 
 			const skillAbility = abilityBlock.abilities[skill.ability as keyof AbilityBlock["abilities"]];
 			if (!skillAbility) {
@@ -34,9 +39,10 @@ export class SkillsView extends BaseView {
 			let skillCheckValue = AbilityService.calculateModifier(skillAbility)
 			if (isExpert) {
 				skillCheckValue += frontmatter.proficiencyBonus * 2;
-			}
-			else if (isProficient) {
+			} else if (isProficient) {
 				skillCheckValue += frontmatter.proficiencyBonus;
+			} else if (isHalfProficient) {
+				skillCheckValue += Math.floor(frontmatter.proficiencyBonus / 2);
 			}
 
 			for (const bonus of skillsBlock.bonuses) {
@@ -52,6 +58,8 @@ export class SkillsView extends BaseView {
 				ability: abbreviation,
 				modifier: skillCheckValue,
 				isProficient: isProficient,
+				isExpert: isExpert,
+				isHalfProficient: isHalfProficient,
 			})
 		}
 
