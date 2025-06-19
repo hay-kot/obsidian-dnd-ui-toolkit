@@ -93,6 +93,15 @@ bonuses:
   - name: Right of Arcana
     target: arcana
 	value: 2
+
+proficiencies:
+  - deception
+
+expertise:
+  - investigation
+
+half_proficiencies:
+  - history
 ```
 ````
 
