@@ -2,8 +2,9 @@ import { Frontmatter } from "lib/types";
 import { MarkdownPostProcessorContext } from "obsidian";
 import { App } from "obsidian";
 
-const FrontMatterKeys: Record<keyof Frontmatter, string[]> = {
-	"proficiencyBonus": ["proficiencyBonus", "Proficiency Bonus",],
+const FrontMatterKeys: Record<string, string[]> = {
+	"proficiencyBonus": ["proficiencyBonus", "Proficiency Bonus", "proficiency_bonus"],
+	"level": ["level", "Level"],
 };
 
 export abstract class BaseView {
@@ -46,16 +47,15 @@ export abstract class BaseView {
 		if (!fm) {
 			return frontmatter
 		}
+
+		// Handle known keys with specific mappings
 		for (const key in FrontMatterKeys) {
-			const keys = FrontMatterKeys[key as keyof Frontmatter]
+			const keys = FrontMatterKeys[key]
 			for (const k of keys) {
 				if (fm[k] !== undefined) {
-					// Check if default value is a number and current value is a string
-					if (typeof frontmatter[key as keyof Frontmatter] === 'number' && typeof fm[k] === 'string') {
-						// Try to parse the string to a number
-						const parsedValue = Number(fm[k])
-						// If parsing succeeded (not NaN), use the parsed number, otherwise use the original value
-						frontmatter[key as keyof Frontmatter] = !isNaN(parsedValue) ? parsedValue : fm[k];
+					// Try to parse numbers
+					if (typeof fm[k] === 'string' && !isNaN(Number(fm[k]))) {
+						frontmatter[key as keyof Frontmatter] = Number(fm[k]);
 					} else {
 						frontmatter[key as keyof Frontmatter] = fm[k];
 					}
@@ -63,12 +63,9 @@ export abstract class BaseView {
 				}
 				const lowered = k.toLowerCase();
 				if (fm[lowered] !== undefined) {
-					// Check if default value is a number and current value is a string
-					if (typeof frontmatter[key as keyof Frontmatter] === 'number' && typeof fm[lowered] === 'string') {
-						// Try to parse the string to a number
-						const parsedValue = Number(fm[lowered])
-						// If parsing succeeded (not NaN), use the parsed number, otherwise use the original value
-						frontmatter[key as keyof Frontmatter] = !isNaN(parsedValue) ? parsedValue : fm[lowered];
+					// Try to parse numbers
+					if (typeof fm[lowered] === 'string' && !isNaN(Number(fm[lowered]))) {
+						frontmatter[key as keyof Frontmatter] = Number(fm[lowered]);
 					} else {
 						frontmatter[key as keyof Frontmatter] = fm[lowered];
 					}
@@ -76,6 +73,14 @@ export abstract class BaseView {
 				}
 			}
 		}
+
+		// Add all other frontmatter properties as-is
+		for (const key in fm) {
+			if (!(key in frontmatter)) {
+				frontmatter[key] = fm[key];
+			}
+		}
+
 		return frontmatter
 	}
 }

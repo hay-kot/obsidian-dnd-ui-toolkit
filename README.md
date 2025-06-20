@@ -174,7 +174,33 @@ also support a `reverse` property, when true it reverses the order of the label 
 omit the value or label property and it will only render what is provided. This gives you a lot of
 flexibility in how they are rendered.
 
+### Dynamic Badges
+
+Badges support dynamic content using template variables with `{{ }}` syntax. This allows you to create badges that automatically calculate values based on your character's frontmatter, abilities, and skills.
+
+````yaml
+```badges
+items:
+  - label: Level
+    value: '{{ frontmatter.level }}'
+  - label: Initiative
+    value: '+{{ modifier abilities.dexterity }}'
+  - label: AC
+    value: '{{ add 10 (modifier abilities.dexterity) }}'
+  - label: Spell Attack
+    value: '{{ add 10 frontmatter.proficiency_bonus (modifier abilities.intelligence) }}'
+```
+````
+
+Available template functions:
+- `add(...)` - Add multiple numbers
+- `modifier(score)` - Calculate D&D ability modifier
+- `frontmatter.property` - Access document frontmatter
+- `abilities.strength` - Access ability scores from ability blocks
+
 ![Rendered Example](./docs/images/example-badges.webp)
+
+#### Static Example
 
 ````yaml
 ```badges

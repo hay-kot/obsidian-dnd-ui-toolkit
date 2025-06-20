@@ -1,5 +1,6 @@
 export type Frontmatter = {
 	proficiencyBonus: number;
+	[key: string]: any; // Allow other frontmatter properties
 }
 
 export type AbilityBlock = {
