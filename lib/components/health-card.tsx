@@ -21,10 +21,18 @@ export function HealthCard(props: HealthCardProps) {
 		if (value <= 0) return;
 
 		const newCurrent = Math.min(props.state.current + value, props.static.health);
-		props.onStateChange({
+		const newState = {
 			...props.state,
 			current: newCurrent
-		});
+		};
+
+		// Reset death saves if health goes above 0
+		if (newCurrent > 0 && props.state.current <= 0) {
+			newState.deathSaveSuccesses = 0;
+			newState.deathSaveFailures = 0;
+		}
+
+		props.onStateChange(newState);
 		setInputValue("1");
 	};
 
@@ -89,6 +97,29 @@ export function HealthCard(props: HealthCardProps) {
 		});
 	};
 
+	// Handle death save interaction
+	const toggleDeathSave = (type: 'success' | 'failure', index: number) => {
+		const newState = { ...props.state };
+
+		if (type === 'success') {
+			const isChecked = index < props.state.deathSaveSuccesses;
+			if (isChecked) {
+				newState.deathSaveSuccesses = index;
+			} else {
+				newState.deathSaveSuccesses = index + 1;
+			}
+		} else {
+			const isChecked = index < props.state.deathSaveFailures;
+			if (isChecked) {
+				newState.deathSaveFailures = index;
+			} else {
+				newState.deathSaveFailures = index + 1;
+			}
+		}
+
+		props.onStateChange(newState);
+	};
+
 	// Handle hit dice rendering
 	const renderHitDice = () => {
 		if (!props.static.hitdice) return null;
@@ -101,6 +132,42 @@ export function HealthCard(props: HealthCardProps) {
 			);
 		}
 		return hitDiceArray;
+	};
+
+	// Handle death saves rendering
+	const renderDeathSaves = () => {
+		if (!props.static.death_saves || props.state.current > 0) return null;
+
+		const failures = [];
+		const successes = [];
+
+		// Render failures (left side)
+		for (let i = 0; i < 3; i++) {
+			failures.push(
+				<Checkbox 
+					key={`failure-${i}`} 
+					checked={i < props.state.deathSaveFailures} 
+					id={`death-save-failure-${i}`} 
+					onChange={() => toggleDeathSave('failure', i)}
+					className="death-save-failure"
+				/>
+			);
+		}
+
+		// Render successes (right side)
+		for (let i = 0; i < 3; i++) {
+			successes.push(
+				<Checkbox 
+					key={`success-${i}`} 
+					checked={i < props.state.deathSaveSuccesses} 
+					id={`death-save-success-${i}`} 
+					onChange={() => toggleDeathSave('success', i)}
+					className="death-save-success"
+				/>
+			);
+		}
+
+		return { failures, successes };
 	};
 
 	return (
@@ -169,6 +236,23 @@ export function HealthCard(props: HealthCardProps) {
 							</p>
 							<div className="hit-dice-boxes">
 								{renderHitDice()}
+							</div>
+						</div>
+					</div>
+				</>
+			)}
+
+			{props.static.death_saves && props.state.current <= 0 && (
+				<>
+					<div className="health-divider" />
+					<div className="death-saves-container">
+						<div className="death-saves-tracker">
+							<div className="death-saves-failures">
+								{renderDeathSaves()?.failures}
+							</div>
+							<div className="death-saves-skull">💀</div>
+							<div className="death-saves-successes">
+								{renderDeathSaves()?.successes}
 							</div>
 						</div>
 					</div>

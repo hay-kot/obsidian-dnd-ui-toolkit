@@ -25,7 +25,7 @@ An easy way to get started is to look at an example in the [examples](./docs/exa
 - Display character information with grid of cards
 - Display Ability Scores and saving throws
 - Display Skills calculated off ability scores
-- HP Widget: Track your characters HP and hit dice (also support for monsters)
+- HP Widget: Track your characters HP, hit dice, and death saves (also support for monsters)
 - Spell Slot Tracking
 - General Consumables Tracking
 - Initiative Tracker: Combat management with AC, HP, and initiative order
@@ -149,6 +149,9 @@ You can also provide a custom `label` key to override the default `Hit Points`, 
 creating an encounter want to track HP of several monsters on a single notebook.
 
 You can also omit the `hitdice` and that part of the component will be omitted from view.
+
+### Death Saves
+The health widget includes automatic death save tracking when a character reaches 0 HP. Death saves automatically reset when the character's health returns above 0. You can disable death saves by setting `death_saves: false`.
 
 ![Rendered Example](./docs/images/example-hp-widget.webp)
 

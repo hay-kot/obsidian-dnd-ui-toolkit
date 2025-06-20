@@ -56,6 +56,7 @@ export type HealthBlock = {
 		dice: string;
 		value: number;
 	};
+	death_saves?: boolean;
 }
 
 export type ConsumableBlock = {

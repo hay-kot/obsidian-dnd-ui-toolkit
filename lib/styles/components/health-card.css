@@ -134,3 +134,43 @@
 	align-items: center;
 }
 
+/* Death Saves Styles */
+.death-saves-container {
+	width: 100%;
+	margin-top: 0.3rem;
+	margin-bottom: 0.3rem;
+}
+
+.death-saves-tracker {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+}
+
+.death-saves-failures {
+	display: flex;
+	gap: 0.3rem;
+}
+
+.death-saves-successes {
+	display: flex;
+	gap: 0.3rem;
+}
+
+.death-saves-skull {
+	font-size: 1.5rem;
+	user-select: none;
+}
+
+/* Death Save Checkbox Styles */
+.death-save-failure[aria-pressed="true"] {
+	background-color: var(--color-accent-red) !important;
+	border-color: var(--color-accent-red) !important;
+}
+
+.death-save-success[aria-pressed="true"] {
+	background-color: var(--color-accent-teal) !important;
+	border-color: var(--color-accent-teal) !important;
+}
+
