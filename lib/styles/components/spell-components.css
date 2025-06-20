@@ -1,0 +1,33 @@
+/*
+ * Spell Components
+ * */
+.spell-components {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+	gap: 0.75rem;
+}
+
+.spell-component-item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.15rem;
+	padding: 0.35rem;
+	background-color: var(--color-bg-tertiary);
+	border-radius: 0.25rem;
+	border: 1px solid var(--color-border-primary);
+	text-align: center;
+}
+
+.spell-component-label {
+	font-weight: bold;
+	color: var(--color-text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	font-size: 0.65rem;
+}
+
+.spell-component-value {
+	color: var(--color-text-primary);
+	font-size: 0.8rem;
+	font-weight: 500;
+}

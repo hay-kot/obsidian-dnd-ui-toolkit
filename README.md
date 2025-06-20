@@ -29,6 +29,7 @@ An easy way to get started is to look at an example in the [examples](./docs/exa
 - Spell Slot Tracking
 - General Consumables Tracking
 - Initiative Tracker: Combat management with AC, HP, and initiative order
+- Spell Components: Display spell casting time, range, components, and duration
 
 ## Road Map
 
@@ -257,5 +258,32 @@ items:
     hp:
       Archer 1: 10
       Archer 2: 10
+```
+````
+
+## Spell Components
+
+The `spell-components` block allows you to display spell information in a clean, organized format. This is perfect for displaying the key details of spells in your character sheet or spellbook.
+
+![Rendered Example](./docs/images/example-spell-components.webp)
+
+#### Example
+
+````yaml
+```spell-components
+casting_time: 1 action
+range: 60 feet
+components: V, S, M (a pinch of sulfur)
+duration: Instantaneous
+```
+````
+
+All fields are optional, so you can include only the information you need:
+
+````yaml
+```spell-components
+casting_time: 1 bonus action
+range: Self
+duration: Concentration, up to 1 minute
 ```
 ````

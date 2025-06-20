@@ -87,3 +87,10 @@ export type InitiativeItem = {
 	link?: string;
 	hp?: number | Record<string, number>;
 }
+
+export type SpellComponentsBlock = {
+	casting_time?: string;
+	range?: string;
+	components?: string;
+	duration?: string;
+}

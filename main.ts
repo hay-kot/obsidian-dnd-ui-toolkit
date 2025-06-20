@@ -7,6 +7,7 @@ import { HealthView } from "lib/views/HealthView";
 import { ConsumableView } from "lib/views/ConsumableView";
 import { BadgesView } from "lib/views/BadgesView";
 import { InitiativeView } from "lib/views/InitiativeView";
+import { SpellComponentsView } from "lib/views/SpellComponentsView";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { JsonDataStore } from "./lib/services/kv/local-file-store";
 
@@ -141,6 +142,7 @@ export default class DndUIToolkitPlugin extends Plugin {
 			new AbilityScoreView(app),
 			new SkillsView(app),
 			new BadgesView(app),
+			new SpellComponentsView(app),
 
 			// Dynamic/Stateful
 			new HealthView(app, kv),
