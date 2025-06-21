@@ -6,6 +6,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { ConsumableState } from "lib/domains/consumables";
+import { eventBus, ResetEvent } from "lib/services/event-bus";
 
 export class ConsumableView extends BaseView {
   public codeblock = "consumable";
@@ -18,7 +19,7 @@ export class ConsumableView extends BaseView {
   }
 
   public render(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): void {
-    const consumableMarkdown = new ConsumableMarkdown(el, source, this.kv);
+    const consumableMarkdown = new ConsumableMarkdown(el, source, this.kv, ctx.sourcePath);
     ctx.addChild(consumableMarkdown);
   }
 }
@@ -27,12 +28,15 @@ class ConsumableMarkdown extends MarkdownRenderChild {
   private reactRoots: Map<string, ReactDOM.Root> = new Map();
   private source: string;
   private kv: KeyValueStore;
+  private filePath: string;
   private consumablesContainer: HTMLElement;
+  private eventUnsubscribers: (() => void)[] = [];
 
-  constructor(el: HTMLElement, source: string, kv: KeyValueStore) {
+  constructor(el: HTMLElement, source: string, kv: KeyValueStore, filePath: string) {
     super(el);
     this.source = source;
     this.kv = kv;
+    this.filePath = filePath;
     this.consumablesContainer = document.createElement("div");
     this.consumablesContainer.className = "consumables-column";
     el.appendChild(this.consumablesContainer);
@@ -56,14 +60,15 @@ class ConsumableMarkdown extends MarkdownRenderChild {
     // Process each consumable item
     await Promise.all(
       consumablesBlock.items.map(async (consumableBlock, index) => {
-        const itemContainer = document.createElement("div");
-        itemContainer.className = "consumable-item";
-        this.consumablesContainer.appendChild(itemContainer);
-
         const stateKey = consumableBlock.state_key;
         if (!stateKey) {
           throw new Error(`Consumable item at index ${index} must contain a 'state_key' property.`);
         }
+
+        const itemContainer = document.createElement("div");
+        itemContainer.className = "consumable-item";
+        itemContainer.setAttribute("data-state-key", stateKey);
+        this.consumablesContainer.appendChild(itemContainer);
 
         // Initialize with default values
         const defaultState = ConsumableService.getDefaultConsumableState(consumableBlock);
@@ -82,10 +87,33 @@ class ConsumableMarkdown extends MarkdownRenderChild {
             }
           }
 
+          // Set up event subscription for reset functionality
+          if (consumableBlock.reset_on) {
+            const unsubscribe = eventBus.subscribe<ResetEvent>("reset", this.filePath, (resetEvent) => {
+              if (this.shouldResetOnEvent(consumableBlock.reset_on, resetEvent.eventType)) {
+                console.debug(`Resetting consumable ${stateKey} due to ${resetEvent.eventType} event`);
+                this.handleResetEvent(consumableBlock);
+              }
+            });
+            this.eventUnsubscribers.push(unsubscribe);
+          }
+
           // Render with the state we have
           this.renderComponent(itemContainer, consumableBlock, consumableState);
         } catch (error) {
           console.error(`Error loading consumable state for ${stateKey}:`, error);
+
+          // Set up event subscription even for error case
+          if (consumableBlock.reset_on) {
+            const unsubscribe = eventBus.subscribe<ResetEvent>("reset", this.filePath, (resetEvent) => {
+              if (this.shouldResetOnEvent(consumableBlock.reset_on, resetEvent.eventType)) {
+                console.debug(`Resetting consumable ${stateKey} due to ${resetEvent.eventType} event`);
+                this.handleResetEvent(consumableBlock);
+              }
+            });
+            this.eventUnsubscribers.push(unsubscribe);
+          }
+
           // Fallback to default state if there's an error
           this.renderComponent(itemContainer, consumableBlock, defaultState);
         }
@@ -140,6 +168,25 @@ class ConsumableMarkdown extends MarkdownRenderChild {
     }
   }
 
+  private async handleResetEvent(consumableBlock: ConsumableService.ConsumablesBlock["items"][0]) {
+    const stateKey = consumableBlock.state_key;
+    if (!stateKey) return;
+
+    try {
+      // Reset to default state (all consumables unused)
+      const resetState: ConsumableState = { value: 0 };
+      await this.kv.set(stateKey, resetState);
+
+      // Find the container for this consumable and re-render it
+      const container = this.consumablesContainer.querySelector(`[data-state-key="${stateKey}"]`) as HTMLElement;
+      if (container) {
+        this.renderComponent(container, consumableBlock, resetState);
+      }
+    } catch (error) {
+      console.error(`Error resetting consumable state for ${stateKey}:`, error);
+    }
+  }
+
   onunload() {
     // Clean up all React roots to prevent memory leaks
     this.reactRoots.forEach((root) => {
@@ -150,6 +197,34 @@ class ConsumableMarkdown extends MarkdownRenderChild {
       }
     });
     this.reactRoots.clear();
-    console.debug("Unmounted all React components in ConsumableMarkdown");
+
+    // Clean up event subscriptions
+    this.eventUnsubscribers.forEach((unsubscribe) => {
+      try {
+        unsubscribe();
+      } catch (e) {
+        console.error("Error unsubscribing from event:", e);
+      }
+    });
+    this.eventUnsubscribers.length = 0;
+
+    console.debug("Unmounted all React components and cleaned up event subscriptions in ConsumableMarkdown");
+  }
+
+  /**
+   * Check if a consumable should reset based on the given event type
+   */
+  private shouldResetOnEvent(resetOn: string | string[] | undefined, eventType: string): boolean {
+    if (!resetOn) return false;
+
+    if (typeof resetOn === "string") {
+      return resetOn === eventType;
+    }
+
+    if (Array.isArray(resetOn)) {
+      return resetOn.includes(eventType);
+    }
+
+    return false;
   }
 }

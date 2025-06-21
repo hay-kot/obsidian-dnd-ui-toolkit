@@ -64,6 +64,7 @@ export type ConsumableBlock = {
   label: string;
   state_key: string;
   uses: number;
+  reset_on?: string | string[]; // Event type(s) that trigger a reset (e.g., 'long-rest', ['short-rest', 'long-rest'])
 };
 
 export type BadgeItem = {
@@ -102,4 +103,14 @@ export type Ability = {
   modifier: number;
   isProficient: boolean;
   savingThrow: number;
+};
+
+export type EventButtonItem = {
+  name: string;
+  icon?: string;
+  value: string; // The event type that gets dispatched
+};
+
+export type EventButtonsBlock = {
+  items: EventButtonItem[];
 };
