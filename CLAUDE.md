@@ -10,7 +10,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run format:check` - Check code formatting with Prettier
 - `npm run lint` - Lint code with ESLint
 - `npm run lint:fix` - Lint and fix code with ESLint
+- `npm run typecheck` - Run TypeScript type checking
 - `task build` - Build and optionally copy to plugin directory (if PLUGIN_DIR is set)
+- `task pr` - Prepare for PR (format, lint, and type check)
 - `task release` - Release a new minor version (includes format and lint checks)
 
 ## Code Style

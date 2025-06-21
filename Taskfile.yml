@@ -33,9 +33,16 @@ tasks:
       - "main.js"
       - "styles.css"
 
+  pr:
+    desc: Prepare for PR - format code, lint, and type check
+    cmds:
+      - npm run format
+      - npm run lint
+      - npm run typecheck
+
   release:
     desc: Release a new minor version of the plugin
     cmds:
       - npm run format:check
       - npm run lint
-      - echo ./release.sh
+      - ./release.sh
