@@ -30,6 +30,7 @@ An easy way to get started is to look at an example in the [examples](./docs/exa
 - General Consumables Tracking
 - Initiative Tracker: Combat management with AC, HP, and initiative order
 - Spell Components: Display spell casting time, range, components, and duration
+- Event System: Reset consumables and health with rest events
 
 ## Road Map
 
@@ -153,6 +154,20 @@ You can also omit the `hitdice` and that part of the component will be omitted f
 ### Death Saves
 The health widget includes automatic death save tracking when a character reaches 0 HP. Death saves automatically reset when the character's health returns above 0. You can disable death saves by setting `death_saves: false`.
 
+### Reset Events
+Health components automatically reset on `long-rest` events by default. You can customize this behavior with the `reset_on` property:
+
+````yaml
+```healthpoints
+state_key: din_health
+health: 24
+reset_on: ["short-rest", "long-rest"]  # Reset on either rest type
+hitdice:
+  dice: d6
+  value: 4
+```
+````
+
 ![Rendered Example](./docs/images/example-hp-widget.webp)
 
 #### Example
@@ -227,7 +242,30 @@ for anything like Spell Slots, Luck Points, or Channel Divinity.
 
 Note that the labels field is optional.
 
+### Reset Events
+Consumables can be automatically reset when specific events are triggered. Use the `reset_on` property to specify which events should reset the consumable:
+
+````yaml
+```consumable
+items:
+  - label: "Level 1 Spells"
+    state_key: din_spells_1
+    uses: 4
+    reset_on: "long-rest"  # Reset on long rest only
+  - label: "Level 2 Spells"
+    state_key: din_spells_2
+    uses: 2
+    reset_on: "long-rest"
+  - label: "Action Surge"
+    state_key: action_surge
+    uses: 1
+    reset_on: ["short-rest", "long-rest"]  # Reset on either rest type
+```
+````
+
 ![Rendered Example](./docs/images/example-consumable.webp)
+
+#### Basic Example
 
 ````yaml
 ```consumable
@@ -240,6 +278,79 @@ items:
     uses: 2
 ```
 ````
+
+## Event Buttons
+
+The `event-btns` component creates clickable buttons that trigger reset events for other components within the same file. This is perfect for managing rest mechanics in D&D, allowing you to reset spell slots, health, and other resources with a single click.
+
+### How It Works
+
+Event buttons dispatch file-scoped events that other components (like `consumable` and `healthpoints`) can listen to. Components with matching `reset_on` values will automatically reset their state when the corresponding button is clicked.
+
+#### Example
+
+````yaml
+```event-btns
+items:
+  - name: Short Rest
+    value: short-rest
+  - name: Long Rest
+    value: long-rest
+  - name: Level Up
+    value: level-up
+```
+````
+
+### Complete Rest System Example
+
+Here's how to set up a complete rest system with event buttons and components that respond to them:
+
+````yaml
+```event-btns
+items:
+  - name: Short Rest
+    value: short-rest
+  - name: Long Rest
+    value: long-rest
+```
+
+```healthpoints
+state_key: character_hp
+health: 45
+reset_on: "long-rest"  # Health resets on long rest only
+hitdice:
+  dice: d10
+  value: 5
+```
+
+```consumable
+items:
+  - label: "Action Surge"
+    state_key: action_surge
+    uses: 1
+    reset_on: ["short-rest", "long-rest"]  # Resets on any rest
+  - label: "Level 1 Spells"
+    state_key: spells_1
+    uses: 4
+    reset_on: "long-rest"  # Spell slots reset on long rest only
+  - label: "Level 2 Spells"
+    state_key: spells_2
+    uses: 3
+    reset_on: "long-rest"
+```
+````
+
+### Event Types
+
+You can use any event type name that makes sense for your game:
+- `short-rest` - For abilities that recharge on short rests
+- `long-rest` - For abilities that recharge on long rests  
+- `level-up` - For resetting everything when leveling up
+- `new-day` - For daily abilities
+- `custom` - For any custom event you define
+
+> [!TIP]
+> Event buttons only affect components within the same markdown file, so you can have different rest states for different characters or encounters.
 
 ## Initiative Tracker
 
