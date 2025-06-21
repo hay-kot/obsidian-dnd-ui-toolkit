@@ -17,7 +17,7 @@ export class StatsView extends BaseView {
     // Check if any items contain template variables
     const hasTemplates = items.some(
       (item: Partial<StatItem>) =>
-        hasTemplateVariables(String(item.label || "")) || 
+        hasTemplateVariables(String(item.label || "")) ||
         hasTemplateVariables(String(item.value || "")) ||
         (item.sublabel && hasTemplateVariables(String(item.sublabel)))
     );
