@@ -1,176 +1,175 @@
 /* Health Card Styles */
 .health-card {
-	display: flex;
-	height: fit-content;
-	flex-direction: column;
-	gap: var(--std-gap);
-	padding: 0.75rem;
-	width: 100%;
+    display: flex;
+    height: fit-content;
+    flex-direction: column;
+    gap: var(--std-gap);
+    padding: 0.75rem;
+    width: 100%;
 }
 
 .health-card p {
-	margin-block-start: 0 !important;
-	margin-block-end: 0 !important;
+    margin-block-start: 0 !important;
+    margin-block-end: 0 !important;
 }
 
 .health-card-header {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
 }
 
 .health-value {
-	font-size: 1.5rem;
-	font-weight: bold;
-	color: var(--color-text-bright);
-	display: flex;
-	align-items: baseline;
-	gap: 0.2rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-text-bright);
+    display: flex;
+    align-items: baseline;
+    gap: 0.2rem;
 }
 
 .health-max {
-	font-size: 1rem;
-	color: var(--color-text-muted);
+    font-size: 1rem;
+    color: var(--color-text-muted);
 }
 
 .health-temp {
-	font-size: 0.8rem;
-	color: var(--color-accent-teal);
+    font-size: 0.8rem;
+    color: var(--color-accent-teal);
 }
 
 .health-progress-container {
-	width: 100%;
-	height: 0.5rem;
-	background-color: var(--color-bg-secondary);
-	border-radius: 0.25rem;
-	overflow: hidden;
-	margin: 0.3rem 0;
+    width: 100%;
+    height: 0.5rem;
+    background-color: var(--color-bg-secondary);
+    border-radius: 0.25rem;
+    overflow: hidden;
+    margin: 0.3rem 0;
 }
 
 .health-progress-bar {
-	height: 100%;
-	background-color: var(--color-border-active);
-	transition: width 0.3s ease;
+    height: 100%;
+    background-color: var(--color-border-active);
+    transition: width 0.3s ease;
 }
 
 .health-controls {
-	display: flex;
-	gap: 0.5rem;
-	width: 100%;
-	margin: 0.3rem 0;
-	flex-wrap: wrap;
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+    margin: 0.3rem 0;
+    flex-wrap: wrap;
 }
 
 .health-input {
-	width: 5rem;
-	background-color: var(--color-bg-secondary);
-	border: 1px solid var(--color-border-active);
-	border-radius: 0.25rem;
-	color: var(--color-text-primary);
-	padding: 0.3rem;
-	text-align: center;
+    width: 5rem;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-active);
+    border-radius: 0.25rem;
+    color: var(--color-text-primary);
+    padding: 0.3rem;
+    text-align: center;
 }
 
 .health-button {
-	flex: 0.8;
-	min-width: fit-content;
-	background-color: var(--color-bg-secondary);
-	border: 1px solid var(--color-border-primary);
-	border-radius: 0.25rem;
-	color: var(--color-text-primary);
-	padding: 0.3rem 0.4rem;
-	font-size: 0.8rem;
-	cursor: pointer;
-	transition: background-color 0.2s ease;
+    flex: 0.8;
+    min-width: fit-content;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.25rem;
+    color: var(--color-text-primary);
+    padding: 0.3rem 0.4rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
 .health-button:hover {
-	background-color: var(--color-bg-hover);
+    background-color: var(--color-bg-hover);
 }
 
 .health-heal {
-	border-color: var(--color-accent-teal);
-	color: var(--color-accent-teal);
+    border-color: var(--color-accent-teal);
+    color: var(--color-accent-teal);
 }
 
 .health-damage {
-	border-color: var(--color-accent-red);
-	color: var(--color-accent-red);
+    border-color: var(--color-accent-red);
+    color: var(--color-accent-red);
 }
 
 .health-temp {
-	border-color: var(--color-accent-purple);
-	color: var(--color-accent-purple);
+    border-color: var(--color-accent-purple);
+    color: var(--color-accent-purple);
 }
 
 .health-divider {
-	width: 100%;
-	height: 1px;
-	background-color: var(--color-border-primary);
-	margin: 0.5rem 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--color-border-primary);
+    margin: 0.5rem 0;
 }
 
 .hit-dice-container {
-	width: 100%;
-	margin-top: 0.3rem;
-	margin-bottom: 0.3rem;
+    width: 100%;
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
 }
 
 .hit-dice-label {
-	font-size: 0.8rem;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	color: var(--color-text-secondary);
-	margin-bottom: 0 !important;
-	text-align: left;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-text-secondary);
+    margin-bottom: 0 !important;
+    text-align: left;
 }
 
 .hit-dice-boxes {
-	display: inline-flex;
-	flex-wrap: wrap;
-	gap: 0.3rem;
-	margin-left: 1rem;
-	align-items: center;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-left: 1rem;
+    align-items: center;
 }
 
 /* Death Saves Styles */
 .death-saves-container {
-	width: 100%;
-	margin-top: 0.3rem;
-	margin-bottom: 0.3rem;
+    width: 100%;
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
 }
 
 .death-saves-tracker {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
 }
 
 .death-saves-failures {
-	display: flex;
-	gap: 0.3rem;
+    display: flex;
+    gap: 0.3rem;
 }
 
 .death-saves-successes {
-	display: flex;
-	gap: 0.3rem;
+    display: flex;
+    gap: 0.3rem;
 }
 
 .death-saves-skull {
-	font-size: 1.5rem;
-	user-select: none;
+    font-size: 1.5rem;
+    user-select: none;
 }
 
 /* Death Save Checkbox Styles */
 .death-save-failure[aria-pressed="true"] {
-	background-color: var(--color-accent-red) !important;
-	border-color: var(--color-accent-red) !important;
+    background-color: var(--color-accent-red) !important;
+    border-color: var(--color-accent-red) !important;
 }
 
 .death-save-success[aria-pressed="true"] {
-	background-color: var(--color-accent-teal) !important;
-	border-color: var(--color-accent-teal) !important;
+    background-color: var(--color-accent-teal) !important;
+    border-color: var(--color-accent-teal) !important;
 }
-

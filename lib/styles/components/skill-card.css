@@ -3,81 +3,81 @@
  * */
 
 .skills-grid {
-	column-count: 2;
-	column-gap: 2rem;
-	align-items: start;
-	background-color: var(--color-bg-primary);
-	color: var(--color-text-primary);
-	border: 1px solid var(--color-border-primary);
-	overflow: hidden;
-	border-radius: 0.4rem;
-	padding: .5rem;
+    column-count: 2;
+    column-gap: 2rem;
+    align-items: start;
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border-primary);
+    overflow: hidden;
+    border-radius: 0.4rem;
+    padding: 0.5rem;
 }
 
 /* on small screens on render single column */
 @media (max-width: 600px) {
-	.skills-grid {
-		column-count: 1;
-	}
+    .skills-grid {
+        column-count: 1;
+    }
 }
 
 .skill-card p {
-	margin-block-start: 0 !important;
-	margin-block-end: 0 !important;
+    margin-block-start: 0 !important;
+    margin-block-end: 0 !important;
 }
 
 .skill-card {
-	display: flex;
-	justify-content: space-between;
-	gap: .2rem;
-	padding: 0.25rem 0.5rem;
-	transition: background-color 0.2s ease;
-	border-radius: 0.25rem;
-	position: relative;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.2rem;
+    padding: 0.25rem 0.5rem;
+    transition: background-color 0.2s ease;
+    border-radius: 0.25rem;
+    position: relative;
 }
 
 .skill-card:hover {
-	background-color: var(--color-bg-hover);
+    background-color: var(--color-bg-hover);
 }
 
 .skill-card.proficient::before {
-	content: "•";
-	position: absolute;
-	left: -0.25rem;
-	color: var(--color-accent-teal);
-	font-size: 1.2rem;
-	line-height: 1.1;
+    content: "•";
+    position: absolute;
+    left: -0.25rem;
+    color: var(--color-accent-teal);
+    font-size: 1.2rem;
+    line-height: 1.1;
 }
 
 .skill-card.expert::before {
-	content: "•";
-	position: absolute;
-	left: -0.25rem;
-	color: var(--color-accent-purple);
-	font-size: 1.2rem;
-	line-height: 1.1;
-	font-weight: bold;
+    content: "•";
+    position: absolute;
+    left: -0.25rem;
+    color: var(--color-accent-purple);
+    font-size: 1.2rem;
+    line-height: 1.1;
+    font-weight: bold;
 }
 
 .skill-card.half-proficient::before {
-	content: "◦";
-	position: absolute;
-	left: -0.25rem;
-	color: var(--color-text-muted);
-	font-size: 1.2rem;
-	line-height: 1.1;
+    content: "◦";
+    position: absolute;
+    left: -0.25rem;
+    color: var(--color-text-muted);
+    font-size: 1.2rem;
+    line-height: 1.1;
 }
 
 .skills-values-container {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .skill-ability {
-	font-size: 0.8rem;
-	color: var(--color-text-muted);
-	border-radius: 3px;
-	width: 1.8rem;
-	margin-right: 0.2rem;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    border-radius: 3px;
+    width: 1.8rem;
+    margin-right: 0.2rem;
 }

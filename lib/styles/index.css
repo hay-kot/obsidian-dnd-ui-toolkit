@@ -1,11 +1,11 @@
-@import './common.css';
+@import "./common.css";
 
 /* Components */
-@import './components/skill-card.css';
-@import './components/ability-cards.css';
-@import './components/health-card.css';
-@import './components/badge.css';
-@import './components/consumables.css';
-@import './components/checkbox.css';
-@import './components/initiative.css';
-@import './components/spell-components.css';
+@import "./components/skill-card.css";
+@import "./components/ability-cards.css";
+@import "./components/health-card.css";
+@import "./components/badge.css";
+@import "./components/consumables.css";
+@import "./components/checkbox.css";
+@import "./components/initiative.css";
+@import "./components/spell-components.css";

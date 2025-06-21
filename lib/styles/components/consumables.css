@@ -2,28 +2,28 @@
  * Consumable Component
  * */
 .consumable-item {
-	margin-bottom: 0.3rem;
+    margin-bottom: 0.3rem;
 }
 
 .consumable-container {
-	display: flex;
-	align-items: center;
-	gap: var(--std-grid-gap);
-	margin: 0.2rem 0;
+    display: flex;
+    align-items: center;
+    gap: var(--std-grid-gap);
+    margin: 0.2rem 0;
 }
 
 .consumable-label {
-	font-size: 0.9rem;
-	font-weight: 500;
-	color: var(--color-text-primary);
-	display: inline-block;
-	width: var(--consumable-label-width, 3.5rem);
-	text-align: left;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    display: inline-block;
+    width: var(--consumable-label-width, 3.5rem);
+    text-align: left;
 }
 
 .consumable-boxes {
-	display: inline-flex;
-	flex-wrap: wrap;
-	gap: 0.3rem;
-	align-items: center;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    align-items: center;
 }

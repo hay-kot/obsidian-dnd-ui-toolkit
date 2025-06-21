@@ -2,18 +2,18 @@
  * Utility Styles
  * */
 :root {
-	/* Spacing */
-	--std-gap: 0.3rem;
-	--ability-card-padding: 0.3rem;
-	--std-grid-gap: 0.5rem;
+    /* Spacing */
+    --std-gap: 0.3rem;
+    --ability-card-padding: 0.3rem;
+    --std-grid-gap: 0.5rem;
 
-	/* Colors set by user */
+    /* Colors set by user */
 }
 
 .card-grid {
-	display: grid;
-	gap: var(--std-grid-gap);
-	align-items: start;
+    display: grid;
+    gap: var(--std-grid-gap);
+    align-items: start;
 }
 
 /*
@@ -21,35 +21,35 @@
  * */
 
 .generic-card {
-	display: flex;
-	height: 100%;
-	flex-direction: column;
-	align-items: center;
-	justify-content: start;
-	padding: 0.75rem;
-	border-radius: 0.4rem;
-	background-color: var(--color-bg-primary);
-	color: var(--color-text-primary);
-	border: 1px solid var(--color-border-primary);
-	min-height: 80px;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    padding: 0.75rem;
+    border-radius: 0.4rem;
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border-primary);
+    min-height: 80px;
 }
 
 .generic-card-label {
-	font-size: 0.8rem;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	color: var(--color-text-secondary);
-	margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.5rem;
 }
 
 .generic-card-value {
-	font-size: 1.2rem;
-	font-weight: bold;
-	color: var(--color-text-bright);
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--color-text-bright);
 }
 
 .generic-card-sublabel {
-	font-size: 0.7rem;
-	color: var(--color-text-sublabel);
-	margin-top: 0.3rem;
+    font-size: 0.7rem;
+    color: var(--color-text-sublabel);
+    margin-top: 0.3rem;
 }

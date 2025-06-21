@@ -1,342 +1,343 @@
 /* Initiative Tracker Styles */
 .initiative-tracker {
-	display: grid;
-	gap: var(--std-gap);
+    display: grid;
+    gap: var(--std-gap);
 }
 
 .initiative-tracker-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	width: 100%;
-	margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 0.5rem;
 }
 
 .initiative-tracker-title {
-	font-size: 1rem;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	color: var(--color-text-secondary);
-	margin: 0;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-text-secondary);
+    margin: 0;
 }
 
 .initiative-tracker-controls {
-	display: flex;
-	align-items: center;
-	margin: var(--std-gap) 0;
-	gap: 0.3rem;
+    display: flex;
+    align-items: center;
+    margin: var(--std-gap) 0;
+    gap: 0.3rem;
 }
 
 .initiative-round-counter {
-	font-size: 0.9rem;
-	color: var(--color-text-secondary);
-	padding: 0.3rem 0.6rem;
-	background-color: var(--color-bg-secondary);
-	border: 1px solid var(--color-border-primary);
-	border-radius: 0.25rem;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    padding: 0.3rem 0.6rem;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.25rem;
 }
 
 .initiative-round-value {
-	font-weight: bold;
-	color: var(--color-text-primary);
+    font-weight: bold;
+    color: var(--color-text-primary);
 }
 
 .initiative-control-button {
-	background-color: var(--color-bg-secondary);
-	border: 1px solid var(--color-border-primary);
-	border-radius: 0.25rem;
-	color: var(--color-text-primary);
-	padding: 0.3rem 0.5rem;
-	font-size: 0.8rem;
-	cursor: pointer;
-	transition: background-color 0.2s ease;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.25rem;
+    color: var(--color-text-primary);
+    padding: 0.3rem 0.5rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
 .initiative-control-button:hover {
-	background-color: var(--color-bg-hover);
+    background-color: var(--color-bg-hover);
 }
 
 .initiative-prev {
-	margin-left: auto;
+    margin-left: auto;
 }
 
 .initiative-prev,
 .initiative-next {
-	border-color: var(--color-border-active);
-	color: var(--color-text-secondary);
+    border-color: var(--color-border-active);
+    color: var(--color-text-secondary);
 }
 
 .initiative-reset {
-	border-color: var(--color-accent-red);
-	color: var(--color-accent-red);
+    border-color: var(--color-accent-red);
+    color: var(--color-accent-red);
 }
 
 .initiative-list {
-	width: 100%;
+    width: 100%;
 }
 
 .initiative-items {
-	display: flex;
-	flex-direction: column;
-	gap: 0.3rem;
-	width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    width: 100%;
 }
 
 .initiative-item {
-	display: flex;
-	flex-direction: column;
-	padding: 0.5rem;
-	border-radius: 0.3rem;
-	background-color: var(--color-bg-secondary);
-	border: 1px solid var(--color-border-primary);
-	transition: background-color 0.2s ease, border-color 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    border-radius: 0.3rem;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-primary);
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
 }
 
 .initiative-item-active {
-	background-color: var(--color-bg-tertiary);
-	border-color: var(--color-border-active);
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-border-active);
 }
 
 .initiative-item-main {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
 }
 
 /* Make initiative roll more prominent */
 .initiative-roll {
-	flex: 0 0 3.5rem;
-	position: relative;
+    flex: 0 0 3.5rem;
+    position: relative;
 }
 
 .initiative-input {
-	width: 100%;
-	background-color: var(--color-bg-primary);
-	border: 1px solid var(--color-border-primary);
-	border-radius: 0.25rem;
-	color: var(--color-text-primary);
-	padding: 0.5rem 1rem;
-	text-align: center;
-	font-size: 1.6rem !important;
-	height: 100% !important;
-	/* Larger initiative font */
+    width: 100%;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.25rem;
+    color: var(--color-text-primary);
+    padding: 0.5rem 1rem;
+    text-align: center;
+    font-size: 1.6rem !important;
+    height: 100% !important;
+    /* Larger initiative font */
 }
 
 .initiative-name {
-	flex: 1;
-	font-weight: bold;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	font-size: 1.2rem;
+    flex: 1;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1.2rem;
 }
 
 .divider {
-	width: 100%;
-	height: 1.5px;
-	background-color: var(--color-text-bright);
-	margin-top: 0.75rem;
-	margin-bottom: 0.5rem;
-	opacity: 25%;
+    width: 100%;
+    height: 1.5px;
+    background-color: var(--color-text-bright);
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+    opacity: 25%;
 }
 
 .initiative-link {
-	font-weight: bold;
-	color: var(--color-text-bright);
-	text-decoration: none !important;
+    font-weight: bold;
+    color: var(--color-text-bright);
+    text-decoration: none !important;
 }
 
-
 .initiative-ac {
-	font-style: italic;
-	font-size: 0.8rem;
-	opacity: 70%;
+    font-style: italic;
+    font-size: 0.8rem;
+    opacity: 70%;
 }
 
 .initiative-ac-value {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .initiative-hp {
-	display: flex;
-	align-items: center;
-	gap: 0.2rem;
-	flex: 0 0 auto;
-	padding: 0.2rem 0.4rem;
-	background-color: var(--color-bg-primary);
-	border-radius: 0.25rem;
-	font-size: 1.1rem;
-	margin-bottom: auto;
-	margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    flex: 0 0 auto;
+    padding: 0.2rem 0.4rem;
+    background-color: var(--color-bg-primary);
+    border-radius: 0.25rem;
+    font-size: 1.1rem;
+    margin-bottom: auto;
+    margin-left: auto;
 }
 
 .initiative-hp-value {
-	font-weight: bold;
-	color: var(--color-text-primary);
+    font-weight: bold;
+    color: var(--color-text-primary);
 }
 
 .initiative-hp-separator {
-	color: var(--color-border-active);
+    color: var(--color-border-active);
 }
 
 .initiative-hp-max {
-	color: var(--color-text-secondary);
+    color: var(--color-text-secondary);
 }
 
 .initiative-item-actions {
-	display: flex;
-	gap: 0.3rem;
-	margin-top: 0.3rem;
-	padding-top: 0.3rem;
-	align-items: center;
-	margin-left: auto;
+    display: flex;
+    gap: 0.3rem;
+    margin-top: 0.3rem;
+    padding-top: 0.3rem;
+    align-items: center;
+    margin-left: auto;
 }
 
 .initiative-hp-input {
-	width: 3rem;
-	background-color: var(--color-bg-primary);
-	border: 1px solid var(--color-border-primary);
-	border-radius: 0.25rem;
-	color: var(--color-text-primary);
-	padding: 0.2rem;
-	text-align: center;
-	font-size: 0.8rem;
+    width: 3rem;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.25rem;
+    color: var(--color-text-primary);
+    padding: 0.2rem;
+    text-align: center;
+    font-size: 0.8rem;
 }
 
 /* More subtle action buttons with icons */
 .initiative-hp-button {
-	flex: 0 0 auto;
-	background-color: transparent;
-	border: 1px solid var(--color-border-primary);
-	border-radius: 0.25rem;
-	color: var(--color-text-primary);
-	width: 1.8rem;
-	height: 1.8rem;
-	font-size: 0.8rem;
-	padding: 0;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	transition: background-color 0.2s ease;
+    flex: 0 0 auto;
+    background-color: transparent;
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.25rem;
+    color: var(--color-text-primary);
+    width: 1.8rem;
+    height: 1.8rem;
+    font-size: 0.8rem;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
 }
 
 .initiative-hp-button:hover {
-	background-color: var(--color-bg-darker);
+    background-color: var(--color-bg-darker);
 }
 
 .initiative-damage {
-	border-color: var(--color-accent-red);
-	color: var(--color-accent-red);
+    border-color: var(--color-accent-red);
+    color: var(--color-accent-red);
 }
 
 .initiative-heal {
-	border-color: var(--color-accent-teal);
-	color: var(--color-accent-teal);
+    border-color: var(--color-accent-teal);
+    color: var(--color-accent-teal);
 }
 
 .initiative-empty-state {
-	padding: 1rem;
-	text-align: center;
-	color: var(--color-text-secondary);
-	font-style: italic;
+    padding: 1rem;
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-style: italic;
 }
 
 /* Group monster styles */
 .initiative-group-container {
-	margin-top: 0.3rem;
-	width: 100%;
+    margin-top: 0.3rem;
+    width: 100%;
 }
 
 /* Group name header */
 .initiative-group-header {
-	padding: 0.3rem 0.5rem;
-	margin-bottom: 0.5rem;
-	background-color: var(--color-bg-group);
-	border-radius: 0.25rem;
-	font-weight: bold;
-	font-size: 0.9rem;
-	color: var(--color-text-group);
-	letter-spacing: 0.5px;
+    padding: 0.3rem 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--color-bg-group);
+    border-radius: 0.25rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: var(--color-text-group);
+    letter-spacing: 0.5px;
 }
 
 .initiative-group-hp {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-	gap: 0.5rem;
-	width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 0.5rem;
+    width: 100%;
 }
 
 .initiative-monster {
-	background-color: var(--color-bg-primary);
-	border-radius: 0.25rem;
-	padding: 0.3rem 0.5rem;
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	border: 1px solid var(--color-border-primary);
+    background-color: var(--color-bg-primary);
+    border-radius: 0.25rem;
+    padding: 0.3rem 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--color-border-primary);
 }
 
 .initiative-monster-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
 }
 
 .initiative-monster-name {
-	font-size: 0.85rem;
-	font-weight: bold;
-	color: var(--color-text-primary);
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: var(--color-text-primary);
 }
 
 .initiative-monster-hp {
-	display: flex;
-	align-items: center;
-	gap: 0.2rem;
-	background-color: var(--color-bg-darker);
-	padding: 0.1rem 0.3rem;
-	border-radius: 0.2rem;
-	font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    background-color: var(--color-bg-darker);
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.2rem;
+    font-size: 0.8rem;
 }
 
 .initiative-monster-actions {
-	display: flex;
-	align-items: center;
-	gap: 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
 }
 
 /* Status indicators for monsters */
 .monster-status-dead {
-	text-decoration: line-through;
-	opacity: 0.5;
+    text-decoration: line-through;
+    opacity: 0.5;
 }
 
 .monster-status-injured {
-	color: var(--color-accent-red);
+    color: var(--color-accent-red);
 }
 
 /* Responsive adjustments for mobile */
 @media (max-width: 600px) {
-	.initiative-item-main {
-		flex-wrap: wrap;
-	}
+    .initiative-item-main {
+        flex-wrap: wrap;
+    }
 
-	.initiative-roll {
-		flex: 0 0 2.5rem;
-	}
+    .initiative-roll {
+        flex: 0 0 2.5rem;
+    }
 
-	.initiative-name {
-		flex: 1 1 calc(100% - 7rem);
-	}
+    .initiative-name {
+        flex: 1 1 calc(100% - 7rem);
+    }
 
-	.initiative-ac,
-	.initiative-hp {
-		flex: 0 0 auto;
-	}
+    .initiative-ac,
+    .initiative-hp {
+        flex: 0 0 auto;
+    }
 
-	.initiative-group-hp {
-		grid-template-columns: 1fr;
-	}
+    .initiative-group-hp {
+        grid-template-columns: 1fr;
+    }
 }
