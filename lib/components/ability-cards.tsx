@@ -1,12 +1,5 @@
-import * as AbilityService from "./domains/abilities";
-
-export type Ability = {
-  label: string;
-  total: number;
-  modifier: number;
-  isProficient: boolean;
-  savingThrow: number;
-};
+import * as AbilityService from "../domains/abilities";
+import { Ability } from "../types";
 
 export function AbilityView(data: Ability[]) {
   return (

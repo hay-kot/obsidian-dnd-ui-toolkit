@@ -95,3 +95,11 @@ export type SpellComponentsBlock = {
   components?: string;
   duration?: string;
 };
+
+export type Ability = {
+  label: string;
+  total: number;
+  modifier: number;
+  isProficient: boolean;
+  savingThrow: number;
+};

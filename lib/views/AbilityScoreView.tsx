@@ -1,8 +1,9 @@
 import * as Tmpl from "lib/html-templates";
-import * as Components from "lib/components";
+import { AbilityView } from "lib/components/ability-cards";
 import { BaseView } from "./BaseView";
 import { MarkdownPostProcessorContext } from "obsidian";
 import * as AbilityService from "lib/domains/abilities";
+import { Ability } from "lib/types";
 
 export class AbilityScoreView extends BaseView {
   public codeblock = "ability";
@@ -10,7 +11,7 @@ export class AbilityScoreView extends BaseView {
   public render(source: string, __: HTMLElement, ctx: MarkdownPostProcessorContext): string {
     const abilityBlock = AbilityService.parseAbilityBlock(source);
 
-    const data: Components.Ability[] = [];
+    const data: Ability[] = [];
 
     const frontmatter = this.frontmatter(ctx);
 
@@ -41,6 +42,6 @@ export class AbilityScoreView extends BaseView {
       });
     }
 
-    return Tmpl.Render(Components.AbilityView(data));
+    return Tmpl.Render(AbilityView(data));
   }
 }
