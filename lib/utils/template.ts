@@ -1,4 +1,4 @@
-const Handlebars = require("handlebars");
+import * as Handlebars from "handlebars";
 import { AbilityScores, Frontmatter, SkillsBlock } from "../types";
 import { parseAbilityBlockFromDocument, calculateModifier } from "../domains/abilities";
 import { parseSkillsBlock } from "../domains/skills";

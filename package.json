@@ -8,7 +8,9 @@
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
     "version": "node version-bump.mjs && git add manifest.json versions.json",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json}\"",
-    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json}\""
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json}\"",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix"
   },
   "keywords": [],
   "author": "",
