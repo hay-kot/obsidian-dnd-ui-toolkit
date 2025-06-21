@@ -20,7 +20,7 @@ export class KeyValueStore {
       this.cache = data?.state || {};
     }
     // @ts-expect-error - we've provided that it is not null at this point so we can safely return it
-		return this.cache;
+    return this.cache;
   }
 
   /**
