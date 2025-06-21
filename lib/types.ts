@@ -58,6 +58,7 @@ export type HealthBlock = {
     value: number;
   };
   death_saves?: boolean;
+  reset_on?: string | string[]; // Event type(s) that trigger a reset, defaults to 'long-rest'
 };
 
 export type ConsumableBlock = {
@@ -107,7 +108,6 @@ export type Ability = {
 
 export type EventButtonItem = {
   name: string;
-  icon?: string;
   value: string; // The event type that gets dispatched
 };
 

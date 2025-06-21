@@ -18,6 +18,7 @@ export function parseHealthBlock(yamlString: string): HealthBlock & { state_key?
     health: 6,
     hitdice: undefined,
     death_saves: true,
+    reset_on: "long-rest", // Default to long rest for health recovery
   };
 
   const parsed = parse(yamlString);

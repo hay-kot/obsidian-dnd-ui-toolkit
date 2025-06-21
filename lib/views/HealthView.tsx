@@ -7,6 +7,7 @@ import * as ReactDOM from "react-dom/client";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { HealthState } from "lib/domains/healthpoints";
 import { HealthBlock } from "lib/types";
+import { eventBus, ResetEvent } from "lib/services/event-bus";
 
 export class HealthView extends BaseView {
   public codeblock = "healthpoints";
@@ -19,7 +20,7 @@ export class HealthView extends BaseView {
   }
 
   public render(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): void {
-    const healthMarkdown = new HealthMarkdown(el, source, this.kv);
+    const healthMarkdown = new HealthMarkdown(el, source, this.kv, ctx.sourcePath);
     ctx.addChild(healthMarkdown);
   }
 }
@@ -28,11 +29,14 @@ class HealthMarkdown extends MarkdownRenderChild {
   private reactRoot: ReactDOM.Root | null = null;
   private source: string;
   private kv: KeyValueStore;
+  private filePath: string;
+  private eventUnsubscriber: (() => void) | null = null;
 
-  constructor(el: HTMLElement, source: string, kv: KeyValueStore) {
+  constructor(el: HTMLElement, source: string, kv: KeyValueStore, filePath: string) {
     super(el);
     this.source = source;
     this.kv = kv;
+    this.filePath = filePath;
   }
 
   async onload() {
@@ -60,10 +64,17 @@ class HealthMarkdown extends MarkdownRenderChild {
         }
       }
 
+      // Set up event subscription for reset functionality
+      this.setupEventSubscription(healthBlock);
+
       // Render with the state we have
       this.renderComponent(healthBlock, healthState);
     } catch (error) {
       console.error("Error loading health state:", error);
+
+      // Set up event subscription even for error case
+      this.setupEventSubscription(healthBlock);
+
       // Fallback to default state if there's an error
       this.renderComponent(healthBlock, defaultState);
     }
@@ -105,6 +116,58 @@ class HealthMarkdown extends MarkdownRenderChild {
     }
   }
 
+  private setupEventSubscription(healthBlock: HealthBlock) {
+    // Use the reset_on property or default to 'long-rest'
+    const resetOn = healthBlock.reset_on || "long-rest";
+
+    this.eventUnsubscriber = eventBus.subscribe<ResetEvent>("reset", this.filePath, (resetEvent) => {
+      if (this.shouldResetOnEvent(resetOn, resetEvent.eventType)) {
+        console.debug(`Resetting health ${healthBlock.state_key} due to ${resetEvent.eventType} event`);
+        this.handleResetEvent(healthBlock);
+      }
+    });
+  }
+
+  private async handleResetEvent(healthBlock: HealthBlock) {
+    const stateKey = healthBlock.state_key;
+    if (!stateKey) return;
+
+    try {
+      // Reset to full health and clear hit dice usage and death saves
+      const resetState: HealthState = {
+        current: healthBlock.health, // Restore to maximum health
+        temporary: 0, // Clear temporary HP
+        hitdiceUsed: 0, // Reset hit dice
+        deathSaveSuccesses: 0, // Clear death saves
+        deathSaveFailures: 0, // Clear death saves
+      };
+
+      await this.kv.set(stateKey, resetState);
+
+      // Re-render with the reset state
+      this.renderComponent(healthBlock, resetState);
+    } catch (error) {
+      console.error(`Error resetting health state for ${stateKey}:`, error);
+    }
+  }
+
+  /**
+   * Check if health should reset based on the given event type
+   */
+  private shouldResetOnEvent(resetOn: string | string[] | undefined, eventType: string): boolean {
+    if (!resetOn) return false;
+
+    if (typeof resetOn === "string") {
+      return resetOn === eventType;
+    }
+
+    if (Array.isArray(resetOn)) {
+      return resetOn.includes(eventType);
+    }
+
+    return false;
+  }
+
   onunload() {
     // Clean up React root to prevent memory leaks
     if (this.reactRoot) {
@@ -114,7 +177,18 @@ class HealthMarkdown extends MarkdownRenderChild {
         console.error("Error unmounting React component:", e);
       }
       this.reactRoot = null;
-      console.debug("Unmounted React component in HealthMarkdown");
     }
+
+    // Clean up event subscription
+    if (this.eventUnsubscriber) {
+      try {
+        this.eventUnsubscriber();
+      } catch (e) {
+        console.error("Error unsubscribing from event:", e);
+      }
+      this.eventUnsubscriber = null;
+    }
+
+    console.debug("Unmounted React component and cleaned up event subscription in HealthMarkdown");
   }
 }

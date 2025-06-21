@@ -19,7 +19,6 @@ export function EventButtons(props: EventButtonsProps) {
           onClick={() => handleClick(button.value)}
           title={`Trigger ${button.name} event`}
         >
-          {button.icon && <span className="event-button-icon">{button.icon}</span>}
           <span className="event-button-text">{button.name}</span>
         </button>
       ))}
