@@ -14,11 +14,13 @@ export class KeyValueStore {
   /**
    * Initialize the cache from the data store
    */
-  private async ensureCache(): Promise<void> {
+  private async ensureCache(): Promise<Record<string, any>> {
     if (this.cache === null) {
       const data = await this.store.loadData();
       this.cache = data?.state || {};
     }
+    // @ts-expect-error - we've provided that it is not null at this point so we can safely return it
+    return this.cache;
   }
 
   /**
@@ -36,8 +38,8 @@ export class KeyValueStore {
    * @returns The value for the key, or undefined if not found
    */
   async get<T>(key: string): Promise<T | undefined> {
-    await this.ensureCache();
-    return this.cache![key] as T | undefined;
+    const cache = await this.ensureCache();
+    return cache[key] as T | undefined;
   }
 
   /**
@@ -46,8 +48,8 @@ export class KeyValueStore {
    * @param value The value to store
    */
   async set<T>(key: string, value: T): Promise<void> {
-    await this.ensureCache();
-    this.cache![key] = value;
+    const cache = await this.ensureCache();
+    cache[key] = value;
     await this.persistCache();
   }
 
@@ -57,8 +59,8 @@ export class KeyValueStore {
    * @returns True if the key exists, false otherwise
    */
   async has(key: string): Promise<boolean> {
-    await this.ensureCache();
-    return key in this.cache!;
+    const cache = await this.ensureCache();
+    return key in cache;
   }
 
   /**
@@ -67,9 +69,9 @@ export class KeyValueStore {
    * @returns True if the key was deleted, false if it didn't exist
    */
   async delete(key: string): Promise<boolean> {
-    await this.ensureCache();
-    if (key in this.cache!) {
-      delete this.cache![key];
+    const cache = await this.ensureCache();
+    if (key in cache) {
+      delete cache[key];
       await this.persistCache();
       return true;
     }
@@ -89,8 +91,8 @@ export class KeyValueStore {
    * @returns Array of keys
    */
   async keys(): Promise<string[]> {
-    await this.ensureCache();
-    return Object.keys(this.cache!);
+    const cache = await this.ensureCache();
+    return Object.keys(cache);
   }
 
   /**
@@ -98,8 +100,8 @@ export class KeyValueStore {
    * @returns Array of values
    */
   async values<T>(): Promise<T[]> {
-    await this.ensureCache();
-    return Object.values(this.cache!) as T[];
+    const cache = await this.ensureCache();
+    return Object.values(cache) as T[];
   }
 
   /**
@@ -107,7 +109,7 @@ export class KeyValueStore {
    * @returns Array of [key, value] pairs
    */
   async entries<T>(): Promise<[string, T][]> {
-    await this.ensureCache();
-    return Object.entries(this.cache!) as [string, T][];
+    const cache = await this.ensureCache();
+    return Object.entries(cache) as [string, T][];
   }
 }
