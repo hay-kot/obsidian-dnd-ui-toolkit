@@ -1,0 +1,262 @@
+import { describe, it, expect, vi } from "vitest";
+import {
+  parseAbilityBlock,
+  parseAbilityBlockFromDocument,
+  calculateModifier,
+  formatModifier,
+  getModifiersForAbility,
+  getTotalScore,
+} from "./abilities";
+import { GenericBonus } from "../types";
+
+describe("abilities", () => {
+  describe("parseAbilityBlock", () => {
+    it("should parse basic YAML ability block", () => {
+      const yaml = `
+abilities:
+  strength: 15
+  dexterity: 14
+  constitution: 13
+  intelligence: 12
+  wisdom: 10
+  charisma: 8
+`;
+      const result = parseAbilityBlock(yaml);
+
+      expect(result.abilities.strength).toBe(15);
+      expect(result.abilities.dexterity).toBe(14);
+      expect(result.abilities.constitution).toBe(13);
+      expect(result.abilities.intelligence).toBe(12);
+      expect(result.abilities.wisdom).toBe(10);
+      expect(result.abilities.charisma).toBe(8);
+    });
+
+    it("should parse ability block with bonuses", () => {
+      const yaml = `
+abilities:
+  strength: 15
+  dexterity: 14
+  constitution: 13
+  intelligence: 12
+  wisdom: 10
+  charisma: 8
+bonuses:
+  - name: "Racial Bonus"
+    target: "strength"
+    value: 2
+  - name: "Magic Item"
+    target: "dexterity"
+    value: 1
+`;
+      const result = parseAbilityBlock(yaml);
+
+      expect(result.bonuses).toHaveLength(2);
+      expect(result.bonuses[0]).toEqual({
+        name: "Racial Bonus",
+        target: "strength",
+        value: 2,
+      });
+      expect(result.bonuses[1]).toEqual({
+        name: "Magic Item",
+        target: "dexterity",
+        value: 1,
+      });
+    });
+
+    it("should parse ability block with proficiencies", () => {
+      const yaml = `
+abilities:
+  strength: 15
+  dexterity: 14
+  constitution: 13
+  intelligence: 12
+  wisdom: 10
+  charisma: 8
+proficiencies:
+  - "Strength"
+  - "Constitution"
+`;
+      const result = parseAbilityBlock(yaml);
+
+      expect(result.proficiencies).toEqual(["Strength", "Constitution"]);
+    });
+
+    it("should use defaults for missing properties", () => {
+      const yaml = `
+abilities:
+  strength: 15
+`;
+      const result = parseAbilityBlock(yaml);
+
+      expect(result.abilities.strength).toBe(15);
+      expect(result.abilities.dexterity).toBe(0);
+      expect(result.bonuses).toEqual([]);
+      expect(result.proficiencies).toEqual([]);
+    });
+  });
+
+  describe("parseAbilityBlockFromDocument", () => {
+    it("should extract and parse ability block from document", () => {
+      const mockElement = {} as HTMLElement;
+      const mockContext = {
+        getSectionInfo: vi.fn().mockReturnValue({
+          text: `
+Some text before
+
+\`\`\`ability
+abilities:
+  strength: 15
+  dexterity: 14
+\`\`\`
+
+Some text after
+`,
+        }),
+      } as any;
+
+      const result = parseAbilityBlockFromDocument(mockElement, mockContext);
+
+      expect(result.abilities.strength).toBe(15);
+      expect(result.abilities.dexterity).toBe(14);
+    });
+
+    it("should handle multiple ability blocks and use the first one", () => {
+      const mockElement = {} as HTMLElement;
+      const mockContext = {
+        getSectionInfo: vi.fn().mockReturnValue({
+          text: `
+\`\`\`ability
+abilities:
+  strength: 15
+\`\`\`
+
+\`\`\`ability
+abilities:
+  strength: 10
+\`\`\`
+`,
+        }),
+      } as any;
+
+      const result = parseAbilityBlockFromDocument(mockElement, mockContext);
+
+      expect(result.abilities.strength).toBe(15);
+    });
+
+    it("should throw error when no ability blocks found", () => {
+      const mockElement = {} as HTMLElement;
+      const mockContext = {
+        getSectionInfo: vi.fn().mockReturnValue({
+          text: "No ability blocks here",
+        }),
+      } as any;
+
+      expect(() => parseAbilityBlockFromDocument(mockElement, mockContext)).toThrow("No ability code blocks found");
+    });
+
+    it("should handle empty section info", () => {
+      const mockElement = {} as HTMLElement;
+      const mockContext = {
+        getSectionInfo: vi.fn().mockReturnValue(null),
+      } as any;
+
+      expect(() => parseAbilityBlockFromDocument(mockElement, mockContext)).toThrow("No ability code blocks found");
+    });
+  });
+
+  describe("calculateModifier", () => {
+    it("should calculate standard D&D 5e modifiers", () => {
+      expect(calculateModifier(1)).toBe(-5);
+      expect(calculateModifier(8)).toBe(-1);
+      expect(calculateModifier(9)).toBe(-1);
+      expect(calculateModifier(10)).toBe(0);
+      expect(calculateModifier(11)).toBe(0);
+      expect(calculateModifier(12)).toBe(1);
+      expect(calculateModifier(13)).toBe(1);
+      expect(calculateModifier(14)).toBe(2);
+      expect(calculateModifier(15)).toBe(2);
+      expect(calculateModifier(16)).toBe(3);
+      expect(calculateModifier(17)).toBe(3);
+      expect(calculateModifier(18)).toBe(4);
+      expect(calculateModifier(20)).toBe(5);
+      expect(calculateModifier(30)).toBe(10);
+    });
+  });
+
+  describe("formatModifier", () => {
+    it("should format positive modifiers with + sign", () => {
+      expect(formatModifier(0)).toBe("+0");
+      expect(formatModifier(1)).toBe("+1");
+      expect(formatModifier(5)).toBe("+5");
+    });
+
+    it("should format negative modifiers with - sign", () => {
+      expect(formatModifier(-1)).toBe("-1");
+      expect(formatModifier(-5)).toBe("-5");
+    });
+  });
+
+  describe("getModifiersForAbility", () => {
+    const testModifiers: GenericBonus[] = [
+      { name: "Strength Bonus", target: "strength", value: 2 },
+      { name: "Dex Bonus", target: "dexterity", value: 1 },
+      { name: "Another Strength", target: "strength", value: 1 },
+      { name: "Wisdom Bonus", target: "wisdom", value: 3 },
+    ];
+
+    it("should return modifiers for specific ability", () => {
+      const strengthMods = getModifiersForAbility(testModifiers, "strength");
+
+      expect(strengthMods).toHaveLength(2);
+      expect(strengthMods[0].name).toBe("Strength Bonus");
+      expect(strengthMods[1].name).toBe("Another Strength");
+    });
+
+    it("should return empty array for ability with no modifiers", () => {
+      const charismaMods = getModifiersForAbility(testModifiers, "charisma");
+
+      expect(charismaMods).toHaveLength(0);
+    });
+
+    it("should handle empty modifiers array", () => {
+      const result = getModifiersForAbility([], "strength");
+
+      expect(result).toHaveLength(0);
+    });
+  });
+
+  describe("getTotalScore", () => {
+    const testModifiers: GenericBonus[] = [
+      { name: "Strength Bonus", target: "strength", value: 2 },
+      { name: "Dex Bonus", target: "dexterity", value: 1 },
+      { name: "Another Strength", target: "strength", value: 1 },
+      { name: "Negative Modifier", target: "strength", value: -1 },
+    ];
+
+    it("should calculate total score with modifiers", () => {
+      const total = getTotalScore(15, "strength", testModifiers);
+
+      // Base 15 + 2 + 1 + (-1) = 17
+      expect(total).toBe(17);
+    });
+
+    it("should return base score when no modifiers apply", () => {
+      const total = getTotalScore(12, "charisma", testModifiers);
+
+      expect(total).toBe(12);
+    });
+
+    it("should handle empty modifiers array", () => {
+      const total = getTotalScore(14, "strength", []);
+
+      expect(total).toBe(14);
+    });
+
+    it("should handle negative base scores", () => {
+      const total = getTotalScore(-5, "strength", testModifiers);
+
+      // Base -5 + 2 + 1 + (-1) = -3
+      expect(total).toBe(-3);
+    });
+  });
+});
