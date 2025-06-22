@@ -1,123 +1,81 @@
-type EventListener<T = any> = (data: T) => void;
-
-interface EventSubscription {
-  eventType: string;
-  filePath: string;
-  listener: EventListener;
-}
+import { Frontmatter } from "lib/types";
 
 export interface ResetEvent {
-  eventType: string; // e.g., 'short-rest', 'long-rest', 'custom'
   filePath: string; // Source file path for scoping
-  timestamp: number; // When the event was triggered
+  eventType: string; // e.g., 'short-rest', 'long-rest', 'custom'
 }
 
-/**
- * Global event bus for file-scoped events within the D&D UI Toolkit.
- * Events are scoped to the file where they originate, allowing components
- * within the same file to respond to reset events and other triggers.
- */
-export class EventBus {
-  private static instance: EventBus;
-  private subscriptions: EventSubscription[] = [];
+type Topics = {
+  reset: ResetEvent;
+  "frontmatter:changes": Frontmatter;
+};
 
-  private constructor() {}
+type Callbacks<T extends keyof Topics> = (data: Topics[T]) => void;
 
-  static getInstance(): EventBus {
-    if (!EventBus.instance) {
-      EventBus.instance = new EventBus();
-    }
-    return EventBus.instance;
+class EventBus<T extends keyof Topics> {
+  private subscribers: { [scopedKey: string]: Callbacks<any>[] } = {};
+
+  keybuilder<K extends T>(filepath: string, topic: K): string {
+    // Remove leading slashes and normalize path separators
+    filepath = filepath.replace(/^\/+/, "").replace(/\\/g, "/");
+    return filepath + ":" + topic;
   }
 
-  /**
-   * Subscribe to events of a specific type within a specific file scope
-   */
-  subscribe<T = any>(eventType: string, filePath: string, listener: EventListener<T>): () => void {
-    const subscription: EventSubscription = {
-      eventType,
-      filePath: this.normalizeFilePath(filePath),
-      listener,
-    };
-
-    this.subscriptions.push(subscription);
+  subscribe<K extends T>(scope: string, topic: K, callback: Callbacks<K>): () => void {
+    const scopedKey = this.keybuilder(scope, topic);
+    if (!this.subscribers[scopedKey]) {
+      this.subscribers[scopedKey] = [];
+    }
+    this.subscribers[scopedKey].push(callback);
 
     // Return unsubscribe function
     return () => {
-      const index = this.subscriptions.indexOf(subscription);
-      if (index > -1) {
-        this.subscriptions.splice(index, 1);
-      }
+      this.unsubscribe(scope, topic, callback);
     };
   }
 
-  /**
-   * Dispatch an event to all subscribers within the same file scope
-   */
-  dispatch<T = any>(eventType: string, filePath: string, data?: T): void {
-    const normalizedPath = this.normalizeFilePath(filePath);
-
-    const matchingSubscriptions = this.subscriptions.filter(
-      (sub) => sub.eventType === eventType && sub.filePath === normalizedPath
-    );
-
-    console.debug(
-      `EventBus: Dispatching ${eventType} to ${matchingSubscriptions.length} subscribers in ${normalizedPath}`
-    );
-
-    matchingSubscriptions.forEach((sub) => {
-      try {
-        sub.listener(data);
-      } catch (error) {
-        console.error(`EventBus: Error in event listener for ${eventType}:`, error);
+  unsubscribe<K extends T>(scope: string, topic: K, callback: Callbacks<K>): void {
+    const scopedKey = this.keybuilder(scope, topic);
+    const callbacks = this.subscribers[scopedKey];
+    if (callbacks) {
+      this.subscribers[scopedKey] = callbacks.filter((cb) => cb !== callback);
+      // Clean up empty arrays to prevent memory leaks
+      if (this.subscribers[scopedKey].length === 0) {
+        delete this.subscribers[scopedKey];
       }
-    });
+    }
   }
 
-  /**
-   * Dispatch a reset event - a common pattern for resetting component states
-   */
-  dispatchReset(eventType: string, filePath: string): void {
-    const resetEvent: ResetEvent = {
-      eventType,
-      filePath: this.normalizeFilePath(filePath),
-      timestamp: Date.now(),
-    };
-
-    this.dispatch("reset", filePath, resetEvent);
+  publish<K extends T>(scope: string, topic: K, payload: Topics[K]): void {
+    const scopedKey = this.keybuilder(scope, topic);
+    console.debug(`Publishing event: ${scopedKey}`, payload);
+    const callbacks: Callbacks<K>[] | undefined = this.subscribers[scopedKey];
+    console.debug("Subscribers for scope", scopedKey, callbacks);
+    if (callbacks) {
+      for (const callback of callbacks) {
+        callback(payload);
+      }
+    }
   }
 
-  /**
-   * Remove all subscriptions for a specific file (useful for cleanup)
-   */
-  unsubscribeAll(filePath: string): void {
-    const normalizedPath = this.normalizeFilePath(filePath);
-    this.subscriptions = this.subscriptions.filter((sub) => sub.filePath !== normalizedPath);
+  // Helper method to get all subscribers for debugging
+  getSubscribers(): { [scopedKey: string]: number } {
+    const result: { [scopedKey: string]: number } = {};
+    for (const [key, callbacks] of Object.entries(this.subscribers)) {
+      result[key] = callbacks.length;
+    }
+    return result;
   }
 
-  /**
-   * Get the number of active subscriptions (for debugging)
-   */
-  getSubscriptionCount(): number {
-    return this.subscriptions.length;
-  }
-
-  /**
-   * Get subscriptions for a specific file (for debugging)
-   */
-  getFileSubscriptions(filePath: string): EventSubscription[] {
-    const normalizedPath = this.normalizeFilePath(filePath);
-    return this.subscriptions.filter((sub) => sub.filePath === normalizedPath);
-  }
-
-  /**
-   * Normalize file paths to ensure consistent matching
-   */
-  private normalizeFilePath(filePath: string): string {
-    // Remove leading slashes and normalize path separators
-    return filePath.replace(/^\/+/, "").replace(/\\/g, "/");
+  // Helper method to clear all subscribers for a specific scope
+  clearScope(scope: string): void {
+    const normalizedScope = scope.replace(/^\/+/, "").replace(/\\/g, "/");
+    const keysToDelete = Object.keys(this.subscribers).filter((key) => key.startsWith(normalizedScope + ":"));
+    for (const key of keysToDelete) {
+      delete this.subscribers[key];
+    }
   }
 }
 
-// Export singleton instance
-export const eventBus = EventBus.getInstance();
+// Define topics and their corresponding payload types
+export const msgbus = new EventBus<keyof Topics>();
