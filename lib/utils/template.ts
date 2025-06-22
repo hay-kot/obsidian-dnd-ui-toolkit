@@ -3,6 +3,7 @@ import { AbilityScores, Frontmatter, SkillsBlock } from "../types";
 import { parseAbilityBlockFromDocument, calculateModifier } from "../domains/abilities";
 import { parseSkillsBlock } from "../domains/skills";
 import { MarkdownPostProcessorContext } from "obsidian";
+import * as Fm from "../domains/frontmatter";
 
 export interface TemplateContext {
   frontmatter: Frontmatter;
@@ -50,16 +51,9 @@ export function processTemplate(text: string, context: TemplateContext): string 
   }
 }
 
-export interface BaseView {
-  frontmatter: (ctx: MarkdownPostProcessorContext) => Frontmatter;
-}
-
-export function createTemplateContext(
-  el: HTMLElement,
-  ctx: MarkdownPostProcessorContext,
-  baseView: BaseView
-): TemplateContext {
-  const frontmatter = baseView.frontmatter(ctx);
+export function createTemplateContext(el: HTMLElement, ctx: MarkdownPostProcessorContext): TemplateContext {
+// TODO: passing in context doens't work for anyIntoFrontMatter
+  const frontmatter = Fm.anyIntoFrontMatter(ctx);
 
   let abilities: AbilityScores = {
     strength: 0,

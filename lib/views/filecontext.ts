@@ -18,7 +18,7 @@ export function useFileContext(app: App, ctx: MarkdownPostProcessorContext) {
   }
 
   return {
-		filepath: ctx.sourcePath,
+    filepath: ctx.sourcePath,
     frontmatter,
     onFrontmatterChange,
   };
