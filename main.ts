@@ -11,9 +11,11 @@ import { SpellComponentsView } from "lib/views/SpellComponentsView";
 import { EventButtonsView } from "lib/views/EventButtonsView";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { JsonDataStore } from "./lib/services/kv/local-file-store";
+import { THEMES } from "./lib/themes";
 
 interface DndUIToolkitSettings {
   statePath: string;
+  selectedTheme: string;
 
   // Color variables
   colorBgPrimary: string;
@@ -42,56 +44,9 @@ interface DndUIToolkitSettings {
 
 const DEFAULT_SETTINGS: DndUIToolkitSettings = {
   statePath: ".dnd-ui-toolkit-state.json",
+  selectedTheme: "default",
 
-  // Default colors
-  colorBgPrimary: "#262a36",
-  colorBgSecondary: "#323748",
-  colorBgTertiary: "#3a4055",
-  colorBgHover: "#363b4a",
-  colorBgDarker: "#303440",
-  colorBgGroup: "#2d334a",
-  colorBgProficient: "#2d3343",
-
-  colorTextPrimary: "#e0e0e0",
-  colorTextSecondary: "#a0a0d0",
-  colorTextSublabel: "#a0c7d0",
-  colorTextBright: "#ffffff",
-  colorTextMuted: "#b8b8d0",
-  colorTextGroup: "#b8c4ff",
-
-  colorBorderPrimary: "#383e54",
-  colorBorderActive: "#6d7cba",
-  colorBorderFocus: "rgba(109, 124, 186, 0.5)",
-
-  colorAccentTeal: "#64d8cb",
-  colorAccentRed: "#e57373",
-  colorAccentPurple: "#b39ddb",
-
-  // WOTC/Beyond color palette
-  /*
-			  colorBgPrimary: "hsl(33, 85%, 95%)",
-			  colorBgSecondary: "hsl(33, 84%, 90%)",
-			  colorBgTertiary: "hsl(33, 84%, 85%)",
-			  colorBgHover: "hsl(33, 84%, 85%)",
-			  colorBgDarker: "hsl(33, 84%, 80%)",
-			  colorBgGroup: "hsl(33, 84%, 90%)",
-			  colorBgProficient: "hsl(36, 100%, 99%)",
-		  
-			  colorTextPrimary: "#000000",
-			  colorTextSecondary: "#646464",
-			  colorTextSublabel: "#4f4f4f",
-			  colorTextBright: "#000000",
-			  colorTextMuted: "#646464",
-			  colorTextGroup: "#ba4040",
-		  
-			  colorBorderPrimary: "hsl(30, 100%, 80%)",
-			  colorBorderActive: "#ba4040",
-			  colorBorderFocus: "rgba(109, 124, 186, 0.5)",
-		  
-			  colorAccentTeal: "#00c25e",
-			  colorAccentRed: "#ba4040",
-			  colorAccentPurple: "#703bbf",
-			  */
+  ...THEMES.default.colors,
 };
 
 export default class DndUIToolkitPlugin extends Plugin {
@@ -223,6 +178,26 @@ class DndSettingsTab extends PluginSettingTab {
 
     containerEl.createEl("h3", { text: "Styles" });
 
+    // Theme selector
+    new Setting(containerEl)
+      .setName("Theme Preset")
+      .setDesc("Choose a predefined color theme. Selecting a theme will update all color values.")
+      .addDropdown((dropdown) => {
+        Object.entries(THEMES).forEach(([key, theme]) => {
+          dropdown.addOption(key, theme.name);
+        });
+        dropdown.setValue(this.plugin.settings.selectedTheme).onChange(async (value) => {
+          this.plugin.settings.selectedTheme = value;
+          const theme = THEMES[value];
+          if (theme) {
+            Object.assign(this.plugin.settings, theme.colors);
+            await this.plugin.saveSettings();
+            this.plugin.applyColorSettings();
+            this.display(); // Refresh the settings display
+          }
+        });
+      });
+
     // Add color inputs for each color variable
     this.addColorSetting(containerEl, "Background Primary", "colorBgPrimary");
     this.addColorSetting(containerEl, "Background Secondary", "colorBgSecondary");
@@ -249,33 +224,12 @@ class DndSettingsTab extends PluginSettingTab {
 
     new Setting(containerEl).setName("Reset Styles").addButton((b) => {
       b.setButtonText("Reset").onClick(async () => {
-        const colors: (keyof DndUIToolkitSettings)[] = [
-          "colorBgPrimary",
-          "colorBgSecondary",
-          "colorBgTertiary",
-          "colorBgHover",
-          "colorBgDarker",
-          "colorBgGroup",
-          "colorBgProficient",
-          "colorTextPrimary",
-          "colorTextSecondary",
-          "colorTextSublabel",
-          "colorTextBright",
-          "colorTextMuted",
-          "colorTextGroup",
-          "colorBorderPrimary",
-          "colorBorderActive",
-          "colorBorderFocus",
-          "colorAccentTeal",
-          "colorAccentRed",
-          "colorAccentPurple",
-        ];
-
-        for (const colorKey of colors) {
-          this.plugin.settings[colorKey] = DEFAULT_SETTINGS[colorKey];
-        }
+        this.plugin.settings.selectedTheme = "default";
+        const defaultTheme = THEMES.default;
+        Object.assign(this.plugin.settings, defaultTheme.colors);
         await this.plugin.saveSettings();
         this.plugin.applyColorSettings();
+        this.display();
       });
     });
   }
