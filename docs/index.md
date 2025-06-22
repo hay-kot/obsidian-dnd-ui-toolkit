@@ -3,8 +3,8 @@
 layout: home
 
 hero:
-  name: "Obsidian DnD UI Toolkit"
-  text: "Modern UI elements for playing Dungeons and Dragons"
+  name: "DnD UI Toolkit"
+  text: "An Obsidian Plugin for D&D"
   tagline: Build beautiful markdown-driven character sheets in Obsidian
   actions:
     - theme: brand
