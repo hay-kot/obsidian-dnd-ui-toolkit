@@ -29,6 +29,21 @@ hitdice:
 ```
 ````
 
+::: tip
+This `health` key supports dynamic content. This allows you to read your HP from frontmatter.
+
+````yaml
+```healthpoints
+state_key: din_health
+health: '{{ frontmatter.hp }}
+hitdice:
+  dice: d6
+  value: 4
+```
+````
+
+:::
+
 ## Configuration
 
 | Property      | Type         | Default      | Description                         |
