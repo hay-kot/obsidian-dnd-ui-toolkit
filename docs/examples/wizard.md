@@ -1,3 +1,10 @@
+This examples is for a divination wizard build.
+
+This example doens't take advantage of many of the new features of the plugin. We're hoping to update and provide better examples in the future.
+
+## Example
+
+````
 ---
 Proficiency Bonus: 2
 ---
@@ -124,3 +131,4 @@ Usually, this information comes from a library, scriptorium, university, or a sa
 
 Your DM might rule that the knowledge you seek is secreted away in an almost inaccessible place, or that it simply cannot be found. Unearthing the deepest secrets of the multiverse can require an adventure or even a whole campaign.
 
+````
