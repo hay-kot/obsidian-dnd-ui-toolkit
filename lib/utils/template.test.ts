@@ -16,7 +16,7 @@ describe("template", () => {
 
   describe("processTemplate", () => {
     const mockContext: TemplateContext = {
-      frontmatter: { proficiencyBonus: 2 },
+      frontmatter: { proficiency_bonus: 2 },
       abilities: {
         strength: 15,
         dexterity: 14,

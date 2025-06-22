@@ -22,7 +22,7 @@ export class AbilityScoreView extends BaseView {
 
       let savingThrowValue = AbilityService.calculateModifier(value);
       if (isProficient) {
-        savingThrowValue += frontmatter.proficiencyBonus;
+        savingThrowValue += frontmatter.proficiency_bonus;
       }
 
       for (const bonus of abilityBlock.bonuses) {

@@ -2,8 +2,8 @@ import { Frontmatter } from "lib/types";
 import { MarkdownPostProcessorContext } from "obsidian";
 import { App } from "obsidian";
 
-const FrontMatterKeys: Record<string, string[]> = {
-  proficiencyBonus: ["proficiencyBonus", "Proficiency Bonus", "proficiency_bonus"],
+const FrontMatterKeys: Record<keyof Frontmatter, string[]> = {
+  proficiency_bonus: ["proficiencyBonus", "Proficiency Bonus", "proficiency_bonus"],
   level: ["level", "Level"],
 };
 
@@ -45,7 +45,7 @@ export abstract class BaseView {
 
   public frontmatter(ctx: MarkdownPostProcessorContext): Frontmatter {
     const frontmatter: Frontmatter = {
-      proficiencyBonus: 2,
+      proficiency_bonus: 2,
     };
     const fm = this.app.metadataCache.getCache(ctx.sourcePath)?.frontmatter;
     if (!fm) {
@@ -78,6 +78,11 @@ export abstract class BaseView {
       }
     }
 
+    // Auto-calculate proficiency bonus from level if proficiency bonus is not explicitly set
+    if (!this.hasProficiencyBonusInFrontmatter(fm) && frontmatter.level !== undefined) {
+      frontmatter.proficiency_bonus = this.calculateProficiencyBonus(frontmatter.level as number);
+    }
+
     // Add all other frontmatter properties as-is
     for (const key in fm) {
       if (!(key in frontmatter)) {
@@ -86,5 +91,23 @@ export abstract class BaseView {
     }
 
     return frontmatter;
+  }
+
+  private hasProficiencyBonusInFrontmatter(fm: any): boolean {
+    const proficiencyBonusKeys = FrontMatterKeys.proficiency_bonus;
+    for (const key of proficiencyBonusKeys) {
+      if (fm[key] !== undefined || fm[key.toLowerCase()] !== undefined) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private calculateProficiencyBonus(level: number): number {
+    if (level >= 17) return 6;
+    if (level >= 13) return 5;
+    if (level >= 9) return 4;
+    if (level >= 5) return 3;
+    return 2;
   }
 }

@@ -40,11 +40,11 @@ export class SkillsView extends BaseView {
 
       let skillCheckValue = AbilityService.calculateModifier(skillAbility);
       if (isExpert) {
-        skillCheckValue += frontmatter.proficiencyBonus * 2;
+        skillCheckValue += frontmatter.proficiency_bonus * 2;
       } else if (isProficient) {
-        skillCheckValue += frontmatter.proficiencyBonus;
+        skillCheckValue += frontmatter.proficiency_bonus;
       } else if (isHalfProficient) {
-        skillCheckValue += Math.floor(frontmatter.proficiencyBonus / 2);
+        skillCheckValue += Math.floor(frontmatter.proficiency_bonus / 2);
       }
 
       for (const bonus of skillsBlock.bonuses) {
