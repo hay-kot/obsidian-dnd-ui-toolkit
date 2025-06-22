@@ -53,3 +53,27 @@
     color: var(--color-text-sublabel);
     margin-top: 0.3rem;
 }
+
+/* Dense card styles */
+.card-grid.dense {
+    gap: calc(var(--std-grid-gap) * 0.6);
+}
+
+.generic-card.dense {
+    padding: 0.5rem;
+    min-height: 60px;
+}
+
+.generic-card.dense .generic-card-label {
+    font-size: 0.7rem;
+    margin-bottom: 0.3rem;
+}
+
+.generic-card.dense .generic-card-value {
+    font-size: 1rem;
+}
+
+.generic-card.dense .generic-card-sublabel {
+    font-size: 0.65rem;
+    margin-top: 0.2rem;
+}

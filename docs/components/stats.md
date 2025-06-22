@@ -23,7 +23,6 @@ Using dynamic content helps keep your character sheet updated as you level up.
 
 See the [Dynamic Content](../concepts/dynamic-content.md) page for more information on using templates.
 
-
 ## Example
 
 ````yaml
@@ -44,10 +43,11 @@ grid:
 
 ## Configuration
 
-| Property | Type   | Description                   |
-| -------- | ------ | ----------------------------- |
-| `items`  | Array  | List of stat items to display |
-| `grid`   | Object | Grid configuration options    |
+| Property | Type    | Description                   |
+| -------- | ------- | ----------------------------- |
+| `items`  | Array   | List of stat items to display |
+| `grid`   | Object  | Grid configuration options    |
+| `dense`  | Boolean | Renders a denser card         |
 
 ### Item Object
 

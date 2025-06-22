@@ -39,6 +39,7 @@ export type StatsBlock = {
   grid?: {
     columns?: number;
   };
+  dense?: boolean;
 };
 
 export type SkillsBlock = {
