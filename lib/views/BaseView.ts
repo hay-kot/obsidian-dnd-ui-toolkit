@@ -8,7 +8,7 @@ const FrontMatterKeys: Record<keyof Frontmatter, string[]> = {
 };
 
 export abstract class BaseView {
-  private app: App;
+  public app: App;
   public abstract codeblock: string;
 
   constructor(app: App) {

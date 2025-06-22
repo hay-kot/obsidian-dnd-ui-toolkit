@@ -26,8 +26,9 @@ export function parseHealthBlock(yamlString: string): HealthBlock & { state_key?
 }
 
 export function getDefaultHealthState(block: HealthBlock): HealthState {
+  const healthValue = typeof block.health === "string" ? 6 : block.health; // Default fallback if health is still a string
   return {
-    current: block.health,
+    current: healthValue,
     temporary: 0,
     hitdiceUsed: 0,
     deathSaveSuccesses: 0,

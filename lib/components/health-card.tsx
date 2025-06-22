@@ -12,15 +12,18 @@ export type HealthCardProps = {
 export function HealthCard(props: HealthCardProps) {
   const [inputValue, setInputValue] = useState("1");
 
+  // Ensure health is a number for calculations
+  const maxHealth = typeof props.static.health === "number" ? props.static.health : 6;
+
   // Calculate health percentage for progress bar
-  const healthPercentage = Math.max(0, Math.min(100, (props.state.current / props.static.health) * 100));
+  const healthPercentage = Math.max(0, Math.min(100, (props.state.current / maxHealth) * 100));
 
   // Event handlers for health actions
   const handleHeal = () => {
     const value = parseInt(inputValue) || 0;
     if (value <= 0) return;
 
-    const newCurrent = Math.min(props.state.current + value, props.static.health);
+    const newCurrent = Math.min(props.state.current + value, maxHealth);
     const newState = {
       ...props.state,
       current: newCurrent,
@@ -175,7 +178,7 @@ export function HealthCard(props: HealthCardProps) {
         <div className="generic-card-label">{props.static.label || "Hit Points"}</div>
         <div className="health-value">
           {props.state.current}
-          <span className="health-max">/ {props.static.health}</span>
+          <span className="health-max">/ {maxHealth}</span>
           {props.state.temporary > 0 && <span className="health-temp">+{props.state.temporary} temp</span>}
         </div>
       </div>

@@ -8,6 +8,7 @@ import { KeyValueStore } from "lib/services/kv/kv";
 import { HealthState } from "lib/domains/healthpoints";
 import { HealthBlock } from "lib/types";
 import { eventBus, ResetEvent } from "lib/services/event-bus";
+import { hasTemplateVariables, processTemplate, createTemplateContext } from "lib/utils/template";
 
 export class HealthView extends BaseView {
   public codeblock = "healthpoints";
@@ -20,7 +21,7 @@ export class HealthView extends BaseView {
   }
 
   public render(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): void {
-    const healthMarkdown = new HealthMarkdown(el, source, this.kv, ctx.sourcePath);
+    const healthMarkdown = new HealthMarkdown(el, source, this.kv, ctx.sourcePath, ctx, this);
     ctx.addChild(healthMarkdown);
   }
 }
@@ -31,16 +32,43 @@ class HealthMarkdown extends MarkdownRenderChild {
   private kv: KeyValueStore;
   private filePath: string;
   private eventUnsubscriber: (() => void) | null = null;
+  private ctx: MarkdownPostProcessorContext;
+  private baseView: BaseView;
+  private metadataChangeRef: any = null;
+  private currentHealthBlock: HealthBlock | null = null;
+  private originalHealthValue: number | string;
 
-  constructor(el: HTMLElement, source: string, kv: KeyValueStore, filePath: string) {
+  constructor(
+    el: HTMLElement,
+    source: string,
+    kv: KeyValueStore,
+    filePath: string,
+    ctx: MarkdownPostProcessorContext,
+    baseView: BaseView
+  ) {
     super(el);
     this.source = source;
     this.kv = kv;
     this.filePath = filePath;
+    this.ctx = ctx;
+    this.baseView = baseView;
+    this.originalHealthValue = HealthService.parseHealthBlock(this.source).health;
   }
 
   async onload() {
-    const healthBlock = HealthService.parseHealthBlock(this.source);
+    // Set up metadata change listener for frontmatter updates
+    this.setupMetadataChangeListener();
+
+    // Process and render initial state
+    await this.processAndRender();
+  }
+
+  private async processAndRender() {
+    let healthBlock = HealthService.parseHealthBlock(this.source);
+
+    // Process template for health value if it contains template variables
+    healthBlock = this.processTemplateInHealthBlock(healthBlock);
+    this.currentHealthBlock = healthBlock;
 
     const stateKey = healthBlock.state_key;
     if (!stateKey) {
@@ -77,6 +105,74 @@ class HealthMarkdown extends MarkdownRenderChild {
 
       // Fallback to default state if there's an error
       this.renderComponent(healthBlock, defaultState);
+    }
+  }
+
+  private processTemplateInHealthBlock(healthBlock: HealthBlock): HealthBlock {
+    if (typeof healthBlock.health === "string" && hasTemplateVariables(healthBlock.health)) {
+      const templateContext = createTemplateContext(this.containerEl, this.ctx, this.baseView);
+      const processedHealth = processTemplate(healthBlock.health, templateContext);
+      const healthValue = parseInt(processedHealth, 10);
+
+      if (!isNaN(healthValue)) {
+        return { ...healthBlock, health: healthValue };
+      } else {
+        console.warn(
+          `Template processed health value "${processedHealth}" is not a valid number, using original value`
+        );
+      }
+    }
+    return healthBlock;
+  }
+
+  private setupMetadataChangeListener() {
+    // Listen for metadata changes (including frontmatter)
+    this.metadataChangeRef = this.baseView.app.metadataCache.on("changed", (file) => {
+      // Check if the change is for our file
+      if (file.path === this.filePath) {
+        // Only re-process if we have template variables in the original health value
+        if (typeof this.originalHealthValue === "string" && hasTemplateVariables(this.originalHealthValue)) {
+          console.debug(`Frontmatter changed for ${this.filePath}, re-processing health template`);
+          this.handleFrontmatterChange();
+        }
+      }
+    });
+  }
+
+  private async handleFrontmatterChange() {
+    if (!this.currentHealthBlock) return;
+
+    try {
+      // Re-process the template with updated frontmatter
+      const updatedHealthBlock = this.processTemplateInHealthBlock({
+        ...this.currentHealthBlock,
+        health: this.originalHealthValue,
+      });
+
+      // Check if the processed health value actually changed
+      const oldHealth = typeof this.currentHealthBlock.health === "number" ? this.currentHealthBlock.health : 6;
+      const newHealth = typeof updatedHealthBlock.health === "number" ? updatedHealthBlock.health : 6;
+
+      if (oldHealth !== newHealth) {
+        console.debug(`Health value changed from ${oldHealth} to ${newHealth}, updating max health`);
+
+        this.currentHealthBlock = updatedHealthBlock;
+
+        // Get current state and re-render with new max health
+        const stateKey = updatedHealthBlock.state_key;
+        if (stateKey) {
+          try {
+            const currentState = await this.kv.get<HealthState>(stateKey);
+            if (currentState) {
+              this.renderComponent(updatedHealthBlock, currentState);
+            }
+          } catch (error) {
+            console.error("Error loading state during frontmatter update:", error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error handling frontmatter change:", error);
     }
   }
 
@@ -133,9 +229,12 @@ class HealthMarkdown extends MarkdownRenderChild {
     if (!stateKey) return;
 
     try {
+      // Ensure health is a number for reset
+      const maxHealth = typeof healthBlock.health === "number" ? healthBlock.health : 6;
+
       // Reset to full health and clear hit dice usage and death saves
       const resetState: HealthState = {
-        current: healthBlock.health, // Restore to maximum health
+        current: maxHealth, // Restore to maximum health
         temporary: 0, // Clear temporary HP
         hitdiceUsed: 0, // Reset hit dice
         deathSaveSuccesses: 0, // Clear death saves
@@ -189,6 +288,16 @@ class HealthMarkdown extends MarkdownRenderChild {
       this.eventUnsubscriber = null;
     }
 
-    console.debug("Unmounted React component and cleaned up event subscription in HealthMarkdown");
+    // Clean up metadata change listener
+    if (this.metadataChangeRef) {
+      try {
+        this.baseView.app.metadataCache.off("changed", this.metadataChangeRef);
+      } catch (e) {
+        console.error("Error removing metadata change listener:", e);
+      }
+      this.metadataChangeRef = null;
+    }
+
+    console.debug("Unmounted React component and cleaned up all subscriptions in HealthMarkdown");
   }
 }
