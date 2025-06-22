@@ -1,5 +1,5 @@
 import { BaseView } from "./BaseView";
-import { App, MarkdownPostProcessorContext, MarkdownRenderChild } from "obsidian";
+import { App, MarkdownPostProcessorContext } from "obsidian";
 import * as HealthService from "lib/domains/healthpoints";
 import { HealthCard } from "lib/components/health-card";
 import * as React from "react";
@@ -9,6 +9,9 @@ import { HealthState } from "lib/domains/healthpoints";
 import { HealthBlock } from "lib/types";
 import { msgbus } from "lib/services/event-bus";
 import { hasTemplateVariables, processTemplate, createTemplateContext } from "lib/utils/template";
+import { useFileContext, FileContext } from "./filecontext";
+import { shouldResetOnEvent } from "lib/domains/events";
+import { ReactMarkdown } from "./ReactMarkdown";
 
 export class HealthView extends BaseView {
   public codeblock = "healthpoints";
@@ -26,15 +29,11 @@ export class HealthView extends BaseView {
   }
 }
 
-class HealthMarkdown extends MarkdownRenderChild {
-  private reactRoot: ReactDOM.Root | null = null;
+class HealthMarkdown extends ReactMarkdown {
   private source: string;
   private kv: KeyValueStore;
   private filePath: string;
-  private eventUnsubscriber: (() => void) | null = null;
-  private ctx: MarkdownPostProcessorContext;
-  private baseView: BaseView;
-  private metadataChangeRef: any = null;
+  private fileContext: FileContext;
   private currentHealthBlock: HealthBlock | null = null;
   private originalHealthValue: number | string;
 
@@ -50,14 +49,13 @@ class HealthMarkdown extends MarkdownRenderChild {
     this.source = source;
     this.kv = kv;
     this.filePath = filePath;
-    this.ctx = ctx;
-    this.baseView = baseView;
+    this.fileContext = useFileContext(baseView.app, ctx);
     this.originalHealthValue = HealthService.parseHealthBlock(this.source).health;
   }
 
   async onload() {
-    // Set up metadata change listener for frontmatter updates
-    this.setupMetadataChangeListener();
+    // Set up frontmatter change listener using filecontext
+    this.setupFrontmatterChangeListener();
 
     // Process and render initial state
     await this.processAndRender();
@@ -110,7 +108,7 @@ class HealthMarkdown extends MarkdownRenderChild {
 
   private processTemplateInHealthBlock(healthBlock: HealthBlock): HealthBlock {
     if (typeof healthBlock.health === "string" && hasTemplateVariables(healthBlock.health)) {
-      const templateContext = createTemplateContext(this.containerEl, this.ctx, this.baseView);
+      const templateContext = createTemplateContext(this.containerEl, this.fileContext);
       const processedHealth = processTemplate(healthBlock.health, templateContext);
       const healthValue = parseInt(processedHealth, 10);
 
@@ -125,18 +123,30 @@ class HealthMarkdown extends MarkdownRenderChild {
     return healthBlock;
   }
 
-  private setupMetadataChangeListener() {
-    // Listen for metadata changes (including frontmatter)
-    this.metadataChangeRef = this.baseView.app.metadataCache.on("changed", (file) => {
-      // Check if the change is for our file
-      if (file.path === this.filePath) {
+  private setupFrontmatterChangeListener() {
+    this.addUnloadFn(
+      this.fileContext.onFrontmatterChange(() => {
         // Only re-process if we have template variables in the original health value
         if (typeof this.originalHealthValue === "string" && hasTemplateVariables(this.originalHealthValue)) {
           console.debug(`Frontmatter changed for ${this.filePath}, re-processing health template`);
           this.handleFrontmatterChange();
         }
-      }
-    });
+      })
+    );
+  }
+
+  private setupEventSubscription(healthBlock: HealthBlock) {
+    // Use the reset_on property or default to 'long-rest'
+    const resetOn = healthBlock.reset_on || "long-rest";
+
+    this.addUnloadFn(
+      msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
+        if (shouldResetOnEvent(resetOn, resetEvent.eventType)) {
+          console.debug(`Resetting health ${healthBlock.state_key} due to ${resetEvent.eventType} event`);
+          this.handleResetEvent(healthBlock);
+        }
+      })
+    );
   }
 
   private async handleFrontmatterChange() {
@@ -212,18 +222,6 @@ class HealthMarkdown extends MarkdownRenderChild {
     }
   }
 
-  private setupEventSubscription(healthBlock: HealthBlock) {
-    // Use the reset_on property or default to 'long-rest'
-    const resetOn = healthBlock.reset_on || "long-rest";
-
-    this.eventUnsubscriber = msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
-      if (this.shouldResetOnEvent(resetOn, resetEvent.eventType)) {
-        console.debug(`Resetting health ${healthBlock.state_key} due to ${resetEvent.eventType} event`);
-        this.handleResetEvent(healthBlock);
-      }
-    });
-  }
-
   private async handleResetEvent(healthBlock: HealthBlock) {
     const stateKey = healthBlock.state_key;
     if (!stateKey) return;
@@ -248,56 +246,5 @@ class HealthMarkdown extends MarkdownRenderChild {
     } catch (error) {
       console.error(`Error resetting health state for ${stateKey}:`, error);
     }
-  }
-
-  /**
-   * Check if health should reset based on the given event type
-   */
-  private shouldResetOnEvent(resetOn: string | string[] | undefined, eventType: string): boolean {
-    if (!resetOn) return false;
-
-    if (typeof resetOn === "string") {
-      return resetOn === eventType;
-    }
-
-    if (Array.isArray(resetOn)) {
-      return resetOn.includes(eventType);
-    }
-
-    return false;
-  }
-
-  onunload() {
-    // Clean up React root to prevent memory leaks
-    if (this.reactRoot) {
-      try {
-        this.reactRoot.unmount();
-      } catch (e) {
-        console.error("Error unmounting React component:", e);
-      }
-      this.reactRoot = null;
-    }
-
-    // Clean up event subscription
-    if (this.eventUnsubscriber) {
-      try {
-        this.eventUnsubscriber();
-      } catch (e) {
-        console.error("Error unsubscribing from event:", e);
-      }
-      this.eventUnsubscriber = null;
-    }
-
-    // Clean up metadata change listener
-    if (this.metadataChangeRef) {
-      try {
-        this.baseView.app.metadataCache.off("changed", this.metadataChangeRef);
-      } catch (e) {
-        console.error("Error removing metadata change listener:", e);
-      }
-      this.metadataChangeRef = null;
-    }
-
-    console.debug("Unmounted React component and cleaned up all subscriptions in HealthMarkdown");
   }
 }

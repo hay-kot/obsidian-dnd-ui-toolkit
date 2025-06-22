@@ -5,6 +5,7 @@ import { MarkdownPostProcessorContext } from "obsidian";
 import * as AbilityService from "lib/domains/abilities";
 import * as SkillsService from "lib/domains/skills";
 import { AbilityBlock } from "lib/types";
+import { useFileContext } from "./filecontext";
 
 export class SkillsView extends BaseView {
   public codeblock = "skills";
@@ -15,7 +16,8 @@ export class SkillsView extends BaseView {
 
     const data: SkillItem[] = [];
 
-    const frontmatter = this.frontmatter(ctx);
+    const fc = useFileContext(this.app, ctx);
+    const frontmatter = fc.frontmatter();
 
     for (const skill of SkillsService.Skills) {
       const isHalfProficient =

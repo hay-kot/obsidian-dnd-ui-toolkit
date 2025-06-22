@@ -17,10 +17,15 @@ export function useFileContext(app: App, ctx: MarkdownPostProcessorContext) {
     return msgbus.subscribe(ctx.sourcePath, "fm:changed", cb);
   }
 
+  function md() {
+    return ctx;
+  }
+
   return {
     filepath: ctx.sourcePath,
     frontmatter,
     onFrontmatterChange,
+    md: md,
   };
 }
 

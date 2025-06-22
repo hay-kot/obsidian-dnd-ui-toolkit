@@ -5,6 +5,7 @@ import { MarkdownPostProcessorContext } from "obsidian";
 import { StatItem, StatsBlock } from "lib/types";
 import { parse } from "yaml";
 import { hasTemplateVariables, processTemplate, createTemplateContext, TemplateContext } from "../utils/template";
+import { useFileContext } from "./filecontext";
 
 export class StatsView extends BaseView {
   public codeblock = "stats";
@@ -24,7 +25,8 @@ export class StatsView extends BaseView {
 
     let templateContext: TemplateContext | null = null;
     if (hasTemplates) {
-      templateContext = createTemplateContext(el, ctx, this);
+      const filectx = useFileContext(this.app, ctx);
+      templateContext = createTemplateContext(el, filectx);
     }
 
     const statsBlock: StatsBlock = {

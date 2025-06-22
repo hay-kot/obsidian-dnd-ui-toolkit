@@ -7,6 +7,7 @@ import * as ReactDOM from "react-dom/client";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { ConsumableState } from "lib/domains/consumables";
 import { msgbus } from "lib/services/event-bus";
+import { shouldResetOnEvent } from "lib/domains/events";
 
 export class ConsumableView extends BaseView {
   public codeblock = "consumable";
@@ -90,7 +91,7 @@ class ConsumableMarkdown extends MarkdownRenderChild {
           // Set up event subscription for reset functionality
           if (consumableBlock.reset_on) {
             const unsubscribe = msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
-              if (this.shouldResetOnEvent(consumableBlock.reset_on, resetEvent.eventType)) {
+              if (shouldResetOnEvent(consumableBlock.reset_on, resetEvent.eventType)) {
                 console.debug(`Resetting consumable ${stateKey} due to ${resetEvent.eventType} event`);
                 this.handleResetEvent(consumableBlock);
               }
@@ -106,7 +107,7 @@ class ConsumableMarkdown extends MarkdownRenderChild {
           // Set up event subscription even for error case
           if (consumableBlock.reset_on) {
             const unsubscribe = msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
-              if (this.shouldResetOnEvent(consumableBlock.reset_on, resetEvent.eventType)) {
+              if (shouldResetOnEvent(consumableBlock.reset_on, resetEvent.eventType)) {
                 console.debug(`Resetting consumable ${stateKey} due to ${resetEvent.eventType} event`);
                 this.handleResetEvent(consumableBlock);
               }
@@ -209,22 +210,5 @@ class ConsumableMarkdown extends MarkdownRenderChild {
     this.eventUnsubscribers.length = 0;
 
     console.debug("Unmounted all React components and cleaned up event subscriptions in ConsumableMarkdown");
-  }
-
-  /**
-   * Check if a consumable should reset based on the given event type
-   */
-  private shouldResetOnEvent(resetOn: string | string[] | undefined, eventType: string): boolean {
-    if (!resetOn) return false;
-
-    if (typeof resetOn === "string") {
-      return resetOn === eventType;
-    }
-
-    if (Array.isArray(resetOn)) {
-      return resetOn.includes(eventType);
-    }
-
-    return false;
   }
 }

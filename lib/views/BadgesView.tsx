@@ -5,6 +5,7 @@ import { MarkdownPostProcessorContext } from "obsidian";
 import { BadgeItem, BadgesBlock } from "lib/types";
 import { parse } from "yaml";
 import { hasTemplateVariables, processTemplate, createTemplateContext, TemplateContext } from "../utils/template";
+import { useFileContext } from "./filecontext";
 
 export class BadgesView extends BaseView {
   public codeblock = "badges";
@@ -21,7 +22,8 @@ export class BadgesView extends BaseView {
 
     let templateContext: TemplateContext | null = null;
     if (hasTemplates) {
-      templateContext = createTemplateContext(el, ctx, this);
+      const filectx = useFileContext(this.app, ctx);
+      templateContext = createTemplateContext(el, filectx);
     }
 
     const badgesBlock: BadgesBlock = {
