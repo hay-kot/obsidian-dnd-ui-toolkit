@@ -107,25 +107,28 @@ class StatsLikeComponent extends ReactMarkdown {
   }
 
   private setupListeners() {
-    this.addUnloadFn(this.ctx.onFrontmatterChange((_) => {
-      if (!this.isTemplate) {
-        // No template means we have nothing to do.
-        return;
-      }
+    this.addUnloadFn(
+      this.ctx.onFrontmatterChange((_) => {
+        if (!this.isTemplate) {
+          // No template means we have nothing to do.
+          return;
+        }
 
-      // recall processAndRender()
-      this.processAndRender();
-    }));
+        // recall processAndRender()
+        this.processAndRender();
+      })
+    );
 
-    this.addUnloadFn(this.ctx.onAbilitiesChange(() => {
-      if (!this.isTemplate) {
-        // No template means we have nothing to do.
-        return;
-      }
+    this.addUnloadFn(
+      this.ctx.onAbilitiesChange(() => {
+        if (!this.isTemplate) {
+          // No template means we have nothing to do.
+          return;
+        }
 
-      // recall processAndRender()
-      this.processAndRender();
-    }));
-
+        // recall processAndRender()
+        this.processAndRender();
+      })
+    );
   }
 }
