@@ -35,7 +35,7 @@ describe("template", () => {
 
     it("should process templates with context variables and math helpers", () => {
       expect(processTemplate("Strength: {{abilities.strength}}", mockContext)).toBe("Strength: 15");
-      expect(processTemplate("Proficiency: +{{frontmatter.proficiencyBonus}}", mockContext)).toBe("Proficiency: +2");
+      expect(processTemplate("Proficiency: +{{frontmatter.proficiency_bonus}}", mockContext)).toBe("Proficiency: +2");
       expect(processTemplate("{{add 5 3}}", mockContext)).toBe("8");
       expect(processTemplate("{{subtract 10 4}}", mockContext)).toBe("6");
       expect(processTemplate("{{multiply 3 4}}", mockContext)).toBe("12");
@@ -47,7 +47,7 @@ describe("template", () => {
 
     it("should handle multiple arguments in add helper and modifier calculations", () => {
       expect(processTemplate("{{add 1 2 3 4}}", mockContext)).toBe("10");
-      expect(processTemplate("{{add abilities.strength frontmatter.proficiencyBonus}}", mockContext)).toBe("17");
+      expect(processTemplate("{{add abilities.strength frontmatter.proficiency_bonus}}", mockContext)).toBe("17");
       expect(processTemplate("STR modifier: {{modifier abilities.strength}}", mockContext)).toBe("STR modifier: 2");
       expect(processTemplate("CHA modifier: {{modifier abilities.charisma}}", mockContext)).toBe("CHA modifier: -1");
     });
