@@ -7,7 +7,7 @@ import * as ReactDOM from "react-dom/client";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { HealthState } from "lib/domains/healthpoints";
 import { HealthBlock } from "lib/types";
-import { eventBus, ResetEvent } from "lib/services/event-bus";
+import { msgbus } from "lib/services/event-bus";
 import { hasTemplateVariables, processTemplate, createTemplateContext } from "lib/utils/template";
 
 export class HealthView extends BaseView {
@@ -216,7 +216,7 @@ class HealthMarkdown extends MarkdownRenderChild {
     // Use the reset_on property or default to 'long-rest'
     const resetOn = healthBlock.reset_on || "long-rest";
 
-    this.eventUnsubscriber = eventBus.subscribe<ResetEvent>("reset", this.filePath, (resetEvent) => {
+    this.eventUnsubscriber = msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
       if (this.shouldResetOnEvent(resetOn, resetEvent.eventType)) {
         console.debug(`Resetting health ${healthBlock.state_key} due to ${resetEvent.eventType} event`);
         this.handleResetEvent(healthBlock);

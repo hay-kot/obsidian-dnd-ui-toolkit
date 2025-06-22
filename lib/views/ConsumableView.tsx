@@ -6,7 +6,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { ConsumableState } from "lib/domains/consumables";
-import { eventBus, ResetEvent } from "lib/services/event-bus";
+import { msgbus } from "lib/services/event-bus";
 
 export class ConsumableView extends BaseView {
   public codeblock = "consumable";
@@ -89,7 +89,7 @@ class ConsumableMarkdown extends MarkdownRenderChild {
 
           // Set up event subscription for reset functionality
           if (consumableBlock.reset_on) {
-            const unsubscribe = eventBus.subscribe<ResetEvent>("reset", this.filePath, (resetEvent) => {
+            const unsubscribe = msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
               if (this.shouldResetOnEvent(consumableBlock.reset_on, resetEvent.eventType)) {
                 console.debug(`Resetting consumable ${stateKey} due to ${resetEvent.eventType} event`);
                 this.handleResetEvent(consumableBlock);
@@ -105,7 +105,7 @@ class ConsumableMarkdown extends MarkdownRenderChild {
 
           // Set up event subscription even for error case
           if (consumableBlock.reset_on) {
-            const unsubscribe = eventBus.subscribe<ResetEvent>("reset", this.filePath, (resetEvent) => {
+            const unsubscribe = msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
               if (this.shouldResetOnEvent(consumableBlock.reset_on, resetEvent.eventType)) {
                 console.debug(`Resetting consumable ${stateKey} due to ${resetEvent.eventType} event`);
                 this.handleResetEvent(consumableBlock);

@@ -5,7 +5,7 @@ import { EventButtons } from "lib/components/event-buttons";
 import { EventButtonsBlock } from "lib/types";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
-import { eventBus } from "lib/services/event-bus";
+import { msgbus } from "lib/services/event-bus";
 
 export class EventButtonsView extends BaseView {
   public codeblock = "event-btns";
@@ -49,7 +49,10 @@ class EventButtonsMarkdown extends MarkdownRenderChild {
   private renderComponent(config: EventButtonsBlock) {
     const handleButtonClick = (eventType: string) => {
       console.debug(`EventButtons: Dispatching reset event '${eventType}' for file '${this.filePath}'`);
-      eventBus.dispatchReset(eventType, this.filePath);
+      msgbus.publish(this.filePath, "reset", {
+        eventType: eventType,
+        filePath: this.filePath,
+      });
     };
 
     const data = {
