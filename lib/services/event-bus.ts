@@ -8,6 +8,7 @@ export interface ResetEvent {
 type Topics = {
   reset: ResetEvent;
   "fm:changed": Frontmatter;
+  "abilities:changed": void; // Triggered when abilities are recalculated
 };
 
 type Callbacks<T extends keyof Topics> = (data: Topics[T]) => void;

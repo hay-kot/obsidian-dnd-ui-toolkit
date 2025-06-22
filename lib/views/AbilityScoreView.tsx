@@ -5,6 +5,7 @@ import { MarkdownPostProcessorContext } from "obsidian";
 import * as AbilityService from "lib/domains/abilities";
 import { Ability } from "lib/types";
 import { useFileContext } from "./filecontext";
+import { msgbus } from "lib/services/event-bus";
 
 export class AbilityScoreView extends BaseView {
   public codeblock = "ability";
@@ -44,6 +45,7 @@ export class AbilityScoreView extends BaseView {
       });
     }
 
+    msgbus.publish(ctx.sourcePath, "abilities:changed", undefined);
     return Tmpl.Render(AbilityView(data));
   }
 }
