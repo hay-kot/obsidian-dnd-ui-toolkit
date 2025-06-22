@@ -11,43 +11,10 @@ import { SpellComponentsView } from "lib/views/SpellComponentsView";
 import { EventButtonsView } from "lib/views/EventButtonsView";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { JsonDataStore } from "./lib/services/kv/local-file-store";
-import { THEMES } from "./lib/themes";
-
-interface DndUIToolkitSettings {
-  statePath: string;
-  selectedTheme: string;
-
-  // Color variables
-  colorBgPrimary: string;
-  colorBgSecondary: string;
-  colorBgTertiary: string;
-  colorBgHover: string;
-  colorBgDarker: string;
-  colorBgGroup: string;
-  colorBgProficient: string;
-
-  colorTextPrimary: string;
-  colorTextSecondary: string;
-  colorTextSublabel: string;
-  colorTextBright: string;
-  colorTextMuted: string;
-  colorTextGroup: string;
-
-  colorBorderPrimary: string;
-  colorBorderActive: string;
-  colorBorderFocus: string;
-
-  colorAccentTeal: string;
-  colorAccentRed: string;
-  colorAccentPurple: string;
-}
-
-const DEFAULT_SETTINGS: DndUIToolkitSettings = {
-  statePath: ".dnd-ui-toolkit-state.json",
-  selectedTheme: "default",
-
-  ...THEMES.default.colors,
-};
+import { DEFAULT_SETTINGS, DndUIToolkitSettings } from "settings";
+import { THEMES } from "lib/themes";
+import { msgbus } from "lib/services/event-bus";
+import * as Fm from "lib/domains/frontmatter";
 
 export default class DndUIToolkitPlugin extends Plugin {
   settings: DndUIToolkitSettings;
@@ -94,6 +61,16 @@ export default class DndUIToolkitPlugin extends Plugin {
 
     // Initialize the JsonDataStore with the configured path
     this.initDataStore();
+
+    // Setup Listener for frontmatter changes
+    this.registerEvent(
+      this.app.metadataCache.on("changed", (file) => {
+        const filefm = this.app.metadataCache.getCache(file.path)?.frontmatter;
+        const fm = Fm.anyIntoFrontMatter(filefm || {});
+
+        msgbus.publish(file.path, "fm:changed", fm);
+      })
+    );
 
     const kv = new KeyValueStore(this.dataStore);
     const { app } = this;

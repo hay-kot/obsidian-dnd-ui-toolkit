@@ -7,7 +7,7 @@ export interface ResetEvent {
 
 type Topics = {
   reset: ResetEvent;
-  "frontmatter:changes": Frontmatter;
+  "fm:changed": Frontmatter;
 };
 
 type Callbacks<T extends keyof Topics> = (data: Topics[T]) => void;
