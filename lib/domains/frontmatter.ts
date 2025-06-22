@@ -17,10 +17,10 @@ const FrontMatterKeys: Record<keyof Frontmatter, string[]> = {
  * aliased values
  * */
 export function isProficiencyBonusInFrontmatter(fm: any): boolean {
-  if (!fm || typeof fm !== 'object') {
+  if (!fm || typeof fm !== "object") {
     return false;
   }
-  
+
   const proficiencyBonusKeys = FrontMatterKeys.proficiency_bonus;
   for (const key of proficiencyBonusKeys) {
     if (fm[key] !== undefined && fm[key] !== null) {
