@@ -6,6 +6,7 @@ export default withMermaid(
 	defineConfig({
 		title: "Obsidian DnD UI Toolkit",
 		description: "Modern UI elements for playing Dungeons and Dragons in Obsidian",
+		base: "/obsidian-dnd-ui-toolkit/",
 		themeConfig: {
 			// https://vitepress.dev/reference/default-theme-config
 			search: {
