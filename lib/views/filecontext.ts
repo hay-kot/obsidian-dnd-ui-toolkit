@@ -17,6 +17,10 @@ export function useFileContext(app: App, ctx: MarkdownPostProcessorContext) {
     return msgbus.subscribe(ctx.sourcePath, "fm:changed", cb);
   }
 
+  function onAbilitiesChange(cb: () => void) {
+    return msgbus.subscribe(ctx.sourcePath, "abilities:changed", cb);
+  }
+
   function md() {
     return ctx;
   }
@@ -25,6 +29,7 @@ export function useFileContext(app: App, ctx: MarkdownPostProcessorContext) {
     filepath: ctx.sourcePath,
     frontmatter,
     onFrontmatterChange,
+    onAbilitiesChange,
     md: md,
   };
 }

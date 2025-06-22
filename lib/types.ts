@@ -73,11 +73,15 @@ export type BadgeItem = {
   reverse?: boolean;
   label: string;
   value: string;
+  sublabel: string;
 };
 
 export type BadgesBlock = {
   items: BadgeItem[];
   dense?: boolean;
+  grid: {
+    columns?: number;
+  };
 };
 
 export type InitiativeBlock = {

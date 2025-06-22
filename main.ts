@@ -1,11 +1,10 @@
 import { App, Plugin, PluginSettingTab, Setting } from "obsidian";
-import { StatsView } from "lib/views/StatsView";
 import { AbilityScoreView } from "lib/views/AbilityScoreView";
 import { BaseView } from "lib/views/BaseView";
 import { SkillsView } from "lib/views/SkillsView";
 import { HealthView } from "lib/views/HealthView";
 import { ConsumableView } from "lib/views/ConsumableView";
-import { BadgesView } from "lib/views/BadgesView";
+import { BadgesView, StatsView } from "lib/views/BadgesView";
 import { InitiativeView } from "lib/views/InitiativeView";
 import { SpellComponentsView } from "lib/views/SpellComponentsView";
 import { EventButtonsView } from "lib/views/EventButtonsView";
