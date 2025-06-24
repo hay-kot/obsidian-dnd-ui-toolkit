@@ -14,15 +14,15 @@ export default withMermaid(
 			},
 			nav: [
 				{ text: "Home", link: "/" },
-				{ text: "Docs", link: "/quick-start" },
+				{ text: "Docs", link: "/getting-started/quick-start" },
 			],
 
 			sidebar: [
 				{
 					text: "Getting Started",
 					items: [
-						{ text: "Quick Start", link: "/quick-start" },
-						{ text: "Installation", link: "/installation" },
+						{ text: "Quick Start", link: "/getting-started/quick-start" },
+						{ text: "Installation", link: "/getting-started/installation" },
 					],
 				},
 				{
@@ -38,15 +38,15 @@ export default withMermaid(
 					text: "Character Sheet",
 					items: [
 						{ text: "Frontmatter", link: "/character-sheet/frontmatter" },
-						{ text: "Ability Scores", link: "/components/ability-scores" },
-						{ text: "Skills", link: "/components/skills" },
-						{ text: "Health Points", link: "/components/healthpoints" },
-						{ text: "Event Buttons", link: "/components/event-buttons" },
+						{ text: "Ability Scores", link: "/character-sheet/ability-scores" },
+						{ text: "Skills", link: "/character-sheet/skills" },
+						{ text: "Health Points", link: "/character-sheet/healthpoints" },
+						{ text: "Event Buttons", link: "/character-sheet/event-buttons" },
 					],
 				},
 				{
 					text: "Dungeon Master",
-					items: [{ text: "Initiative Tracker", link: "/components/initiative-tracker" }],
+					items: [{ text: "Initiative Tracker", link: "/dungeon-master/initiative-tracker" }],
 				},
 				{
 					text: "Concepts",
