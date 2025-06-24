@@ -1,6 +1,6 @@
 # Ability Scores
 
-The `ability` block is used to generate a 6 column grid of your ability scores and their savings throws. Fill in the code block with your abilities, proficiencies, and any bonuses that are applied to saving throws.
+The `ability` block is used to generate a 6 column grid of your ability scores and their saving throws. Fill in the code block with your abilities, proficiencies, and any bonuses that are applied to saving throws.
 
 ::: info
 Bonuses apply to the saving throws modifier so if the value of the bonus is +2 strength it would add +2 to your saving throw value. If you just want to add a bonus to your strength score, you can increment the number and leave yourself a comment in the code block.

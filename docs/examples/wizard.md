@@ -1,6 +1,6 @@
 This examples is for a divination wizard build.
 
-This example doens't take advantage of many of the new features of the plugin. We're hoping to update and provide better examples in the future.
+This example doesn't take advantage of many of the new features of the plugin. We're hoping to update and provide better examples in the future.
 
 ## Example
 

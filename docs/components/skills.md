@@ -23,9 +23,6 @@ bonuses:
     target: arcana
     value: 2
 
-proficiencies:
-  - deception
-
 expertise:
   - investigation
 

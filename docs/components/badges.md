@@ -20,7 +20,6 @@ See the [Dynamic Content](../concepts/dynamic-content.md) page for more informat
 
 ## Static Example
 
-`````yaml
 ````yaml
 ```badges
 items:
@@ -35,7 +34,7 @@ items:
   - label: Spell Attack
     value: '{{ add 10 frontmatter.proficiency_bonus (modifier abilities.intelligence) }}'
 ```
-`````
+````
 
 ## Configuration
 

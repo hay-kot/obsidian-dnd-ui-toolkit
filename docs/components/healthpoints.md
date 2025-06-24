@@ -9,7 +9,7 @@ Each `state_key` defined in **any** component needs to be unique as they are all
 ## Features
 
 - Customize 'Hit Points' label
-- Death save yracking
+- Death save tracking
 - Supports temporary HP
 - Supports **Reset Events** - See [Event System](../concepts/event-systems.md) for more details. By default it is configured for `long-rest`.
 
@@ -35,7 +35,7 @@ This `health` key supports dynamic content. This allows you to read your HP from
 ````yaml
 ```healthpoints
 state_key: din_health
-health: '{{ frontmatter.hp }}
+health: '{{ frontmatter.hp }}'
 hitdice:
   dice: d6
   value: 4
