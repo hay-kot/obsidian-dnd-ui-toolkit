@@ -1,14 +1,12 @@
 # Badges
 
-The badges component can be used to display any generic Key/Value data in a more condensed view.
-
-Badges support a `reverse` property, when true it reverses the order of the label and value. You can also omit the value or label property and it will only render what is provided. This gives you a lot of flexibility in how they are rendered.
+The badges component can be used to display any generic Key/Value data in a more condensed view. Optionally, you can also omit they Key/Value and display only one.
 
 ![Rendered Example](../images/example-badges.webp)
 
 ## Dynamic Content
 
-Badges support dynamic content using template variables with `{{ }}` style templates. This allows creating badges with data from the frontmatter or even calculations based off abilities or skills. This is great for things like
+Badges support dynamic content using template variables with <span v-pre>`{{ }}`</span> style templates. This allows creating badges with data from the frontmatter or even calculations based off abilities or skills. This is great for things like
 
 - Armor Class
 - Attack Bonus

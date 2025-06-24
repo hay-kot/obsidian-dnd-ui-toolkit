@@ -13,7 +13,7 @@ _Note that the example is two stat grids stacked on top of each other_
 
 ## Dynamic Content
 
-Stats support dynamic content using template variables with `{{ }}` style templates. This allows creating badges with data from the frontmatter or even calculations based off abilities or skills. This is great for things like
+Stats support dynamic content using template variables with <span v-pre>`{{ }}`</span> style templates. This allows creating badges with data from the frontmatter or even calculations based off abilities or skills. This is great for things like
 
 - Armor Class
 - Attack Bonus
