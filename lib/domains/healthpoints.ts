@@ -24,7 +24,7 @@ export function parseHealthBlock(yamlString: string): ParsedHealthBlock {
 
   const parsed = parse(yamlString);
   const merged = Utils.mergeWithDefaults(parsed, def);
-  
+
   // Normalize reset_on to always be an array of ResetConfig objects
   const normalized: ParsedHealthBlock = {
     ...merged,

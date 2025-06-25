@@ -75,11 +75,11 @@ export type ConsumableBlock = {
   reset_on?: string | string[] | { event: string; amount: number }[]; // Event type(s) that trigger a reset (e.g., 'long-rest', ['short-rest', 'long-rest'], [{event: 'short-rest', amount: 1}])
 };
 
-export type ParsedConsumableBlock = Omit<ConsumableBlock, 'reset_on'> & {
+export type ParsedConsumableBlock = Omit<ConsumableBlock, "reset_on"> & {
   reset_on?: ResetConfig[]; // Normalized to always be an array of objects
 };
 
-export type ParsedHealthBlock = Omit<HealthBlock, 'reset_on'> & {
+export type ParsedHealthBlock = Omit<HealthBlock, "reset_on"> & {
   reset_on?: ResetConfig[]; // Normalized to always be an array of objects
 };
 

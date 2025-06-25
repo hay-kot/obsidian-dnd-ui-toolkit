@@ -48,14 +48,16 @@ class EventButtonsMarkdown extends MarkdownRenderChild {
 
   private renderComponent(config: EventButtonsBlock) {
     const handleButtonClick = (value: string | { event: string; amount: number }) => {
-      if (typeof value === 'string') {
+      if (typeof value === "string") {
         console.debug(`EventButtons: Dispatching reset event '${value}' for file '${this.filePath}'`);
         msgbus.publish(this.filePath, "reset", {
           eventType: value,
           filePath: this.filePath,
         });
       } else {
-        console.debug(`EventButtons: Dispatching reset event '${value.event}' with amount ${value.amount} for file '${this.filePath}'`);
+        console.debug(
+          `EventButtons: Dispatching reset event '${value.event}' with amount ${value.amount} for file '${this.filePath}'`
+        );
         msgbus.publish(this.filePath, "reset", {
           eventType: value.event,
           filePath: this.filePath,

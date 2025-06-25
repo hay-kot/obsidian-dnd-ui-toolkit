@@ -127,11 +127,7 @@ class ConsumableMarkdown extends MarkdownRenderChild {
     );
   }
 
-  private renderComponent(
-    container: HTMLElement,
-    consumableBlock: ParsedConsumableBlock,
-    state: ConsumableState
-  ) {
+  private renderComponent(container: HTMLElement, consumableBlock: ParsedConsumableBlock, state: ConsumableState) {
     const stateKey = consumableBlock.state_key || "";
 
     const data = {
@@ -159,10 +155,7 @@ class ConsumableMarkdown extends MarkdownRenderChild {
     root.render(React.createElement(ConsumableCheckboxes, data));
   }
 
-  private async handleStateChange(
-    consumableBlock: ParsedConsumableBlock,
-    newState: ConsumableState
-  ) {
+  private async handleStateChange(consumableBlock: ParsedConsumableBlock, newState: ConsumableState) {
     const stateKey = consumableBlock.state_key;
     if (!stateKey) return;
 
@@ -186,7 +179,7 @@ class ConsumableMarkdown extends MarkdownRenderChild {
       // If amount is specified, restore that amount of uses (subtract from current usage)
       // If amount is undefined, reset to full (0 used consumables)
       const resetState: ConsumableState = {
-        value: amount !== undefined ? Math.max(0, currentValue - amount) : 0
+        value: amount !== undefined ? Math.max(0, currentValue - amount) : 0,
       };
 
       await this.kv.set(stateKey, resetState);
