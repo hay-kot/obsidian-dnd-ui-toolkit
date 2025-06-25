@@ -2,12 +2,12 @@ import { EventButtonsBlock } from "lib/types";
 
 export type EventButtonsProps = {
   config: EventButtonsBlock;
-  onButtonClick: (eventType: string) => void;
+  onButtonClick: (value: string | { event: string; amount: number }) => void;
 };
 
 export function EventButtons(props: EventButtonsProps) {
-  const handleClick = (eventType: string) => {
-    props.onButtonClick(eventType);
+  const handleClick = (value: string | { event: string; amount: number }) => {
+    props.onButtonClick(value);
   };
 
   return (

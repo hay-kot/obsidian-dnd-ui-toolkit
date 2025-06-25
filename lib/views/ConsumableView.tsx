@@ -7,7 +7,7 @@ import * as ReactDOM from "react-dom/client";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { ConsumableState } from "lib/domains/consumables";
 import { msgbus } from "lib/services/event-bus";
-import { shouldResetOnEvent } from "lib/domains/events";
+import { shouldResetOnEvent, getResetAmount } from "lib/domains/events";
 
 export class ConsumableView extends BaseView {
   public codeblock = "consumable";
@@ -93,7 +93,9 @@ class ConsumableMarkdown extends MarkdownRenderChild {
             const unsubscribe = msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
               if (shouldResetOnEvent(consumableBlock.reset_on, resetEvent.eventType)) {
                 console.debug(`Resetting consumable ${stateKey} due to ${resetEvent.eventType} event`);
-                this.handleResetEvent(consumableBlock);
+                // Get the amount from the configuration or use the amount from the event
+                const resetAmount = getResetAmount(consumableBlock.reset_on, resetEvent.eventType) || resetEvent.amount;
+                this.handleResetEvent(consumableBlock, resetAmount);
               }
             });
             this.eventUnsubscribers.push(unsubscribe);
@@ -109,7 +111,9 @@ class ConsumableMarkdown extends MarkdownRenderChild {
             const unsubscribe = msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
               if (shouldResetOnEvent(consumableBlock.reset_on, resetEvent.eventType)) {
                 console.debug(`Resetting consumable ${stateKey} due to ${resetEvent.eventType} event`);
-                this.handleResetEvent(consumableBlock);
+                // Get the amount from the configuration or use the amount from the event
+                const resetAmount = getResetAmount(consumableBlock.reset_on, resetEvent.eventType) || resetEvent.amount;
+                this.handleResetEvent(consumableBlock, resetAmount);
               }
             });
             this.eventUnsubscribers.push(unsubscribe);
@@ -169,13 +173,21 @@ class ConsumableMarkdown extends MarkdownRenderChild {
     }
   }
 
-  private async handleResetEvent(consumableBlock: ConsumableService.ConsumablesBlock["items"][0]) {
+  private async handleResetEvent(consumableBlock: ConsumableService.ConsumablesBlock["items"][0], amount?: number) {
     const stateKey = consumableBlock.state_key;
     if (!stateKey) return;
 
     try {
-      // Reset to default state (all consumables unused)
-      const resetState: ConsumableState = { value: 0 };
+      // Get current state to determine the reset value
+      const currentState = await this.kv.get<ConsumableState>(stateKey);
+      const currentValue = currentState?.value || 0;
+
+      // If amount is specified, restore that amount of uses (subtract from current usage)
+      // If amount is undefined, reset to full (0 used consumables)
+      const resetState: ConsumableState = {
+        value: amount !== undefined ? Math.max(0, currentValue - amount) : 0
+      };
+
       await this.kv.set(stateKey, resetState);
 
       // Find the container for this consumable and re-render it

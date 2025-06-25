@@ -3,6 +3,7 @@ import { Frontmatter } from "lib/types";
 export interface ResetEvent {
   filePath: string; // Source file path for scoping
   eventType: string; // e.g., 'short-rest', 'long-rest', 'custom'
+  amount?: number; // Optional amount to reset, if undefined resets to 0 (full reset)
 }
 
 type Topics = {
