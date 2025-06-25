@@ -48,3 +48,7 @@ Event buttons only affect components within the same markdown file, so you can h
 | -------- | ------ | ------------------------------------------ |
 | `name`   | String | **Required** - Display text for the button |
 | `value`  | String | **Required** - Event name to trigger       |
+
+::: tip Reset Amounts
+Event buttons dispatch the event name, and individual components determine how much to reset based on their own `reset_on` configuration. See [Consumables](../components/consumables.md#reset-configuration) for details on configuring partial resets.
+:::

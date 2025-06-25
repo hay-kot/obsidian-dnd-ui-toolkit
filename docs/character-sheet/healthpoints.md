@@ -53,7 +53,27 @@ hitdice:
 | `label`       | String       | "Hit Points" | Custom label for the component      |
 | `hitdice`     | Object       | null         | Hit dice configuration              |
 | `death_saves` | Boolean      | true         | Whether to show death saves         |
-| `reset_on`    | String/Array | "long-rest"  | Events that reset health            |
+| `reset_on`    | String/Array/Object | "long-rest"  | Events that reset health     |
+
+### Reset Configuration
+
+The `reset_on` property supports the same formats as [consumables](../components/consumables.md#reset-configuration):
+
+**Simple String**: Complete reset on the specified event
+```yaml
+reset_on: long-rest
+```
+
+**Array of Strings**: Complete reset on any of the specified events
+```yaml
+reset_on: ["short-rest", "long-rest"]
+```
+
+**Array of Objects**: Fine-grained control (currently health always resets completely)
+```yaml
+reset_on:
+  - event: long-rest  # Complete reset
+```
 
 ### Hit Dice Object
 

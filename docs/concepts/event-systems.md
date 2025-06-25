@@ -60,8 +60,37 @@ items:
 
 Any component with a `reset_on` field supports listening for events.
 
-- [Consumables](../components/consumables.md)
-- [Health Points](../character-sheet/healthpoints.md)
+- [Consumables](../components/consumables.md) - Supports partial and complete resets
+- [Health Points](../character-sheet/healthpoints.md) - Complete resets only
+
+### Reset Types
+
+Components can reset in different ways when they receive an event:
+
+**Complete Reset**: The component returns to its default state (e.g., all consumables unused, health fully restored)
+
+**Partial Reset**: The component restores a specific amount (e.g., restore 1 spell slot on short rest, full reset on long rest)
+
+#### Example: Partial Reset Configuration
+
+```yaml
+```consumable
+items:
+  - label: "Warlock Spell Slots"
+    state_key: warlock_slots
+    uses: 2
+    reset_on:
+      - event: short-rest  # Complete reset on short rest
+      - event: long-rest   # Complete reset on long rest
+  - label: "Bardic Inspiration"
+    state_key: bardic_inspiration
+    uses: 4
+    reset_on:
+      - event: short-rest
+        amount: 1  # Restore only 1 use on short rest
+      - event: long-rest  # Complete reset on long rest
+```
+```
 
 ## File Scope Behavior
 
