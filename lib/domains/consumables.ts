@@ -1,16 +1,17 @@
 import * as Utils from "lib/utils/utils";
-import { ConsumableBlock } from "lib/types";
+import { ConsumableBlock, ParsedConsumableBlock } from "lib/types";
 import { parse } from "yaml";
+import { normalizeResetConfig } from "lib/domains/events";
 
 export interface ConsumableState {
 	value: number;
 }
 
 export interface ConsumablesBlock {
-	items: (ConsumableBlock & { state_key?: string })[];
+	items: ParsedConsumableBlock[];
 }
 
-export function parseConsumableBlock(yamlString: string): ConsumableBlock & { state_key?: string } {
+export function parseConsumableBlock(yamlString: string): ParsedConsumableBlock {
 	const def: ConsumableBlock = {
 		label: "Consumable",
 		// @ts-expect-error - no viable default for state_key
@@ -20,7 +21,15 @@ export function parseConsumableBlock(yamlString: string): ConsumableBlock & { st
 	};
 
 	const parsed = parse(yamlString);
-	return Utils.mergeWithDefaults(parsed, def);
+	const merged = Utils.mergeWithDefaults(parsed, def);
+	
+	// Normalize reset_on to always be an array of ResetConfig objects
+	const normalized: ParsedConsumableBlock = {
+		...merged,
+		reset_on: normalizeResetConfig(merged.reset_on),
+	};
+
+	return normalized;
 }
 
 export function parseConsumablesBlock(yamlString: string): ConsumablesBlock {
@@ -35,9 +44,15 @@ export function parseConsumablesBlock(yamlString: string): ConsumablesBlock {
 			uses: 3,
 		};
 
-		// Apply defaults to each item
+		// Apply defaults to each item and normalize reset_on
 		return {
-			items: parsed.items.map((item: any) => Utils.mergeWithDefaults(item, defItem)),
+			items: parsed.items.map((item: any) => {
+				const merged = Utils.mergeWithDefaults(item, defItem);
+				return {
+					...merged,
+					reset_on: normalizeResetConfig(merged.reset_on),
+				} as ParsedConsumableBlock;
+			}),
 		};
 	}
 
@@ -48,7 +63,7 @@ export function parseConsumablesBlock(yamlString: string): ConsumablesBlock {
 	};
 }
 
-export function getDefaultConsumableState(block: ConsumableBlock): ConsumableState {
+export function getDefaultConsumableState(block: ParsedConsumableBlock): ConsumableState {
 	return {
 		value: 0,
 	};

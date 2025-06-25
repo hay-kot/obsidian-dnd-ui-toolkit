@@ -6,7 +6,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { HealthState } from "lib/domains/healthpoints";
-import { HealthBlock } from "lib/types";
+import { ParsedHealthBlock } from "lib/types";
 import { msgbus } from "lib/services/event-bus";
 import { hasTemplateVariables, processTemplate, createTemplateContext } from "lib/utils/template";
 import { useFileContext, FileContext } from "./filecontext";
@@ -34,7 +34,7 @@ class HealthMarkdown extends ReactMarkdown {
   private kv: KeyValueStore;
   private filePath: string;
   private fileContext: FileContext;
-  private currentHealthBlock: HealthBlock | null = null;
+  private currentHealthBlock: ParsedHealthBlock | null = null;
   private originalHealthValue: number | string;
 
   constructor(
@@ -106,7 +106,7 @@ class HealthMarkdown extends ReactMarkdown {
     }
   }
 
-  private processTemplateInHealthBlock(healthBlock: HealthBlock): HealthBlock {
+  private processTemplateInHealthBlock(healthBlock: ParsedHealthBlock): ParsedHealthBlock {
     if (typeof healthBlock.health === "string" && hasTemplateVariables(healthBlock.health)) {
       const templateContext = createTemplateContext(this.containerEl, this.fileContext);
       const processedHealth = processTemplate(healthBlock.health, templateContext);
@@ -135,9 +135,9 @@ class HealthMarkdown extends ReactMarkdown {
     );
   }
 
-  private setupEventSubscription(healthBlock: HealthBlock) {
+  private setupEventSubscription(healthBlock: ParsedHealthBlock) {
     // Use the reset_on property or default to 'long-rest'
-    const resetOn = healthBlock.reset_on || "long-rest";
+    const resetOn = healthBlock.reset_on || [{ event: "long-rest" }];
 
     this.addUnloadFn(
       msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
@@ -186,7 +186,7 @@ class HealthMarkdown extends ReactMarkdown {
     }
   }
 
-  private renderComponent(healthBlock: HealthBlock, state: HealthState) {
+  private renderComponent(healthBlock: ParsedHealthBlock, state: HealthState) {
     const stateKey = healthBlock.state_key;
     if (!stateKey) return;
 
@@ -210,7 +210,7 @@ class HealthMarkdown extends ReactMarkdown {
     this.reactRoot.render(React.createElement(HealthCard, data));
   }
 
-  private async handleStateChange(healthBlock: HealthBlock, newState: HealthState) {
+  private async handleStateChange(healthBlock: ParsedHealthBlock, newState: HealthState) {
     const stateKey = healthBlock.state_key;
     if (!stateKey) return;
 
@@ -222,7 +222,7 @@ class HealthMarkdown extends ReactMarkdown {
     }
   }
 
-  private async handleResetEvent(healthBlock: HealthBlock) {
+  private async handleResetEvent(healthBlock: ParsedHealthBlock) {
     const stateKey = healthBlock.state_key;
     if (!stateKey) return;
 

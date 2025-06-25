@@ -8,6 +8,7 @@ import { KeyValueStore } from "lib/services/kv/kv";
 import { ConsumableState } from "lib/domains/consumables";
 import { msgbus } from "lib/services/event-bus";
 import { shouldResetOnEvent, getResetAmount } from "lib/domains/events";
+import { ParsedConsumableBlock } from "lib/types";
 
 export class ConsumableView extends BaseView {
   public codeblock = "consumable";
@@ -93,7 +94,7 @@ class ConsumableMarkdown extends MarkdownRenderChild {
             const unsubscribe = msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
               if (shouldResetOnEvent(consumableBlock.reset_on, resetEvent.eventType)) {
                 console.debug(`Resetting consumable ${stateKey} due to ${resetEvent.eventType} event`);
-                // Get the amount from the configuration or use the amount from the event
+                // Get the amount from the configuration, falling back to event amount for backward compatibility
                 const resetAmount = getResetAmount(consumableBlock.reset_on, resetEvent.eventType) || resetEvent.amount;
                 this.handleResetEvent(consumableBlock, resetAmount);
               }
@@ -111,7 +112,7 @@ class ConsumableMarkdown extends MarkdownRenderChild {
             const unsubscribe = msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
               if (shouldResetOnEvent(consumableBlock.reset_on, resetEvent.eventType)) {
                 console.debug(`Resetting consumable ${stateKey} due to ${resetEvent.eventType} event`);
-                // Get the amount from the configuration or use the amount from the event
+                // Get the amount from the configuration, falling back to event amount for backward compatibility
                 const resetAmount = getResetAmount(consumableBlock.reset_on, resetEvent.eventType) || resetEvent.amount;
                 this.handleResetEvent(consumableBlock, resetAmount);
               }
@@ -128,7 +129,7 @@ class ConsumableMarkdown extends MarkdownRenderChild {
 
   private renderComponent(
     container: HTMLElement,
-    consumableBlock: ConsumableService.ConsumablesBlock["items"][0],
+    consumableBlock: ParsedConsumableBlock,
     state: ConsumableState
   ) {
     const stateKey = consumableBlock.state_key || "";
@@ -159,7 +160,7 @@ class ConsumableMarkdown extends MarkdownRenderChild {
   }
 
   private async handleStateChange(
-    consumableBlock: ConsumableService.ConsumablesBlock["items"][0],
+    consumableBlock: ParsedConsumableBlock,
     newState: ConsumableState
   ) {
     const stateKey = consumableBlock.state_key;
@@ -173,7 +174,7 @@ class ConsumableMarkdown extends MarkdownRenderChild {
     }
   }
 
-  private async handleResetEvent(consumableBlock: ConsumableService.ConsumablesBlock["items"][0], amount?: number) {
+  private async handleResetEvent(consumableBlock: ParsedConsumableBlock, amount?: number) {
     const stateKey = consumableBlock.state_key;
     if (!stateKey) return;
 

@@ -1,35 +1,33 @@
-export function shouldResetOnEvent(resetOn: string | string[] | { event: string; amount: number }[] | undefined, eventType: string): boolean {
-  if (!resetOn) return false;
+import { ResetConfig } from "lib/types";
+
+export function normalizeResetConfig(resetOn: string | string[] | { event: string; amount: number }[] | undefined): ResetConfig[] | undefined {
+  if (!resetOn) return undefined;
 
   if (typeof resetOn === "string") {
-    return resetOn === eventType;
+    return [{ event: resetOn }];
   }
 
   if (Array.isArray(resetOn)) {
     // Check if it's an array of strings
     if (resetOn.length > 0 && typeof resetOn[0] === "string") {
-      return (resetOn as string[]).includes(eventType);
+      return (resetOn as string[]).map(event => ({ event }));
     }
-    // Check if it's an array of objects with event and amount
+    // Check if it's already an array of objects
     if (resetOn.length > 0 && typeof resetOn[0] === "object" && "event" in resetOn[0]) {
-      return (resetOn as { event: string; amount: number }[]).some(item => item.event === eventType);
+      return resetOn as ResetConfig[];
     }
-  }
-
-  return false;
-}
-
-export function getResetAmount(resetOn: string | string[] | { event: string; amount: number }[] | undefined, eventType: string): number | undefined {
-  if (!resetOn) return undefined;
-
-  if (typeof resetOn === "string" || (Array.isArray(resetOn) && typeof resetOn[0] === "string")) {
-    return undefined; // Full reset
-  }
-
-  if (Array.isArray(resetOn) && resetOn.length > 0 && typeof resetOn[0] === "object" && "event" in resetOn[0]) {
-    const matchingEvent = (resetOn as { event: string; amount: number }[]).find(item => item.event === eventType);
-    return matchingEvent?.amount;
   }
 
   return undefined;
+}
+
+export function shouldResetOnEvent(resetOn: ResetConfig[] | undefined, eventType: string): boolean {
+  if (!resetOn) return false;
+  return resetOn.some(config => config.event === eventType);
+}
+
+export function getResetAmount(resetOn: ResetConfig[] | undefined, eventType: string): number | undefined {
+  if (!resetOn) return undefined;
+  const matchingEvent = resetOn.find(config => config.event === eventType);
+  return matchingEvent?.amount;
 }

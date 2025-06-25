@@ -1,9 +1,9 @@
-import { ConsumableBlock } from "lib/types";
+import { ParsedConsumableBlock } from "lib/types";
 import { ConsumableState } from "lib/domains/consumables";
 import { Checkbox } from "lib/components/checkbox";
 
 export type ConsumableCheckboxesProps = {
-  static: ConsumableBlock;
+  static: ParsedConsumableBlock;
   state: ConsumableState;
   onStateChange: (newState: ConsumableState) => void;
 };

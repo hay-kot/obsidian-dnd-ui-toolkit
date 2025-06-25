@@ -1,10 +1,10 @@
 import { useState } from "react";
-import type { HealthBlock } from "lib/types";
+import type { ParsedHealthBlock } from "lib/types";
 import { HealthState } from "lib/domains/healthpoints";
 import { Checkbox } from "lib/components/checkbox";
 
 export type HealthCardProps = {
-  static: HealthBlock;
+  static: ParsedHealthBlock;
   state: HealthState;
   onStateChange: (newState: HealthState) => void;
 };

@@ -1,6 +1,7 @@
 import * as Utils from "lib/utils/utils";
-import { HealthBlock } from "lib/types";
+import { HealthBlock, ParsedHealthBlock } from "lib/types";
 import { parse } from "yaml";
+import { normalizeResetConfig } from "lib/domains/events";
 
 export interface HealthState {
   current: number;
@@ -10,7 +11,7 @@ export interface HealthState {
   deathSaveFailures: number;
 }
 
-export function parseHealthBlock(yamlString: string): HealthBlock & { state_key?: string } {
+export function parseHealthBlock(yamlString: string): ParsedHealthBlock {
   const def: HealthBlock = {
     label: "Hit Points",
     // @ts-expect-error - no viable default for state_key
@@ -22,10 +23,18 @@ export function parseHealthBlock(yamlString: string): HealthBlock & { state_key?
   };
 
   const parsed = parse(yamlString);
-  return Utils.mergeWithDefaults(parsed, def);
+  const merged = Utils.mergeWithDefaults(parsed, def);
+  
+  // Normalize reset_on to always be an array of ResetConfig objects
+  const normalized: ParsedHealthBlock = {
+    ...merged,
+    reset_on: normalizeResetConfig(merged.reset_on),
+  };
+
+  return normalized;
 }
 
-export function getDefaultHealthState(block: HealthBlock): HealthState {
+export function getDefaultHealthState(block: ParsedHealthBlock): HealthState {
   const healthValue = typeof block.health === "string" ? 6 : block.health; // Default fallback if health is still a string
   return {
     current: healthValue,
