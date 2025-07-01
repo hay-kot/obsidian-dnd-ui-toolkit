@@ -26,6 +26,7 @@ export type GenericBonus = {
   name: string;
   target: keyof AbilityScores;
   value: number;
+  modifies?: "saving_throw" | "score"; // Defaults to 'saving_throw'
 };
 
 export type StatItem = {

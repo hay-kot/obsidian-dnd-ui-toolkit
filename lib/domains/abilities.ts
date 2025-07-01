@@ -53,9 +53,19 @@ export function getModifiersForAbility(modifiers: GenericBonus[], ability: keyof
   return modifiers.filter((mod) => mod.target === ability);
 }
 
-// Calculate total score including modifiers
+// Calculate total score including modifiers that affect the score itself
 export function getTotalScore(baseScore: number, ability: keyof AbilityScores, modifiers: GenericBonus[]): number {
-  const abilityModifiers = getModifiersForAbility(modifiers, ability);
+  const abilityModifiers = getModifiersForAbility(modifiers, ability).filter(
+    (mod) => !mod.modifies || mod.modifies === "score"
+  ); // Only include score modifiers
   const modifierTotal = abilityModifiers.reduce((sum, mod) => sum + mod.value, 0);
   return baseScore + modifierTotal;
+}
+
+// Calculate saving throw bonus from modifiers that affect saving throws
+export function getSavingThrowBonus(ability: keyof AbilityScores, modifiers: GenericBonus[]): number {
+  const savingThrowModifiers = getModifiersForAbility(modifiers, ability).filter(
+    (mod) => !mod.modifies || mod.modifies === "saving_throw"
+  ); // Default to saving_throw if not specified
+  return savingThrowModifiers.reduce((sum, mod) => sum + mod.value, 0);
 }

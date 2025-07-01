@@ -6,6 +6,7 @@ import {
   formatModifier,
   getModifiersForAbility,
   getTotalScore,
+  getSavingThrowBonus,
 } from "./abilities";
 import { GenericBonus } from "../types";
 
@@ -63,6 +64,38 @@ bonuses:
       });
     });
 
+    it("should parse ability block with bonuses that have modifies field", () => {
+      const yaml = `
+abilities:
+  strength: 15
+  dexterity: 14
+bonuses:
+  - name: "Score Bonus"
+    target: "strength"
+    value: 2
+    modifies: "score"
+  - name: "Save Bonus"
+    target: "dexterity"
+    value: 1
+    modifies: "saving_throw"
+`;
+      const result = parseAbilityBlock(yaml);
+
+      expect(result.bonuses).toHaveLength(2);
+      expect(result.bonuses[0]).toEqual({
+        name: "Score Bonus",
+        target: "strength",
+        value: 2,
+        modifies: "score",
+      });
+      expect(result.bonuses[1]).toEqual({
+        name: "Save Bonus",
+        target: "dexterity",
+        value: 1,
+        modifies: "saving_throw",
+      });
+    });
+
     it("should parse ability block with proficiencies", () => {
       const yaml = `
 abilities:
@@ -92,6 +125,27 @@ abilities:
       expect(result.abilities.dexterity).toBe(0);
       expect(result.bonuses).toEqual([]);
       expect(result.proficiencies).toEqual([]);
+    });
+
+    it("should handle bonuses without modifies field (backward compatibility)", () => {
+      const yaml = `
+abilities:
+  strength: 15
+bonuses:
+  - name: "Legacy Bonus"
+    target: "strength"
+    value: 2
+`;
+      const result = parseAbilityBlock(yaml);
+
+      expect(result.bonuses).toHaveLength(1);
+      expect(result.bonuses[0]).toEqual({
+        name: "Legacy Bonus",
+        target: "strength",
+        value: 2,
+      });
+      // modifies field should be undefined for backward compatibility
+      expect(result.bonuses[0].modifies).toBeUndefined();
     });
   });
 
@@ -233,10 +287,10 @@ abilities:
       { name: "Negative Modifier", target: "strength", value: -1 },
     ];
 
-    it("should calculate total score with modifiers", () => {
+    it("should calculate total score with modifiers (backward compatibility)", () => {
       const total = getTotalScore(15, "strength", testModifiers);
 
-      // Base 15 + 2 + 1 + (-1) = 17
+      // Base 15 + 2 + 1 + (-1) = 17 (all modifiers default to score modification)
       expect(total).toBe(17);
     });
 
@@ -257,6 +311,73 @@ abilities:
 
       // Base -5 + 2 + 1 + (-1) = -3
       expect(total).toBe(-3);
+    });
+
+    it("should only apply score modifiers to total score", () => {
+      const mixedModifiers: GenericBonus[] = [
+        { name: "Score Bonus", target: "strength", value: 2, modifies: "score" },
+        { name: "Saving Throw Bonus", target: "strength", value: 3, modifies: "saving_throw" },
+        { name: "Default Bonus", target: "strength", value: 1 }, // Should default to score
+      ];
+
+      const total = getTotalScore(15, "strength", mixedModifiers);
+
+      // Base 15 + 2 (score) + 1 (default to score) = 18
+      // Saving throw bonus (3) should not be included
+      expect(total).toBe(18);
+    });
+  });
+
+  describe("getSavingThrowBonus", () => {
+    const mixedModifiers: GenericBonus[] = [
+      { name: "Score Bonus", target: "strength", value: 2, modifies: "score" },
+      { name: "Saving Throw Bonus", target: "strength", value: 3, modifies: "saving_throw" },
+      { name: "Another Save Bonus", target: "strength", value: 1, modifies: "saving_throw" },
+      { name: "Default Bonus", target: "strength", value: 4 }, // Should default to saving_throw
+      { name: "Dex Save Bonus", target: "dexterity", value: 2, modifies: "saving_throw" },
+    ];
+
+    it("should calculate saving throw bonus from saving throw modifiers", () => {
+      const bonus = getSavingThrowBonus("strength", mixedModifiers);
+
+      // 3 + 1 + 4 (default to saving_throw) = 8
+      // Score bonus (2) should not be included
+      expect(bonus).toBe(8);
+    });
+
+    it("should return 0 when no saving throw modifiers apply", () => {
+      const bonus = getSavingThrowBonus("charisma", mixedModifiers);
+
+      expect(bonus).toBe(0);
+    });
+
+    it("should handle empty modifiers array", () => {
+      const bonus = getSavingThrowBonus("strength", []);
+
+      expect(bonus).toBe(0);
+    });
+
+    it("should handle only score modifiers (no saving throw bonuses)", () => {
+      const scoreOnlyModifiers: GenericBonus[] = [
+        { name: "Score Bonus 1", target: "strength", value: 2, modifies: "score" },
+        { name: "Score Bonus 2", target: "strength", value: 1, modifies: "score" },
+      ];
+
+      const bonus = getSavingThrowBonus("strength", scoreOnlyModifiers);
+
+      expect(bonus).toBe(0);
+    });
+
+    it("should default modifies field to saving_throw for backward compatibility", () => {
+      const legacyModifiers: GenericBonus[] = [
+        { name: "Legacy Bonus 1", target: "strength", value: 2 },
+        { name: "Legacy Bonus 2", target: "strength", value: 1 },
+      ];
+
+      const bonus = getSavingThrowBonus("strength", legacyModifiers);
+
+      // Both should default to saving_throw: 2 + 1 = 3
+      expect(bonus).toBe(3);
     });
   });
 });

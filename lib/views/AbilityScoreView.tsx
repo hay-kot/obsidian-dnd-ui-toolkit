@@ -23,23 +23,29 @@ export class AbilityScoreView extends BaseView {
 
       const label = key.charAt(0).toUpperCase() + key.slice(1);
 
-      let savingThrowValue = AbilityService.calculateModifier(value);
+      // Calculate total ability score including score modifiers
+      const totalScore = AbilityService.getTotalScore(
+        value,
+        key as keyof typeof abilityBlock.abilities,
+        abilityBlock.bonuses
+      );
+
+      // Calculate saving throw with base modifier + proficiency + saving throw bonuses
+      let savingThrowValue = AbilityService.calculateModifier(totalScore);
       if (isProficient) {
         savingThrowValue += frontmatter.proficiency_bonus;
       }
-
-      for (const bonus of abilityBlock.bonuses) {
-        if (bonus.target.toLowerCase() === key) {
-          savingThrowValue += bonus.value;
-        }
-      }
+      savingThrowValue += AbilityService.getSavingThrowBonus(
+        key as keyof typeof abilityBlock.abilities,
+        abilityBlock.bonuses
+      );
 
       const abbreviation = label.substring(0, 3).toUpperCase();
 
       data.push({
         label: abbreviation,
-        total: value,
-        modifier: AbilityService.calculateModifier(value),
+        total: totalScore,
+        modifier: AbilityService.calculateModifier(totalScore),
         isProficient: isProficient,
         savingThrow: savingThrowValue,
       });
