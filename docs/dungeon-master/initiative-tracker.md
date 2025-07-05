@@ -61,11 +61,11 @@ items:
 
 ## Configuration
 
-| Property    | Type    | Description                                        |
-| ----------- | ------- | -------------------------------------------------- |
-| `state_key` | String  | **Required** - Unique identifier for state storage |
-| `items`     | Array   | **Required** - List of combatants                  |
-| `dense`     | Boolean | Optional - Use compact layout with reduced spacing |
+| Property      | Type   | Description                                        |
+| ------------- | ------ | -------------------------------------------------- |
+| `state_key`   | String | **Required** - Unique identifier for state storage |
+| `items`       | Array  | **Required** - List of combatants                  |
+| `consumables` | Array  | **Optional** - Tracked consumables                 |
 
 ### Item Object
 
@@ -93,11 +93,11 @@ hp:
   Creature 3: 8
 ```
 
-## Consumables
+### Consumables Object
 
 The initiative tracker supports tracking consumable abilities that reset between rounds, such as legendary actions, lair actions, or other limited-use abilities.
 
-### Basic Consumables Example
+#### Basic Consumables Example
 
 ````yaml
 ```initiative
@@ -124,7 +124,7 @@ consumables:
 ```
 ````
 
-### Consumable Options
+#### Consumable Options
 
 | Property         | Type    | Description                                        |
 | ---------------- | ------- | -------------------------------------------------- |
@@ -133,7 +133,7 @@ consumables:
 | `uses`           | Number  | **Required** - Maximum number of uses              |
 | `reset_on_round` | Boolean | Optional - Whether to reset when round advances    |
 
-### How Consumables Work
+#### How Consumables Work
 
 - **Checkboxes**: Each consumable displays as a series of checkboxes representing available uses
 - **Usage Tracking**: Check boxes to mark uses; the tracker maintains state between sessions
