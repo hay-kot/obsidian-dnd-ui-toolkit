@@ -327,56 +327,6 @@ export function Initiative(props: InitiativeProps) {
     }
   };
 
-  // Render HP actions for single monster
-  const renderHpActions = (item: InitiativeItem, index: number) => {
-    if (!item.hp) return null;
-
-    const itemHash = itemHashKey(item);
-
-    const itemHp = props.state.hp[itemHash] || {};
-    const isGroup = typeof item.hp === "object" && Object.keys(item.hp).length > 1;
-
-    if (isGroup) {
-      // Actions for groups are rendered with each monster
-      return null;
-    } else {
-      // Single monster actions
-      const monsterKey = Object.keys(itemHp)[0] || "main";
-
-      return (
-        <div className="initiative-item-actions">
-          <input
-            type="number"
-            className="initiative-hp-input"
-            placeholder="0"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-          />
-          <button
-            className="initiative-hp-button initiative-damage"
-            onClick={() => {
-              handleDamage(props.static.items[index], monsterKey, inputValue);
-              setInputValue("1");
-            }}
-            title="Damage"
-          >
-            −
-          </button>
-          <button
-            className="initiative-hp-button initiative-heal"
-            onClick={() => {
-              handleDamage(props.static.items[index], monsterKey, inputValue, "heal");
-              setInputValue("1");
-            }}
-            title="Heal"
-          >
-            +
-          </button>
-        </div>
-      );
-    }
-  };
-
   return (
     <div className="initiative-tracker">
       <div className="initiative-tracker-controls">
