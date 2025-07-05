@@ -33,7 +33,7 @@ export function MultiConsumableCheckboxes(props: MultiConsumableCheckboxesProps)
     <div ref={containerRef} className="consumables-column">
       {props.consumables.map((consumable) => {
         const state = props.states[consumable.state_key] || { value: 0 };
-        
+
         return (
           <div key={consumable.state_key} className="consumable-item">
             <ConsumableCheckboxes
