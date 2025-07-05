@@ -109,7 +109,6 @@ export type InitiativeConsumable = {
 export type InitiativeBlock = {
   state_key: string;
   items: InitiativeItem[];
-  dense?: boolean;
   consumables?: InitiativeConsumable[];
 };
 

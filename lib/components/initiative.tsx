@@ -285,56 +285,45 @@ export function Initiative(props: InitiativeProps) {
         statusClass = "monster-status-injured";
       }
 
-      // In dense mode, render HP with inline controls
-      if (props.static.dense) {
-        return (
-          <div className={`initiative-hp-inline ${statusClass}`}>
-            <div className="initiative-hp-display">
-              <span className="initiative-hp-value">{currentHp}</span>
-              <span className="initiative-hp-separator">/</span>
-              <span className="initiative-hp-max">{maxHp}</span>
-            </div>
-            <div className="initiative-hp-controls">
-              <input
-                type="number"
-                className="initiative-hp-input"
-                placeholder="0"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-              />
-              <button
-                className="initiative-hp-button initiative-damage"
-                onClick={() => {
-                  handleDamage(props.static.items[index], monsterKey, inputValue);
-                  setInputValue("1");
-                }}
-                title="Damage"
-              >
-                −
-              </button>
-              <button
-                className="initiative-hp-button initiative-heal"
-                onClick={() => {
-                  handleDamage(props.static.items[index], monsterKey, inputValue, "heal");
-                  setInputValue("1");
-                }}
-                title="Heal"
-              >
-                +
-              </button>
-            </div>
-          </div>
-        );
-      } else {
-        // Regular mode - just show HP display
-        return (
-          <div className={`initiative-hp ${statusClass}`}>
+      // Always render HP with inline controls
+      return (
+        <div className={`initiative-hp-inline ${statusClass}`}>
+          <div className="initiative-hp-display">
             <span className="initiative-hp-value">{currentHp}</span>
             <span className="initiative-hp-separator">/</span>
             <span className="initiative-hp-max">{maxHp}</span>
           </div>
-        );
-      }
+          <div className="initiative-hp-controls">
+            <input
+              type="number"
+              className="initiative-hp-input"
+              placeholder="0"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+            />
+            <button
+              className="initiative-hp-button initiative-damage"
+              onClick={() => {
+                handleDamage(props.static.items[index], monsterKey, inputValue);
+                setInputValue("1");
+              }}
+              title="Damage"
+            >
+              −
+            </button>
+            <button
+              className="initiative-hp-button initiative-heal"
+              onClick={() => {
+                handleDamage(props.static.items[index], monsterKey, inputValue, "heal");
+                setInputValue("1");
+              }}
+              title="Heal"
+            >
+              +
+            </button>
+          </div>
+        </div>
+      );
     }
   };
 
@@ -389,7 +378,7 @@ export function Initiative(props: InitiativeProps) {
   };
 
   return (
-    <div className={`initiative-tracker ${props.static.dense ? "dense" : ""}`}>
+    <div className="initiative-tracker">
       <div className="initiative-tracker-controls">
         <div className="initiative-round-counter">
           Round: <span className="initiative-round-value">{props.state.round}</span>
@@ -470,12 +459,7 @@ export function Initiative(props: InitiativeProps) {
                     {hasHp && !isGroupMonster && renderHpSection(item, index)}
                   </div>
 
-                  {hasHp && !isGroupMonster && !props.static.dense && (
-                    <>
-                      <div className="divider"></div>
-                      {renderHpActions(item, index)}
-                    </>
-                  )}
+                  {/* HP actions are now always inline - no separate section needed */}
 
                   {isGroupMonster && (
                     <>

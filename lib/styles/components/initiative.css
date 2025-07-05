@@ -23,7 +23,7 @@
 .initiative-tracker-controls {
 	display: flex;
 	align-items: center;
-	margin: var(--std-gap) 0;
+	margin: 0.5rem 0;
 	gap: 0.3rem;
 }
 
@@ -78,14 +78,14 @@
 .initiative-items {
 	display: flex;
 	flex-direction: column;
-	gap: 0.3rem;
+	gap: 0.2rem;
 	width: 100%;
 }
 
 .initiative-item {
 	display: flex;
 	flex-direction: column;
-	padding: 0.5rem;
+	padding: 0.3rem;
 	border-radius: 0.3rem;
 	background-color: var(--color-bg-secondary);
 	border: 1px solid var(--color-border-primary);
@@ -102,13 +102,13 @@
 .initiative-item-main {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: 0.3rem;
 	width: 100%;
 }
 
 /* Make initiative roll more prominent */
 .initiative-roll {
-	flex: 0 0 3.5rem;
+	flex: 0 0 2.5rem;
 	position: relative;
 }
 
@@ -118,9 +118,9 @@
 	border: 1px solid var(--color-border-primary);
 	border-radius: 0.25rem;
 	color: var(--color-text-primary);
-	padding: 0.5rem 1rem;
+	padding: 0.3rem 0.5rem;
 	text-align: center;
-	font-size: 1.6rem !important;
+	font-size: 1.2rem !important;
 	height: 100% !important;
 	/* Larger initiative font */
 }
@@ -131,15 +131,15 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	font-size: 1.2rem;
+	font-size: 1rem;
 }
 
 .divider {
 	width: 100%;
 	height: 1.5px;
 	background-color: var(--color-text-bright);
-	margin-top: 0.75rem;
-	margin-bottom: 0.5rem;
+	margin-top: 0.5rem;
+	margin-bottom: 0.3rem;
 	opacity: 25%;
 }
 
@@ -151,7 +151,7 @@
 
 .initiative-ac {
 	font-style: italic;
-	font-size: 0.8rem;
+	font-size: 0.7rem;
 	opacity: 70%;
 }
 
@@ -164,10 +164,10 @@
 	align-items: center;
 	gap: 0.2rem;
 	flex: 0 0 auto;
-	padding: 0.2rem 0.4rem;
+	padding: 0.1rem 0.3rem;
 	background-color: var(--color-bg-primary);
 	border-radius: 0.25rem;
-	font-size: 1.1rem;
+	font-size: 0.9rem;
 	margin-bottom: auto;
 	margin-left: auto;
 }
@@ -265,14 +265,14 @@
 .initiative-group-hp {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-	gap: 0.5rem;
+	gap: 0.3rem;
 	width: 100%;
 }
 
 .initiative-monster {
 	background-color: var(--color-bg-primary);
 	border-radius: 0.25rem;
-	padding: 0.3rem 0.5rem;
+	padding: 0.2rem 0.3rem;
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
@@ -287,7 +287,7 @@
 }
 
 .initiative-monster-name {
-	font-size: 0.85rem;
+	font-size: 0.8rem;
 	font-weight: bold;
 	color: var(--color-text-primary);
 }
@@ -333,9 +333,9 @@
 .initiative-consumables {
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
-	margin-top: var(--std-gap);
-	padding: 0.5rem;
+	gap: 0.3rem;
+	margin-top: 0.5rem;
+	padding: 0.3rem;
 	background-color: var(--color-bg-secondary);
 	border-radius: 0.3rem;
 	border: 1px solid var(--color-border-primary);
@@ -344,7 +344,7 @@
 .initiative-consumable {
 	display: flex;
 	flex-direction: column;
-	gap: 0.3rem;
+	gap: 0.2rem;
 }
 
 .initiative-consumable-header {
@@ -357,15 +357,15 @@
 .initiative-consumable-label {
 	font-weight: bold;
 	color: var(--color-text-primary);
-	font-size: 0.9rem;
+	font-size: 0.8rem;
 }
 
 .initiative-consumable-reset-indicator {
-	font-size: 0.7rem;
+	font-size: 0.6rem;
 	color: var(--color-text-secondary);
 	font-style: italic;
 	background-color: var(--color-bg-primary);
-	padding: 0.1rem 0.3rem;
+	padding: 0.05rem 0.2rem;
 	border-radius: 0.2rem;
 	border: 1px solid var(--color-border-primary);
 }
@@ -376,80 +376,7 @@
 	flex-wrap: wrap;
 }
 
-/* Dense view styles */
-.initiative-tracker.dense .initiative-item {
-	padding: 0.3rem;
-}
-
-.initiative-tracker.dense .initiative-item-main {
-	gap: 0.3rem;
-}
-
-.initiative-tracker.dense .initiative-roll {
-	flex: 0 0 2.5rem;
-}
-
-.initiative-tracker.dense .initiative-input {
-	padding: 0.3rem 0.5rem;
-	font-size: 1.2rem !important;
-}
-
-.initiative-tracker.dense .initiative-name {
-	font-size: 1rem;
-}
-
-.initiative-tracker.dense .initiative-ac {
-	font-size: 0.7rem;
-}
-
-.initiative-tracker.dense .initiative-hp {
-	font-size: 0.9rem;
-	padding: 0.1rem 0.3rem;
-}
-
-.initiative-tracker.dense .initiative-tracker-controls {
-	margin: 0.5rem 0;
-}
-
-.initiative-tracker.dense .initiative-items {
-	gap: 0.2rem;
-}
-
-.initiative-tracker.dense .initiative-monster {
-	padding: 0.2rem 0.3rem;
-}
-
-.initiative-tracker.dense .initiative-monster-name {
-	font-size: 0.8rem;
-}
-
-.initiative-tracker.dense .initiative-group-hp {
-	gap: 0.3rem;
-}
-
-.initiative-tracker.dense .divider {
-	margin-top: 0.5rem;
-	margin-bottom: 0.3rem;
-}
-
-.initiative-tracker.dense .initiative-consumables {
-	margin-top: 0.5rem;
-	padding: 0.3rem;
-	gap: 0.3rem;
-}
-
-.initiative-tracker.dense .initiative-consumable {
-	gap: 0.2rem;
-}
-
-.initiative-tracker.dense .initiative-consumable-label {
-	font-size: 0.8rem;
-}
-
-.initiative-tracker.dense .initiative-consumable-reset-indicator {
-	font-size: 0.6rem;
-	padding: 0.05rem 0.2rem;
-}
+/* Removed duplicate styles - now using defaults above */
 
 /* Inline health controls for dense mode */
 .initiative-hp-inline {
@@ -476,11 +403,11 @@
 	gap: 0.3rem;
 }
 
-.initiative-tracker.dense .initiative-hp-inline {
+.initiative-hp-inline {
 	gap: 0.3rem;
 }
 
-.initiative-tracker.dense .initiative-hp-display {
+.initiative-hp-display {
 	font-size: 0.9rem;
 	padding: 0.2rem 0.4rem;
 	height: 1.8rem;
@@ -489,11 +416,11 @@
 	justify-content: center;
 }
 
-.initiative-tracker.dense .initiative-hp-controls {
+.initiative-hp-controls {
 	gap: 0.2rem;
 }
 
-.initiative-tracker.dense .initiative-hp-controls .initiative-hp-input {
+.initiative-hp-controls .initiative-hp-input {
 	width: 2.5rem;
 	height: 2rem;
 	padding: 0.2rem;
@@ -501,7 +428,7 @@
 	box-sizing: border-box;
 }
 
-.initiative-tracker.dense .initiative-hp-controls .initiative-hp-button {
+.initiative-hp-controls .initiative-hp-button {
 	width: 1.8rem;
 	height: 1.8rem;
 	font-size: 0.8rem;
