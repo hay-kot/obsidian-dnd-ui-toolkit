@@ -1,19 +1,24 @@
 import { useState } from "react";
-import type { InitiativeBlock, InitiativeItem } from "lib/types";
-import { getSortedInitiativeItems, getMaxHp, itemHashKey } from "lib/domains/initiative";
-
-export type InitiativeState = {
-  activeIndex: number;
-  initiatives: Record<string, number>;
-  hp: Record<string, Record<string, number>>;
-  round: number;
-};
+import type { InitiativeBlock, InitiativeItem, InitiativeConsumable, ParsedConsumableBlock } from "lib/types";
+import { getSortedInitiativeItems, getMaxHp, itemHashKey, InitiativeState } from "lib/domains/initiative";
+import { MultiConsumableCheckboxes } from "lib/components/multi-consumable-checkboxes";
+import { ConsumableState } from "lib/domains/consumables";
 
 export type InitiativeProps = {
   static: InitiativeBlock;
   state: InitiativeState;
   onStateChange: (newState: InitiativeState) => void;
 };
+
+// Convert InitiativeConsumable to ParsedConsumableBlock format for ConsumableCheckboxes
+function adaptInitiativeConsumable(consumable: InitiativeConsumable): ParsedConsumableBlock {
+  return {
+    label: consumable.label,
+    state_key: consumable.state_key,
+    uses: consumable.uses,
+    reset_on: consumable.reset_on_round ? [{ event: "round", amount: undefined }] : undefined,
+  };
+}
 
 export function Initiative(props: InitiativeProps) {
   const [inputValue, setInputValue] = useState<string>("1");
@@ -74,6 +79,7 @@ export function Initiative(props: InitiativeProps) {
     const currentActiveIndex = props.state.activeIndex;
     let nextActiveIndex = -1;
     let newRound = props.state.round;
+    const newConsumables = { ...(props.state.consumables || {}) };
 
     // Find the index of the current active item in the sorted list
     const currentActiveItemIndex = sortedItems.findIndex((item) => item.index === currentActiveIndex);
@@ -84,6 +90,15 @@ export function Initiative(props: InitiativeProps) {
       // Increment round when cycling back to the beginning
       if (currentActiveItemIndex !== -1) {
         newRound = props.state.round + 1;
+
+        // Reset consumables that have reset_on_round: true
+        if (props.static.consumables) {
+          props.static.consumables.forEach((consumable) => {
+            if (consumable.reset_on_round) {
+              newConsumables[consumable.state_key] = 0;
+            }
+          });
+        }
       }
     } else {
       // Otherwise, go to the next item
@@ -94,6 +109,7 @@ export function Initiative(props: InitiativeProps) {
       ...props.state,
       activeIndex: nextActiveIndex,
       round: newRound,
+      consumables: newConsumables,
     });
   };
 
@@ -130,6 +146,7 @@ export function Initiative(props: InitiativeProps) {
     // Reset all initiatives to 0 and HP to max values
     const newInitiatives = { ...props.state.initiatives };
     const newHp: Record<string, Record<string, number>> = {};
+    const newConsumables: Record<string, number> = {};
 
     props.static.items.forEach((item) => {
       const indexStr = itemHashKey(item);
@@ -145,12 +162,31 @@ export function Initiative(props: InitiativeProps) {
       }
     });
 
+    // Reset all consumables to 0
+    if (props.static.consumables) {
+      props.static.consumables.forEach((consumable) => {
+        newConsumables[consumable.state_key] = 0;
+      });
+    }
+
     props.onStateChange({
       ...props.state,
       activeIndex: -1,
       initiatives: newInitiatives,
       hp: newHp,
       round: 1, // Reset to round 1
+      consumables: newConsumables,
+    });
+  };
+
+  // Handle consumable state change from MultiConsumableCheckboxes
+  const handleConsumableStateChange = (stateKey: string, newState: ConsumableState) => {
+    const newConsumables = { ...(props.state.consumables || {}) };
+    newConsumables[stateKey] = newState.value;
+
+    props.onStateChange({
+      ...props.state,
+      consumables: newConsumables,
     });
   };
 
@@ -333,6 +369,20 @@ export function Initiative(props: InitiativeProps) {
           Reset
         </button>
       </div>
+
+      {/* Consumables Section */}
+      {props.static.consumables && props.static.consumables.length > 0 && (
+        <MultiConsumableCheckboxes
+          consumables={props.static.consumables.map(adaptInitiativeConsumable)}
+          states={Object.fromEntries(
+            props.static.consumables.map((consumable) => [
+              consumable.state_key,
+              { value: props.state.consumables?.[consumable.state_key] || 0 },
+            ])
+          )}
+          onStateChange={handleConsumableStateChange}
+        />
+      )}
 
       <div className="initiative-list">
         {sortedItems.length === 0 ? (

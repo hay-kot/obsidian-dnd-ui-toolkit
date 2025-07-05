@@ -63,7 +63,7 @@ export function parseConsumablesBlock(yamlString: string): ConsumablesBlock {
   };
 }
 
-export function getDefaultConsumableState(block: ParsedConsumableBlock): ConsumableState {
+export function getDefaultConsumableState(_: ParsedConsumableBlock): ConsumableState {
   return {
     value: 0,
   };

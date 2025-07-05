@@ -99,10 +99,18 @@ export type BadgesBlock = {
   };
 };
 
+export type InitiativeConsumable = {
+  label: string;
+  state_key: string;
+  uses: number;
+  reset_on_round?: boolean;
+};
+
 export type InitiativeBlock = {
   state_key: string;
   items: InitiativeItem[];
   dense?: boolean;
+  consumables?: InitiativeConsumable[];
 };
 
 export type InitiativeItem = {

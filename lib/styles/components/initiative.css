@@ -318,6 +318,53 @@
     color: var(--color-accent-red);
 }
 
+/* Consumables section styles */
+.initiative-consumables {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: var(--std-gap);
+    padding: 0.5rem;
+    background-color: var(--color-bg-secondary);
+    border-radius: 0.3rem;
+    border: 1px solid var(--color-border-primary);
+}
+
+.initiative-consumable {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.initiative-consumable-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.initiative-consumable-label {
+    font-weight: bold;
+    color: var(--color-text-primary);
+    font-size: 0.9rem;
+}
+
+.initiative-consumable-reset-indicator {
+    font-size: 0.7rem;
+    color: var(--color-text-secondary);
+    font-style: italic;
+    background-color: var(--color-bg-primary);
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.2rem;
+    border: 1px solid var(--color-border-primary);
+}
+
+.initiative-consumable-boxes {
+    display: flex;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+}
+
 /* Dense view styles */
 .initiative-tracker.dense .initiative-item {
     padding: 0.3rem;
@@ -377,6 +424,25 @@
 .initiative-tracker.dense .divider {
     margin-top: 0.5rem;
     margin-bottom: 0.3rem;
+}
+
+.initiative-tracker.dense .initiative-consumables {
+    margin-top: 0.5rem;
+    padding: 0.3rem;
+    gap: 0.3rem;
+}
+
+.initiative-tracker.dense .initiative-consumable {
+    gap: 0.2rem;
+}
+
+.initiative-tracker.dense .initiative-consumable-label {
+    font-size: 0.8rem;
+}
+
+.initiative-tracker.dense .initiative-consumable-reset-indicator {
+    font-size: 0.6rem;
+    padding: 0.05rem 0.2rem;
 }
 
 /* Responsive adjustments for mobile */

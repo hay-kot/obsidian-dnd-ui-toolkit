@@ -7,6 +7,7 @@ export interface InitiativeState {
   initiatives: Record<string, number>;
   hp: Record<string, Record<string, number>>;
   round: number;
+  consumables: Record<string, number>;
 }
 
 export function parseInitiativeBlock(yamlString: string): InitiativeBlock & { state_key?: string } {
@@ -14,15 +15,27 @@ export function parseInitiativeBlock(yamlString: string): InitiativeBlock & { st
     // @ts-expect-error - no viable default for state_key
     state_key: undefined,
     items: [],
+    consumables: [],
   };
 
   const parsed = parse(yamlString);
-  return Utils.mergeWithDefaults(parsed, def);
+  const merged = Utils.mergeWithDefaults(parsed, def);
+
+  // Apply defaults to consumables
+  if (merged.consumables) {
+    merged.consumables = merged.consumables.map((consumable: any) => ({
+      ...consumable,
+      reset_on_round: consumable.reset_on_round ?? false,
+    }));
+  }
+
+  return merged;
 }
 
 export function getDefaultInitiativeState(block: InitiativeBlock): InitiativeState {
   const initiatives: Record<string, number> = {};
   const hp: Record<string, Record<string, number>> = {};
+  const consumables: Record<string, number> = {};
 
   // Initialize with default values (0 for initiative, max hp for health)
   block.items.forEach((item, index) => {
@@ -42,11 +55,19 @@ export function getDefaultInitiativeState(block: InitiativeBlock): InitiativeSta
     }
   });
 
+  // Initialize consumables with 0 uses
+  if (block.consumables) {
+    block.consumables.forEach((consumable) => {
+      consumables[consumable.state_key] = 0;
+    });
+  }
+
   return {
     activeIndex: -1, // No active combatant at first
     initiatives,
     hp,
     round: 1, // Start at round 1
+    consumables,
   };
 }
 
