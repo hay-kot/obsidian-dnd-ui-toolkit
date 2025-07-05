@@ -310,7 +310,7 @@ export function Initiative(props: InitiativeProps) {
   };
 
   return (
-    <div className="initiative-tracker">
+    <div className={`initiative-tracker ${props.static.dense ? "dense" : ""}`}>
       <div className="initiative-tracker-controls">
         <div className="initiative-round-counter">
           Round: <span className="initiative-round-value">{props.state.round}</span>

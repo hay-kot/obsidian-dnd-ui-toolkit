@@ -102,6 +102,7 @@ export type BadgesBlock = {
 export type InitiativeBlock = {
   state_key: string;
   items: InitiativeItem[];
+  dense?: boolean;
 };
 
 export type InitiativeItem = {

@@ -60,10 +60,11 @@ items:
 
 ## Configuration
 
-| Property    | Type   | Description                                        |
-| ----------- | ------ | -------------------------------------------------- |
-| `state_key` | String | **Required** - Unique identifier for state storage |
-| `items`     | Array  | **Required** - List of combatants                  |
+| Property    | Type    | Description                                        |
+| ----------- | ------- | -------------------------------------------------- |
+| `state_key` | String  | **Required** - Unique identifier for state storage |
+| `items`     | Array   | **Required** - List of combatants                  |
+| `dense`     | Boolean | Optional - Use compact layout with reduced spacing |
 
 ### Item Object
 

@@ -318,6 +318,67 @@
     color: var(--color-accent-red);
 }
 
+/* Dense view styles */
+.initiative-tracker.dense .initiative-item {
+    padding: 0.3rem;
+}
+
+.initiative-tracker.dense .initiative-item-main {
+    gap: 0.3rem;
+}
+
+.initiative-tracker.dense .initiative-roll {
+    flex: 0 0 2.5rem;
+}
+
+.initiative-tracker.dense .initiative-input {
+    padding: 0.3rem 0.5rem;
+    font-size: 1.2rem !important;
+}
+
+.initiative-tracker.dense .initiative-name {
+    font-size: 1rem;
+}
+
+.initiative-tracker.dense .initiative-ac {
+    font-size: 0.7rem;
+}
+
+.initiative-tracker.dense .initiative-hp {
+    font-size: 0.9rem;
+    padding: 0.1rem 0.3rem;
+}
+
+.initiative-tracker.dense .initiative-tracker-controls {
+    margin: 0.5rem 0;
+}
+
+.initiative-tracker.dense .initiative-items {
+    gap: 0.2rem;
+}
+
+.initiative-tracker.dense .initiative-monster {
+    padding: 0.2rem 0.3rem;
+}
+
+.initiative-tracker.dense .initiative-monster-name {
+    font-size: 0.8rem;
+}
+
+.initiative-tracker.dense .initiative-monster-hp {
+    padding: 0.1rem 0.2rem;
+    font-size: 0.7rem;
+}
+
+.initiative-tracker.dense .initiative-group-hp {
+    gap: 0.3rem;
+}
+
+.initiative-tracker.dense .divider {
+    margin-top: 0.5rem;
+    margin-bottom: 0.3rem;
+}
+
 /* Responsive adjustments for mobile */
 @media (max-width: 600px) {
     .initiative-item-main {
