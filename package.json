@@ -23,27 +23,26 @@
   "license": "MIT",
   "devDependencies": {
     "@mermaid-js/mermaid-mindmap": "^9.3.0",
-    "@types/node": "^22.0.0",
-    "@typescript-eslint/eslint-plugin": "5.29.0",
-    "@typescript-eslint/parser": "5.29.0",
-    "builtin-modules": "3.3.0",
-    "esbuild": "0.17.3",
+    "@types/node": "^24.0.13",
+    "@types/react": "^18.3.10",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.36.0",
+    "@typescript-eslint/parser": "^8.36.0",
+    "builtin-modules": "^5.0.0",
+    "esbuild": "^0.25.6",
     "mermaid": "^10.9.0",
     "obsidian": "latest",
-    "prettier": "^3.5.3",
-    "tslib": "2.4.0",
-    "typescript": "4.7.4",
+    "prettier": "^3.6.2",
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.3",
     "vitepress": "^1.6.3",
     "vitepress-plugin-mermaid": "^2.0.17",
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@types/handlebars": "^4.0.40",
-    "@types/react": "^18.3.10",
-    "@types/react-dom": "^18.3.0",
     "handlebars": "^4.7.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "yaml": "^2.5.1"
+    "yaml": "^2.8.0"
   }
 }
