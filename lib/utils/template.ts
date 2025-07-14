@@ -28,6 +28,13 @@ function init() {
   Handlebars.registerHelper("ceil", (a: number) => Math.ceil(a));
   Handlebars.registerHelper("round", (a: number) => Math.round(a));
   Handlebars.registerHelper("modifier", (score: number) => calculateModifier(score));
+
+  // Text helpers
+  Handlebars.registerHelper("link-title", (a: string) => a.match(/\|(.*?)\]\]/));
+  Handlebars.registerHelper("to-number", (a: string) => {
+	const stringToNumber = parseInt(a);
+	return (!isNaN(stringToNumber) && stringToNumber);
+  });
 }
 
 init();
