@@ -30,11 +30,7 @@ function init() {
   Handlebars.registerHelper("modifier", (score: number) => calculateModifier(score));
 
   // Text helpers
-  Handlebars.registerHelper("link-title", (a: string) => a.match(/\|(.*?)\]\]/));
-  Handlebars.registerHelper("to-number", (a: string) => {
-	const stringToNumber = parseInt(a);
-	return (!isNaN(stringToNumber) && stringToNumber);
-  });
+  Handlebars.registerHelper("strip-link", (a: string) => a.replace(/\[\[([^|]+)\|([^\]]+)\]\]/g, "$2"));
 }
 
 init();
