@@ -18,9 +18,9 @@ describe("template", () => {
   describe("processTemplate", () => {
     const mockContext: TemplateContext = {
       frontmatter: {
-		class: "[[wizard-phb|Wizard]]",
-		proficiency_bonus: 2,
-	  },
+        class: "[[wizard-phb|Wizard]]",
+        proficiency_bonus: 2,
+      },
       abilities: {
         strength: 15,
         dexterity: 14,
@@ -47,7 +47,7 @@ describe("template", () => {
       expect(processTemplate("{{floor 3.7}}", mockContext)).toBe("3");
       expect(processTemplate("{{ceil 3.2}}", mockContext)).toBe("4");
       expect(processTemplate("{{round 3.6}}", mockContext)).toBe("4");
-	  expect(processTemplate("{{strip-link frontmatter.class}}", mockContext)).toBe("Wizard");
+      expect(processTemplate("{{strip-link frontmatter.class}}", mockContext)).toBe("Wizard");
     });
 
     it("should handle multiple arguments in add helper and modifier calculations", () => {
@@ -118,8 +118,8 @@ bonuses:
       expect(context.frontmatter.proficiency_bonus).toBe(2);
     });
 
-	it("should calculate skill proficiency correctly from ability scores, including bonuses", () => {
-	  const mockElement = {} as HTMLElement;
+    it("should calculate skill proficiency correctly from ability scores, including bonuses", () => {
+      const mockElement = {} as HTMLElement;
       const mockFileContext = {
         frontmatter: () => ({ proficiency_bonus: 3 }),
 
@@ -155,13 +155,13 @@ expertise:
 
       const context = createTemplateContext(mockElement, mockFileContext);
 
-	  // Intelligence should be 15 + 2 + 1 = 18 (score bonus applied)
+      // Intelligence should be 15 + 2 + 1 = 18 (score bonus applied)
       expect(context.abilities.intelligence).toBe(18);
 
       // Investigation should be 4 (INT modifier) + 6 (proficiency_bonus * 2) = 10
       const intelligenceModifier = calculateModifier(context.abilities.intelligence);
-      const investigationValue = intelligenceModifier + (context.frontmatter.proficiency_bonus * 2);
+      const investigationValue = intelligenceModifier + context.frontmatter.proficiency_bonus * 2;
       expect(investigationValue).toBe(10);
-	});
+    });
   });
 });

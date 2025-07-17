@@ -40,11 +40,11 @@ export class SkillsView extends BaseView {
         throw new Error(`Skill ${skill.ability} not found in Skills list`);
       }
 
-	  const totalAbilityScore = AbilityService.getTotalScore(
-		skillAbility,
-		skill.ability as keyof AbilityScores,
-		abilityBlock.bonuses,
-	  );
+      const totalAbilityScore = AbilityService.getTotalScore(
+        skillAbility,
+        skill.ability as keyof AbilityScores,
+        abilityBlock.bonuses
+      );
 
       let skillCheckValue = AbilityService.calculateModifier(totalAbilityScore);
       if (isExpert) {
