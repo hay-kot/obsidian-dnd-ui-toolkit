@@ -145,7 +145,6 @@ class ConsumableMarkdown extends MarkdownRenderChild {
     // Create or reuse a React root
     let root: ReactDOM.Root;
     if (this.reactRoots.has(stateKey)) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       root = this.reactRoots.get(stateKey)!;
     } else {
       root = ReactDOM.createRoot(container);
