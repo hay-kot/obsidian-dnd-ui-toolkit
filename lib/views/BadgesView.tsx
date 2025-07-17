@@ -39,7 +39,8 @@ class StatsLikeComponent extends ReactMarkdown {
 
   constructor(el: HTMLElement, source: string, app: App, ctx: MarkdownPostProcessorContext) {
     super(el);
-    (this.source = source), (this.ctx = useFileContext(app, ctx));
+    this.source = source;
+    this.ctx = useFileContext(app, ctx);
   }
 
   async onload() {

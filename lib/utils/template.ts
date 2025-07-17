@@ -28,6 +28,9 @@ function init() {
   Handlebars.registerHelper("ceil", (a: number) => Math.ceil(a));
   Handlebars.registerHelper("round", (a: number) => Math.round(a));
   Handlebars.registerHelper("modifier", (score: number) => calculateModifier(score));
+
+  // Text helpers
+  Handlebars.registerHelper("strip-link", (a: string) => a.replace(/\[\[([^|]+)\|([^\]]+)\]\]/g, "$2"));
 }
 
 init();
@@ -85,6 +88,7 @@ export function createTemplateContext(el: HTMLElement, fileContext: FileContext)
   } catch (error) {
     // If no ability block found, use defaults
     console.debug("No ability block found, using default values");
+    console.log("Error: ", error);
   }
 
   try {
@@ -99,6 +103,7 @@ export function createTemplateContext(el: HTMLElement, fileContext: FileContext)
     }
   } catch (error) {
     console.debug("No skills block found, using default values");
+    console.log("Error: ", error);
   }
 
   return {

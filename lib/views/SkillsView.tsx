@@ -4,7 +4,7 @@ import { BaseView } from "./BaseView";
 import { MarkdownPostProcessorContext } from "obsidian";
 import * as AbilityService from "lib/domains/abilities";
 import * as SkillsService from "lib/domains/skills";
-import { AbilityBlock } from "lib/types";
+import { AbilityBlock, AbilityScores } from "lib/types";
 import { useFileContext } from "./filecontext";
 
 export class SkillsView extends BaseView {
@@ -40,7 +40,13 @@ export class SkillsView extends BaseView {
         throw new Error(`Skill ${skill.ability} not found in Skills list`);
       }
 
-      let skillCheckValue = AbilityService.calculateModifier(skillAbility);
+      const totalAbilityScore = AbilityService.getTotalScore(
+        skillAbility,
+        skill.ability as keyof AbilityScores,
+        abilityBlock.bonuses
+      );
+
+      let skillCheckValue = AbilityService.calculateModifier(totalAbilityScore);
       if (isExpert) {
         skillCheckValue += frontmatter.proficiency_bonus * 2;
       } else if (isProficient) {

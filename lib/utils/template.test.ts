@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { hasTemplateVariables, processTemplate, createTemplateContext } from "./template";
+import { calculateModifier } from "lib/domains/abilities";
 import type { TemplateContext } from "./template";
 
 describe("template", () => {
@@ -16,7 +17,10 @@ describe("template", () => {
 
   describe("processTemplate", () => {
     const mockContext: TemplateContext = {
-      frontmatter: { proficiency_bonus: 2 },
+      frontmatter: {
+        class: "[[wizard-phb|Wizard]]",
+        proficiency_bonus: 2,
+      },
       abilities: {
         strength: 15,
         dexterity: 14,
@@ -43,6 +47,7 @@ describe("template", () => {
       expect(processTemplate("{{floor 3.7}}", mockContext)).toBe("3");
       expect(processTemplate("{{ceil 3.2}}", mockContext)).toBe("4");
       expect(processTemplate("{{round 3.6}}", mockContext)).toBe("4");
+      expect(processTemplate("{{strip-link frontmatter.class}}", mockContext)).toBe("Wizard");
     });
 
     it("should handle multiple arguments in add helper and modifier calculations", () => {
@@ -111,6 +116,52 @@ bonuses:
       expect(context.abilities.strength).toBe(0);
       expect(context.abilities.dexterity).toBe(0);
       expect(context.frontmatter.proficiency_bonus).toBe(2);
+    });
+
+    it("should calculate skill proficiency correctly from ability scores, including bonuses", () => {
+      const mockElement = {} as HTMLElement;
+      const mockFileContext = {
+        frontmatter: () => ({ proficiency_bonus: 3 }),
+
+        md: () => ({
+          getSectionInfo: vi.fn().mockReturnValue({
+            text: `
+\`\`\`ability
+abilities:
+  intelligence: 15
+bonuses:
+  - name: "Racial"
+    target: "intelligence"
+    value: 2
+    modifies: "score"
+  - name: "Telekinetic feat"
+    target: "intelligence"
+    value: 1
+    modifies: "score"
+\`\`\`
+
+\`\`\`skills
+proficiencies:
+  - arcana
+  - history
+  - investigation
+expertise:
+  - investigation
+\`\`\`
+`,
+          }),
+        }),
+      } as any;
+
+      const context = createTemplateContext(mockElement, mockFileContext);
+
+      // Intelligence should be 15 + 2 + 1 = 18 (score bonus applied)
+      expect(context.abilities.intelligence).toBe(18);
+
+      // Investigation should be 4 (INT modifier) + 6 (proficiency_bonus * 2) = 10
+      const intelligenceModifier = calculateModifier(context.abilities.intelligence);
+      const investigationValue = intelligenceModifier + context.frontmatter.proficiency_bonus * 2;
+      expect(investigationValue).toBe(10);
     });
   });
 });
