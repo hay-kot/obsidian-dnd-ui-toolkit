@@ -1,6 +1,6 @@
 import * as Handlebars from "handlebars";
 import { AbilityScores, Frontmatter, SkillsBlock } from "../types";
-import { parseAbilityBlockFromDocument, calculateModifier, getTotalScore } from "../domains/abilities";
+import { parseAbilityBlock, calculateModifier, getTotalScore } from "../domains/abilities";
 import { parseSkillsBlock } from "../domains/skills";
 import { FileContext } from "../views/filecontext";
 
@@ -74,17 +74,34 @@ export function createTemplateContext(el: HTMLElement, fileContext: FileContext)
 
   try {
     // Try to parse abilities from the document
-    const abilityBlock = parseAbilityBlockFromDocument(el, fileContext.md());
+    const sectionInfo = fileContext.md().getSectionInfo(el);
+    const documentText = sectionInfo?.text || "";
 
-    // Calculate total scores including bonuses that modify the score
-    abilities = {
-      strength: getTotalScore(abilityBlock.abilities.strength, "strength", abilityBlock.bonuses),
-      dexterity: getTotalScore(abilityBlock.abilities.dexterity, "dexterity", abilityBlock.bonuses),
-      constitution: getTotalScore(abilityBlock.abilities.constitution, "constitution", abilityBlock.bonuses),
-      intelligence: getTotalScore(abilityBlock.abilities.intelligence, "intelligence", abilityBlock.bonuses),
-      wisdom: getTotalScore(abilityBlock.abilities.wisdom, "wisdom", abilityBlock.bonuses),
-      charisma: getTotalScore(abilityBlock.abilities.charisma, "charisma", abilityBlock.bonuses),
-    };
+    // Clean the document text to handle callouts and nested callouts
+    const cleanedDocumentText = documentText
+      .split("\n")
+      .map((line) => {
+        const match = line.match(/^(>+)\s?(.*)/);
+        return match ? match[2] : line;
+      })
+      .join("\n");
+
+    const abilityCodeblocks = cleanedDocumentText.match(/```ability[\s\S]*?```/g);
+
+    if (abilityCodeblocks && abilityCodeblocks.length > 0) {
+      const abilityContent = abilityCodeblocks[0].replace(/```ability|```/g, "").trim();
+      const abilityBlock = parseAbilityBlock(abilityContent);
+
+      // Calculate total scores including bonuses that modify the score
+      abilities = {
+        strength: getTotalScore(abilityBlock.abilities.strength, "strength", abilityBlock.bonuses),
+        dexterity: getTotalScore(abilityBlock.abilities.dexterity, "dexterity", abilityBlock.bonuses),
+        constitution: getTotalScore(abilityBlock.abilities.constitution, "constitution", abilityBlock.bonuses),
+        intelligence: getTotalScore(abilityBlock.abilities.intelligence, "intelligence", abilityBlock.bonuses),
+        wisdom: getTotalScore(abilityBlock.abilities.wisdom, "wisdom", abilityBlock.bonuses),
+        charisma: getTotalScore(abilityBlock.abilities.charisma, "charisma", abilityBlock.bonuses),
+      };
+    }
   } catch (error) {
     // If no ability block found, use defaults
     console.debug("No ability block found, using default values");
@@ -99,7 +116,16 @@ export function createTemplateContext(el: HTMLElement, fileContext: FileContext)
 
     if (skillsCodeblocks && skillsCodeblocks.length > 0) {
       const skillsContent = skillsCodeblocks[0].replace(/```skills|```/g, "").trim();
-      skills = parseSkillsBlock(skillsContent);
+
+      // Clean the skillsContent to handle callouts and nested callouts
+      const cleanedSkillsContents = skillsContent
+        .split("\n")
+        .map((line) => {
+          const match = line.match(/^(>+)\s?(.*)/);
+          return match ? match[2] : line;
+        })
+        .join("\n");
+      skills = parseSkillsBlock(cleanedSkillsContents);
     }
   } catch (error) {
     console.debug("No skills block found, using default values");
