@@ -7,7 +7,17 @@ export function parseAbilityBlockFromDocument(el: HTMLElement, ctx: MarkdownPost
   // Extract all ability code blocks from the document
   const sectionInfo = ctx.getSectionInfo(el);
   const documentText = sectionInfo?.text || "";
-  const codeblocks = documentText.match(/```ability[\s\S]*?```/g);
+
+  // Clean the document text to handle callouts and nested callouts
+  const cleanedDocumentText = documentText
+    .split("\n")
+    .map((line) => {
+      const match = line.match(/^(>+)\s?(.*)/);
+      return match ? match[2] : line;
+    })
+    .join("\n");
+
+  const codeblocks = cleanedDocumentText.match(/```ability[\s\S]*?```/g);
 
   if (!codeblocks) {
     throw new Error("No ability code blocks found");
