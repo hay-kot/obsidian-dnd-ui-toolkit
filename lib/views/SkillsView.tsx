@@ -11,7 +11,26 @@ export class SkillsView extends BaseView {
   public codeblock = "skills";
 
   public render(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): string {
-    const abilityBlock = AbilityService.parseAbilityBlockFromDocument(el, ctx);
+    let abilityBlock: AbilityBlock = {
+      abilities: {
+        strength: 0,
+        dexterity: 0,
+        constitution: 0,
+        intelligence: 0,
+        wisdom: 0,
+        charisma: 0,
+      },
+      bonuses: [],
+      proficiencies: [],
+    };
+
+    try {
+      abilityBlock = AbilityService.parseAbilityBlockFromDocument(el, ctx);
+    } catch (error) {
+      console.debug("No ability block found for skills view, using default values");
+      console.log("Error: ", error);
+    }
+
     const skillsBlock = SkillsService.parseSkillsBlock(source);
 
     const data: SkillItem[] = [];
