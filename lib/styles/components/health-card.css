@@ -117,20 +117,33 @@
     margin-bottom: 0.3rem;
 }
 
+.hit-dice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    width: 100%;
+}
+
+.hit-dice-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
 .hit-dice-label {
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--color-text-secondary);
-    margin-bottom: 0 !important;
+    margin: 0 !important;
     text-align: left;
+    flex-shrink: 0;
 }
 
 .hit-dice-boxes {
-    display: inline-flex;
+    display: flex;
     flex-wrap: wrap;
     gap: 0.3rem;
-    margin-left: 1rem;
     align-items: center;
 }
 

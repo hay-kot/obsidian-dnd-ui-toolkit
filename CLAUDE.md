@@ -3,6 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Build Commands
+
 - `npm run dev` - Start compilation in watch mode
 - `npm run build` - Build production version (with TypeScript checks)
 - `npm version patch|minor|major` - Bump version
@@ -20,6 +21,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `task release` - Release a new minor version (includes format, lint, type check, and test)
 
 ## Code Style
+
 - **TypeScript:** Use strict typing (noImplicitAny, strictNullChecks)
 - **React:** Use functional components with explicit props interfaces
 - **JSX:** Use React JSX syntax with function components
@@ -36,6 +38,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **File Structure:** Keep code aligned with domain separation (domains, components, views)
 
 ## Architecture
+
 - **Plugin Structure:** Obsidian plugin with React components for D&D UI elements
 - **Code Block Processors:** Each View class processes specific YAML code blocks (ability, skills, stats, etc.)
 - **State Management:** Uses KeyValueStore with JsonDataStore for persistent state across sessions
@@ -48,14 +51,31 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Plugin Settings:** Configurable color scheme and state file path in settings tab
 - **Event System:** Uses message bus (msgbus) for communication between components and frontmatter changes
 - **Frontmatter Integration:** Automatically syncs with Obsidian frontmatter for character data like proficiency bonus and level
+- **View Registration Pattern:** Each view extends BaseView and implements:
+  - `registerView()`: Registers code block processor with plugin
+  - `render()`: Transforms parsed YAML data into React components
+  - State persistence handled automatically via KV store integration
+- **State Persistence:**
+  - In-memory cache with automatic disk persistence
+  - Scoped by view type and element ID
+  - State file location configurable in plugin settings
+- **Template System:** Handlebars-style templating for dynamic content (e.g., {{dex_mod}} in ability descriptions)
+- **D&D Mechanics:** Implements 5e rules for ability modifiers, proficiency bonuses, skill calculations
 
 ## Testing
+
 - **Framework:** Vitest with Node environment
 - **Test Files:** Place tests alongside source files with `.test.ts` extension
 - **Coverage:** Configured to exclude config files, main.ts, and build outputs
-- **Running Tests:** Use `npm run test` for single run or `npm run test:watch` for watch mode
+- **Running Tests:**
+  - All tests: `npm run test`
+  - Watch mode: `npm run test:watch`
+  - Single test file: `npm run test path/to/file.test.ts`
+  - Pattern matching: `npm run test -- --grep "pattern"`
+- **Test Patterns:** Mock external dependencies (e.g., MockDataStore), use TypeScript generics for type safety
 
 ## Development Workflow
+
 - **Plugin Development:** Set PLUGIN_DIR environment variable to auto-copy built files to Obsidian plugin directory
 - **Documentation:** VitePress documentation in `/docs` with examples and component references
 - **State File:** Plugin creates `.dnd-ui-toolkit-state.json` (configurable) for persistent component state

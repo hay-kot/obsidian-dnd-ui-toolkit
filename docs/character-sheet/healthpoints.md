@@ -17,8 +17,9 @@ Each `state_key` defined in **any** component needs to be unique as they are all
 
 ![Rendered Example](../images/example-hp-widget.webp)
 
-## Example
+## Examples
 
+### Basic Example
 ````yaml
 ```healthpoints
 state_key: din_health
@@ -29,8 +30,22 @@ hitdice:
 ```
 ````
 
+### Multiclass Example
+````yaml
+```healthpoints
+state_key: multiclass_health
+health: 58
+hitdice:
+  - dice: d10  # Fighter levels
+    value: 5
+  - dice: d8   # Cleric levels
+    value: 3
+```
+````
+
+### Dynamic Health Example
 ::: tip
-This `health` key supports dynamic content. This allows you to read your HP from frontmatter.
+The `health` key supports dynamic content. This allows you to read your HP from frontmatter.
 
 ````yaml
 ```healthpoints
@@ -41,7 +56,6 @@ hitdice:
   value: 4
 ```
 ````
-
 :::
 
 ## Configuration
@@ -51,7 +65,7 @@ hitdice:
 | `state_key`   | String       | **Required** | Unique identifier for state storage |
 | `health`      | Number       | **Required** | Maximum health points               |
 | `label`       | String       | "Hit Points" | Custom label for the component      |
-| `hitdice`     | Object       | null         | Hit dice configuration              |
+| `hitdice`     | Object/Array | null         | Hit dice configuration (single object or array for multiclass) |
 | `death_saves` | Boolean      | true         | Whether to show death saves         |
 | `reset_on`    | String/Array/Object | "long-rest"  | Events that reset health     |
 
@@ -75,7 +89,28 @@ reset_on:
   - event: long-rest  # Complete reset
 ```
 
-### Hit Dice Object
+### Hit Dice Configuration
+
+The `hitdice` property supports both single class and multiclass configurations:
+
+#### Single Class Format
+```yaml
+hitdice:
+  dice: d6
+  value: 4
+```
+
+#### Multiclass Format
+For characters with multiple classes, you can specify multiple hit dice types:
+```yaml
+hitdice:
+  - dice: d10
+    value: 3
+  - dice: d6
+    value: 2
+```
+
+#### Hit Dice Object Properties
 
 | Property | Type   | Description                         |
 | -------- | ------ | ----------------------------------- |

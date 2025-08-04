@@ -52,14 +52,16 @@ export type SkillsBlock = {
 
 export type SkillsBlockBonus = GenericBonus;
 
+export type HitDice = {
+  dice: string;
+  value: number;
+};
+
 export type HealthBlock = {
   label: string;
   state_key: string;
   health: number | string; // Allow string for template support
-  hitdice?: {
-    dice: string;
-    value: number;
-  };
+  hitdice?: HitDice | HitDice[]; // Support both single and multiple hit dice
   death_saves?: boolean;
   reset_on?: string | string[]; // Event type(s) that trigger a reset, defaults to 'long-rest'
 };
@@ -80,8 +82,9 @@ export type ParsedConsumableBlock = Omit<ConsumableBlock, "reset_on"> & {
   reset_on?: ResetConfig[]; // Normalized to always be an array of objects
 };
 
-export type ParsedHealthBlock = Omit<HealthBlock, "reset_on"> & {
+export type ParsedHealthBlock = Omit<HealthBlock, "reset_on" | "hitdice"> & {
   reset_on?: ResetConfig[]; // Normalized to always be an array of objects
+  hitdice?: HitDice[]; // Normalized to always be an array
 };
 
 export type BadgeItem = {
@@ -142,3 +145,6 @@ export type EventButtonItem = {
 export type EventButtonsBlock = {
   items: EventButtonItem[];
 };
+
+// Re-export HealthState from healthpoints domain
+export type { HealthState } from "./domains/healthpoints";

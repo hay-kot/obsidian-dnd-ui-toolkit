@@ -79,10 +79,21 @@ class HealthMarkdown extends ReactMarkdown {
     try {
       // Load the initial state
       const savedState = await this.kv.get<HealthState>(stateKey);
-      const healthState = savedState || defaultState;
+      let healthState = savedState || defaultState;
 
-      // If no saved state exists, save the default state
-      if (!savedState) {
+      // Migrate state if needed (for multiclass hit dice support)
+      if (savedState) {
+        healthState = HealthService.migrateHealthState(savedState, healthBlock);
+        // Save migrated state if it changed
+        if (healthState !== savedState) {
+          try {
+            await this.kv.set(stateKey, healthState);
+          } catch (error) {
+            console.error("Error saving migrated health state:", error);
+          }
+        }
+      } else {
+        // If no saved state exists, save the default state
         try {
           await this.kv.set(stateKey, defaultState);
         } catch (error) {
@@ -230,11 +241,14 @@ class HealthMarkdown extends ReactMarkdown {
       // Ensure health is a number for reset
       const maxHealth = typeof healthBlock.health === "number" ? healthBlock.health : 6;
 
+      // Get default state to properly initialize hitdiceUsed
+      const defaultState = HealthService.getDefaultHealthState(healthBlock);
+
       // Reset to full health and clear hit dice usage and death saves
       const resetState: HealthState = {
         current: maxHealth, // Restore to maximum health
         temporary: 0, // Clear temporary HP
-        hitdiceUsed: 0, // Reset hit dice
+        hitdiceUsed: defaultState.hitdiceUsed, // Reset hit dice with proper structure
         deathSaveSuccesses: 0, // Clear death saves
         deathSaveFailures: 0, // Clear death saves
       };
