@@ -11,6 +11,25 @@ export interface HealthState {
   deathSaveFailures: number;
 }
 
+// Type guards for better type safety
+export function isSingleHitDiceState(state: HealthState): state is HealthState & { hitdiceUsed: number } {
+  return typeof state.hitdiceUsed === "number";
+}
+
+export function isMultiHitDiceState(
+  state: HealthState
+): state is HealthState & { hitdiceUsed: Record<string, number> } {
+  return typeof state.hitdiceUsed === "object" && state.hitdiceUsed !== null;
+}
+
+export function hasSingleHitDice(block: ParsedHealthBlock): boolean {
+  return block.hitdice !== undefined && block.hitdice.length === 1;
+}
+
+export function hasMultipleHitDice(block: ParsedHealthBlock): boolean {
+  return block.hitdice !== undefined && block.hitdice.length > 1;
+}
+
 export function parseHealthBlock(yamlString: string): ParsedHealthBlock {
   const def: HealthBlock = {
     label: "Hit Points",

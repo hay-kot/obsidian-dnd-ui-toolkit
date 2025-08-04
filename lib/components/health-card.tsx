@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ParsedHealthBlock } from "lib/types";
-import { HealthState } from "lib/domains/healthpoints";
+import { HealthState, isSingleHitDiceState, isMultiHitDiceState, hasSingleHitDice } from "lib/domains/healthpoints";
 import { Checkbox } from "lib/components/checkbox";
 
 export type HealthCardProps = {
@@ -81,43 +81,37 @@ export function HealthCard(props: HealthCardProps) {
     setInputValue("1");
   };
 
+  // Helper function to calculate new used count based on toggle action
+  const calculateNewUsedCount = (currentUsed: number, index: number): number => {
+    const isUsed = index < currentUsed;
+    if (isUsed) {
+      // Uncheck this die and all dice after it
+      return index;
+    } else {
+      // Check this die and all dice before it
+      return index + 1;
+    }
+  };
+
   // Handle hit dice interaction
   const toggleHitDie = (diceType: string | null, index: number) => {
-    if (!diceType && typeof props.state.hitdiceUsed === "number") {
+    if (!diceType && isSingleHitDiceState(props.state)) {
       // Legacy single dice type
-      const isUsed = index < props.state.hitdiceUsed;
-      let newHitDiceUsed = props.state.hitdiceUsed;
-
-      if (isUsed) {
-        // Uncheck this die and all dice after it
-        newHitDiceUsed = index;
-      } else {
-        // Check this die and all dice before it
-        newHitDiceUsed = index + 1;
-      }
+      const newHitDiceUsed = calculateNewUsedCount(props.state.hitdiceUsed, index);
 
       props.onStateChange({
         ...props.state,
         hitdiceUsed: newHitDiceUsed,
       });
-    } else if (diceType && typeof props.state.hitdiceUsed === "object") {
+    } else if (diceType && isMultiHitDiceState(props.state)) {
       // Multiple dice types
       const currentUsed = props.state.hitdiceUsed[diceType] || 0;
-      const isUsed = index < currentUsed;
-
-      let newUsed: number;
-      if (isUsed) {
-        // Uncheck this die and all dice after it
-        newUsed = index;
-      } else {
-        // Check this die and all dice before it
-        newUsed = index + 1;
-      }
+      const newUsed = calculateNewUsedCount(currentUsed, index);
 
       props.onStateChange({
         ...props.state,
         hitdiceUsed: {
-          ...props.state.hitdiceUsed,
+          ...(props.state.hitdiceUsed as Record<string, number>),
           [diceType]: newUsed,
         },
       });
@@ -155,19 +149,14 @@ export function HealthCard(props: HealthCardProps) {
       <div className="hit-dice-list">
         {props.static.hitdice.map((hd) => {
           // Get the used count based on state structure
-          let used: number;
-          if (
-            props.static.hitdice &&
-            props.static.hitdice.length === 1 &&
-            typeof props.state.hitdiceUsed === "number"
-          ) {
+          let used: number = 0;
+
+          if (hasSingleHitDice(props.static) && isSingleHitDiceState(props.state)) {
             // Legacy single dice with number state
             used = props.state.hitdiceUsed;
-          } else if (typeof props.state.hitdiceUsed === "object") {
+          } else if (isMultiHitDiceState(props.state)) {
             // Multiple dice or migrated state
             used = props.state.hitdiceUsed[hd.dice] || 0;
-          } else {
-            used = 0;
           }
 
           const hitDiceArray = [];
@@ -177,9 +166,7 @@ export function HealthCard(props: HealthCardProps) {
                 key={`${hd.dice}-${i}`}
                 checked={i < used}
                 id={`hit-dice-${hd.dice}-${i}`}
-                onChange={() =>
-                  toggleHitDie(props.static.hitdice && props.static.hitdice.length === 1 ? null : hd.dice, i)
-                }
+                onChange={() => toggleHitDie(hasSingleHitDice(props.static) ? null : hd.dice, i)}
               />
             );
           }

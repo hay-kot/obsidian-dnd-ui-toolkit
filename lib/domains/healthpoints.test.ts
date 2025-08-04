@@ -1,5 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { parseHealthBlock, getDefaultHealthState, migrateHealthState } from "./healthpoints";
+import {
+  parseHealthBlock,
+  getDefaultHealthState,
+  migrateHealthState,
+  isSingleHitDiceState,
+  isMultiHitDiceState,
+  hasSingleHitDice,
+  hasMultipleHitDice,
+} from "./healthpoints";
 import type { ParsedHealthBlock, HealthState } from "lib/types";
 
 describe("healthpoints", () => {
@@ -221,6 +229,152 @@ reset_on: short-rest
       expect(migrated.hitdiceUsed).toEqual({
         d10: 3, // Max out first type
         d6: 4, // Remaining 4 go to second type
+      });
+    });
+  });
+
+  describe("type guards", () => {
+    describe("isSingleHitDiceState", () => {
+      it("should return true for number hitdiceUsed", () => {
+        const state: HealthState = {
+          current: 20,
+          temporary: 0,
+          hitdiceUsed: 3,
+          deathSaveSuccesses: 0,
+          deathSaveFailures: 0,
+        };
+
+        expect(isSingleHitDiceState(state)).toBe(true);
+      });
+
+      it("should return false for object hitdiceUsed", () => {
+        const state: HealthState = {
+          current: 20,
+          temporary: 0,
+          hitdiceUsed: { d10: 2, d6: 1 },
+          deathSaveSuccesses: 0,
+          deathSaveFailures: 0,
+        };
+
+        expect(isSingleHitDiceState(state)).toBe(false);
+      });
+    });
+
+    describe("isMultiHitDiceState", () => {
+      it("should return true for object hitdiceUsed", () => {
+        const state: HealthState = {
+          current: 20,
+          temporary: 0,
+          hitdiceUsed: { d10: 2, d6: 1 },
+          deathSaveSuccesses: 0,
+          deathSaveFailures: 0,
+        };
+
+        expect(isMultiHitDiceState(state)).toBe(true);
+      });
+
+      it("should return false for number hitdiceUsed", () => {
+        const state: HealthState = {
+          current: 20,
+          temporary: 0,
+          hitdiceUsed: 3,
+          deathSaveSuccesses: 0,
+          deathSaveFailures: 0,
+        };
+
+        expect(isMultiHitDiceState(state)).toBe(false);
+      });
+
+      it("should return false for null hitdiceUsed", () => {
+        const state: HealthState = {
+          current: 20,
+          temporary: 0,
+          hitdiceUsed: null as any, // Simulating edge case
+          deathSaveSuccesses: 0,
+          deathSaveFailures: 0,
+        };
+
+        expect(isMultiHitDiceState(state)).toBe(false);
+      });
+    });
+
+    describe("hasSingleHitDice", () => {
+      it("should return true for single hit dice block", () => {
+        const block: ParsedHealthBlock = {
+          state_key: "test",
+          label: "Hit Points",
+          health: 24,
+          hitdice: [{ dice: "d6", value: 4 }],
+          death_saves: true,
+        };
+
+        expect(hasSingleHitDice(block)).toBe(true);
+      });
+
+      it("should return false for multiple hit dice block", () => {
+        const block: ParsedHealthBlock = {
+          state_key: "test",
+          label: "Hit Points",
+          health: 24,
+          hitdice: [
+            { dice: "d10", value: 3 },
+            { dice: "d6", value: 2 },
+          ],
+          death_saves: true,
+        };
+
+        expect(hasSingleHitDice(block)).toBe(false);
+      });
+
+      it("should return false for no hit dice", () => {
+        const block: ParsedHealthBlock = {
+          state_key: "test",
+          label: "Hit Points",
+          health: 24,
+          death_saves: true,
+        };
+
+        expect(hasSingleHitDice(block)).toBe(false);
+      });
+    });
+
+    describe("hasMultipleHitDice", () => {
+      it("should return true for multiple hit dice block", () => {
+        const block: ParsedHealthBlock = {
+          state_key: "test",
+          label: "Hit Points",
+          health: 24,
+          hitdice: [
+            { dice: "d10", value: 3 },
+            { dice: "d6", value: 2 },
+          ],
+          death_saves: true,
+        };
+
+        expect(hasMultipleHitDice(block)).toBe(true);
+      });
+
+      it("should return false for single hit dice block", () => {
+        const block: ParsedHealthBlock = {
+          state_key: "test",
+          label: "Hit Points",
+          health: 24,
+          hitdice: [{ dice: "d6", value: 4 }],
+          death_saves: true,
+        };
+
+        expect(hasMultipleHitDice(block)).toBe(false);
+      });
+
+      it("should return false for no hit dice", () => {
+        const block: ParsedHealthBlock = {
+          state_key: "test",
+          label: "Hit Points",
+          health: 24,
+          death_saves: true,
+        };
+
+        expect(hasMultipleHitDice(block)).toBe(false);
       });
     });
   });
