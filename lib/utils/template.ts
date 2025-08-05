@@ -3,6 +3,7 @@ import { AbilityScores, Frontmatter, SkillsBlock } from "../types";
 import { parseAbilityBlockFromDocument, calculateModifier, getTotalScore } from "../domains/abilities";
 import { parseSkillsBlock } from "../domains/skills";
 import { FileContext } from "../views/filecontext";
+import { extractFirstCodeBlock } from "./codeblock-extractor";
 
 export interface TemplateContext {
   frontmatter: Frontmatter;
@@ -95,10 +96,10 @@ export function createTemplateContext(el: HTMLElement, fileContext: FileContext)
     // Try to parse skills from the document
     const sectionInfo = fileContext.md().getSectionInfo(el);
     const documentText = sectionInfo?.text || "";
-    const skillsCodeblocks = documentText.match(/```skills[\s\S]*?```/g);
 
-    if (skillsCodeblocks && skillsCodeblocks.length > 0) {
-      const skillsContent = skillsCodeblocks[0].replace(/```skills|```/g, "").trim();
+    const skillsContent = extractFirstCodeBlock(documentText, "skills");
+
+    if (skillsContent) {
       skills = parseSkillsBlock(skillsContent);
     }
   } catch (error) {

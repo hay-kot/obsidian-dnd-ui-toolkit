@@ -174,6 +174,90 @@ Some text after
       expect(result.abilities.dexterity).toBe(14);
     });
 
+    it("should parse ability block inside a simple callout", () => {
+      const mockElement = {} as HTMLElement;
+      const mockContext = {
+        getSectionInfo: vi.fn().mockReturnValue({
+          text: `> \`\`\`ability
+> abilities:
+>   strength: 15
+>   dexterity: 10
+> \`\`\``,
+        }),
+      } as any;
+
+      const result = parseAbilityBlockFromDocument(mockElement, mockContext);
+
+      expect(result.abilities.strength).toBe(15);
+      expect(result.abilities.dexterity).toBe(10);
+    });
+
+    it("should parse ability block inside nested callouts", () => {
+      const mockElement = {} as HTMLElement;
+      const mockContext = {
+        getSectionInfo: vi.fn().mockReturnValue({
+          text: `>>> \`\`\`ability
+>>> abilities:
+>>>   strength: 8
+>>>   dexterity: 14
+>>>   constitution: 12
+>>> \`\`\``,
+        }),
+      } as any;
+
+      const result = parseAbilityBlockFromDocument(mockElement, mockContext);
+
+      expect(result.abilities.strength).toBe(8);
+      expect(result.abilities.dexterity).toBe(14);
+      expect(result.abilities.constitution).toBe(12);
+    });
+
+    it("should parse ability block with bonuses inside callout", () => {
+      const mockElement = {} as HTMLElement;
+      const mockContext = {
+        getSectionInfo: vi.fn().mockReturnValue({
+          text: `> \`\`\`ability
+> abilities:
+>   strength: 10
+>   charisma: 16
+> bonuses:
+>   - name: "Racial Bonus"
+>     target: "charisma"
+>     value: 2
+> \`\`\``,
+        }),
+      } as any;
+
+      const result = parseAbilityBlockFromDocument(mockElement, mockContext);
+
+      expect(result.abilities.strength).toBe(10);
+      expect(result.abilities.charisma).toBe(16);
+      expect(result.bonuses).toHaveLength(1);
+      expect(result.bonuses[0].target).toBe("charisma");
+      expect(result.bonuses[0].value).toBe(2);
+    });
+
+    it("should parse ability block with proficiencies inside callout", () => {
+      const mockElement = {} as HTMLElement;
+      const mockContext = {
+        getSectionInfo: vi.fn().mockReturnValue({
+          text: `> \`\`\`ability
+> abilities:
+>   strength: 12
+> proficiencies:
+>   - "strength"
+>   - "constitution"
+> \`\`\``,
+        }),
+      } as any;
+
+      const result = parseAbilityBlockFromDocument(mockElement, mockContext);
+
+      expect(result.abilities.strength).toBe(12);
+      expect(result.proficiencies).toContain("strength");
+      expect(result.proficiencies).toContain("constitution");
+    });
+
     it("should handle multiple ability blocks and use the first one", () => {
       const mockElement = {} as HTMLElement;
       const mockContext = {

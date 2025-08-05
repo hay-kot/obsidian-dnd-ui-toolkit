@@ -2,22 +2,19 @@ import { AbilityBlock, GenericBonus, AbilityScores } from "lib/types";
 import { MarkdownPostProcessorContext } from "obsidian";
 import * as Utils from "lib/utils/utils";
 import { parse } from "yaml";
+import { extractFirstCodeBlock } from "../utils/codeblock-extractor";
 
 export function parseAbilityBlockFromDocument(el: HTMLElement, ctx: MarkdownPostProcessorContext): AbilityBlock {
-  // Extract all ability code blocks from the document
   const sectionInfo = ctx.getSectionInfo(el);
   const documentText = sectionInfo?.text || "";
-  const codeblocks = documentText.match(/```ability[\s\S]*?```/g);
 
-  if (!codeblocks) {
+  const abilityContent = extractFirstCodeBlock(documentText, "ability");
+
+  if (!abilityContent) {
     throw new Error("No ability code blocks found");
   }
 
-  const first = codeblocks[0];
-
-  // prepare contents
-  const contents = first.replace(/```ability|```/g, "").trim();
-  return parseAbilityBlock(contents);
+  return parseAbilityBlock(abilityContent);
 }
 
 export function parseAbilityBlock(yamlString: string): AbilityBlock {
