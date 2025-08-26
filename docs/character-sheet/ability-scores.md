@@ -67,7 +67,7 @@ proficiencies:
 :::
 
 ::: tip Template Strings
-Always wrap template expressions in quotes when used as YAML values: `'{{ frontmatter.strength }}'`
+Always wrap template expressions in quotes when used as YAML values: <code v-pre>'{{ frontmatter.strength }}'</code>
 :::
 
 ### Benefits of Template-Based Abilities
@@ -96,8 +96,8 @@ abilities:
 ::: warning Template Limitations
 Template expressions in abilities can only reference `frontmatter` values and mathematical functions. They cannot reference other `abilities` or `skills` to prevent circular dependencies.
 
-**Allowed**: `'{{ frontmatter.strength }}'`, `'{{ add frontmatter.base_str 2 }}'`  
-**Not allowed**: `'{{ abilities.dexterity }}'`, `'{{ skills.proficiencies }}'`
+**Allowed**: <code v-pre>'{{ frontmatter.strength }}'</code>, <code v-pre>'{{ add frontmatter.base_str 2 }}'</code>  
+**Not allowed**: <code v-pre>'{{ abilities.dexterity }}'</code>, <code v-pre>'{{ skills.proficiencies }}'</code>
 :::
 
 ### Referencing Templated Abilities
