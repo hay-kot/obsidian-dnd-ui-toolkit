@@ -22,7 +22,7 @@ export default defineConfig({
     alias: {
       "@": "/lib",
       "@lib": "/lib",
-      "obsidian": path.resolve(__dirname, "./test-utils/mock-obsidian.ts"),
+      obsidian: path.resolve(__dirname, "./test-utils/mock-obsidian.ts"),
     },
   },
 });

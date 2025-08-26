@@ -21,12 +21,7 @@ class SkillsMarkdown extends ReactMarkdown {
   private source: string;
   private fileContext: FileContext;
 
-  constructor(
-    el: HTMLElement,
-    source: string,
-    ctx: MarkdownPostProcessorContext,
-    app: App
-  ) {
+  constructor(el: HTMLElement, source: string, ctx: MarkdownPostProcessorContext, app: App) {
     super(el);
     this.source = source;
     this.fileContext = useFileContext(app, ctx);
@@ -35,7 +30,7 @@ class SkillsMarkdown extends ReactMarkdown {
   async onload() {
     // Set up listeners for abilities and frontmatter changes
     this.setupListeners();
-    
+
     // Process and render initial state
     this.processAndRender();
   }

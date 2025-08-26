@@ -559,9 +559,7 @@ abilities:
       expect(result.abilities.dexterity).toBe(0); // Should default to 0 for non-numeric string
       expect(result.abilities.constitution).toBe(13); // Should preserve valid number
 
-      expect(warnSpy).toHaveBeenCalledWith(
-        expect.stringContaining("Template processed ability value")
-      );
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("Template processed ability value"));
 
       warnSpy.mockRestore();
     });
@@ -616,9 +614,7 @@ abilities:
           wisdom: 10,
           charisma: 8,
         },
-        bonuses: [
-          { name: "Racial", target: "strength", value: 2 },
-        ],
+        bonuses: [{ name: "Racial", target: "strength", value: 2 }],
         proficiencies: ["strength", "constitution"],
       };
 

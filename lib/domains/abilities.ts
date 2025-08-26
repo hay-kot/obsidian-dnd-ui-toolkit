@@ -65,7 +65,7 @@ export function processAbilityBlockTemplate(
   // Process each ability score
   for (const [key, value] of Object.entries(rawBlock.abilities)) {
     const abilityKey = key as keyof AbilityScores;
-    
+
     if (typeof value === "string" && hasTemplateVariables(value)) {
       // Process template with a minimal context to avoid circular dependencies
       const minimalContext = {
@@ -77,20 +77,18 @@ export function processAbilityBlockTemplate(
           constitution: 0,
           intelligence: 0,
           wisdom: 0,
-          charisma: 0
+          charisma: 0,
         },
-        skills: { proficiencies: [], expertise: [], half_proficiencies: [], bonuses: [] }
+        skills: { proficiencies: [], expertise: [], half_proficiencies: [], bonuses: [] },
       };
-      
+
       const processedValue = processTemplate(value, minimalContext);
       const numericValue = parseInt(processedValue, 10);
-      
+
       if (!isNaN(numericValue)) {
         processedAbilities[abilityKey] = numericValue;
       } else {
-        console.warn(
-          `Template processed ability value "${processedValue}" for ${key} is not a valid number, using 0`
-        );
+        console.warn(`Template processed ability value "${processedValue}" for ${key} is not a valid number, using 0`);
         processedAbilities[abilityKey] = 0;
       }
     } else {

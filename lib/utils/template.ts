@@ -57,7 +57,11 @@ export function processTemplate(text: string, context: TemplateContext): string 
 // Thread-local flag to prevent recursion during template processing
 let isProcessingAbilityTemplate = false;
 
-export function createTemplateContext(el: HTMLElement, fileContext: FileContext, skipAbilities: boolean = false): TemplateContext {
+export function createTemplateContext(
+  el: HTMLElement,
+  fileContext: FileContext,
+  skipAbilities: boolean = false
+): TemplateContext {
   const frontmatter = fileContext.frontmatter();
 
   let abilities: AbilityScores = {

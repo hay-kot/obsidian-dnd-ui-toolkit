@@ -25,17 +25,12 @@ class AbilityMarkdown extends ReactMarkdown {
   private originalRawBlock: RawAbilityBlock;
   private hasTemplates: boolean = false;
 
-  constructor(
-    el: HTMLElement,
-    source: string,
-    ctx: MarkdownPostProcessorContext,
-    app: App
-  ) {
+  constructor(el: HTMLElement, source: string, ctx: MarkdownPostProcessorContext, app: App) {
     super(el);
     this.source = source;
     this.fileContext = useFileContext(app, ctx);
     this.originalRawBlock = AbilityService.parseAbilityBlock(source);
-    
+
     // Check if any abilities contain template variables
     this.hasTemplates = Object.values(this.originalRawBlock.abilities).some(
       (value) => typeof value === "string" && hasTemplateVariables(value)
@@ -47,7 +42,7 @@ class AbilityMarkdown extends ReactMarkdown {
     if (this.hasTemplates) {
       this.setupFrontmatterChangeListener();
     }
-    
+
     // Process and render initial state
     this.processAndRender();
   }
@@ -58,7 +53,7 @@ class AbilityMarkdown extends ReactMarkdown {
     // Process templates if present
     if (this.hasTemplates) {
       const templateContext = {
-        frontmatter: this.fileContext.frontmatter()
+        frontmatter: this.fileContext.frontmatter(),
       };
       abilityBlock = AbilityService.processAbilityBlockTemplate(this.originalRawBlock, templateContext);
     } else {

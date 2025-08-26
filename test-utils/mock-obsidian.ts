@@ -2,7 +2,7 @@
 
 export class App {
   metadataCache: any;
-  
+
   constructor() {
     this.metadataCache = {
       getCache: () => ({
@@ -14,17 +14,17 @@ export class App {
 
 export class MarkdownPostProcessorContext {
   sourcePath: string;
-  
+
   constructor() {
     this.sourcePath = "test.md";
   }
-  
+
   getSectionInfo(el: HTMLElement) {
     return {
       text: "",
     };
   }
-  
+
   addChild(child: any) {
     // Mock implementation
   }
@@ -32,15 +32,15 @@ export class MarkdownPostProcessorContext {
 
 export class MarkdownRenderChild {
   containerEl: HTMLElement;
-  
+
   constructor(el: HTMLElement) {
     this.containerEl = el;
   }
-  
+
   onload() {
     // Mock implementation
   }
-  
+
   onunload() {
     // Mock implementation
   }
