@@ -47,28 +47,24 @@ describe("SkillsView", () => {
     } as any;
   });
 
-  it.skip("should handle missing ability block gracefully", () => {
-    // Note: This test is skipped as it needs to be updated for async behavior in SkillsMarkdown
+  it("should handle missing ability block gracefully", () => {
     // Mock parseAbilityBlockFromDocument to throw an error
     const parseAbilityBlockSpy = vi.spyOn(AbilityService, "parseAbilityBlockFromDocument");
     parseAbilityBlockSpy.mockImplementation(() => {
       throw new Error("No ability code blocks found");
     });
 
-    const consoleDebugSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
-
     const skillsYaml = `proficiencies:
   - athletics
   - intimidation`;
 
-    // Should not throw an error
+    // Should not throw an error when creating the SkillsMarkdown component
     expect(() => skillsView.render(skillsYaml, mockElement, mockContext)).not.toThrow();
 
-    // Should log debug message
-    expect(consoleDebugSpy).toHaveBeenCalledWith("No ability block found for skills view, using default values");
+    // Should call addChild to register the SkillsMarkdown component
+    expect(mockContext.addChild).toHaveBeenCalled();
 
     parseAbilityBlockSpy.mockRestore();
-    consoleDebugSpy.mockRestore();
   });
 
   it("should use ability scores when ability block is found", () => {
