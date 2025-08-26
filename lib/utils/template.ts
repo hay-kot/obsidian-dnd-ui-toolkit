@@ -91,18 +91,30 @@ export function createTemplateContext(
 
       if (abilityContent) {
         const rawBlock = parseAbilityBlock(abilityContent);
-        // Process without templates to avoid recursion - just convert to numbers
-        const abilityBlock = processAbilityBlockTemplate(rawBlock, null, true);
+        
+        // Set the flag to prevent recursion when processing ability templates
+        isProcessingAbilityTemplate = true;
+        
+        try {
+          // Process templates with frontmatter context to get the correct values
+          const templateContext = {
+            frontmatter: frontmatter
+          };
+          const abilityBlock = processAbilityBlockTemplate(rawBlock, templateContext, false);
 
-        // Calculate total scores including bonuses that modify the score
-        abilities = {
-          strength: getTotalScore(abilityBlock.abilities.strength, "strength", abilityBlock.bonuses),
-          dexterity: getTotalScore(abilityBlock.abilities.dexterity, "dexterity", abilityBlock.bonuses),
-          constitution: getTotalScore(abilityBlock.abilities.constitution, "constitution", abilityBlock.bonuses),
-          intelligence: getTotalScore(abilityBlock.abilities.intelligence, "intelligence", abilityBlock.bonuses),
-          wisdom: getTotalScore(abilityBlock.abilities.wisdom, "wisdom", abilityBlock.bonuses),
-          charisma: getTotalScore(abilityBlock.abilities.charisma, "charisma", abilityBlock.bonuses),
-        };
+          // Calculate total scores including bonuses that modify the score
+          abilities = {
+            strength: getTotalScore(abilityBlock.abilities.strength, "strength", abilityBlock.bonuses),
+            dexterity: getTotalScore(abilityBlock.abilities.dexterity, "dexterity", abilityBlock.bonuses),
+            constitution: getTotalScore(abilityBlock.abilities.constitution, "constitution", abilityBlock.bonuses),
+            intelligence: getTotalScore(abilityBlock.abilities.intelligence, "intelligence", abilityBlock.bonuses),
+            wisdom: getTotalScore(abilityBlock.abilities.wisdom, "wisdom", abilityBlock.bonuses),
+            charisma: getTotalScore(abilityBlock.abilities.charisma, "charisma", abilityBlock.bonuses),
+          };
+        } finally {
+          // Always reset the flag
+          isProcessingAbilityTemplate = false;
+        }
       }
     } catch (error) {
       // If no ability block found, use defaults

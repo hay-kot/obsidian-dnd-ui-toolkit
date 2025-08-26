@@ -163,5 +163,55 @@ expertise:
       const investigationValue = intelligenceModifier + context.frontmatter.proficiency_bonus * 2;
       expect(investigationValue).toBe(10);
     });
+
+    it("should process templated abilities correctly when creating template context", () => {
+      const mockElement = {} as HTMLElement;
+      // Mock frontmatter with specific ability scores
+      const mockFileContext = {
+        frontmatter: () => ({
+          proficiency_bonus: 6,
+          level: 20,
+          strength: 14,
+          dexterity: 16,
+          constitution: 12,
+          intelligence: 10,
+          wisdom: 13,
+          charisma: 8
+        }),
+        md: () => ({
+          getSectionInfo: () => ({
+            text: `
+\`\`\`ability
+abilities:
+  strength: '{{ frontmatter.strength }}'
+  dexterity: '{{ frontmatter.dexterity }}'
+  constitution: '{{ frontmatter.constitution }}'
+  intelligence: '{{ frontmatter.intelligence }}'
+  wisdom: '{{ frontmatter.wisdom }}'
+  charisma: '{{ frontmatter.charisma }}'
+
+proficiencies:
+  - intelligence
+  - wisdom
+\`\`\`
+`
+          })
+        })
+      } as any;
+
+      const result = createTemplateContext(mockElement, mockFileContext);
+
+      // Should have processed the templates and gotten the actual values from frontmatter
+      expect(result.abilities.strength).toBe(14);
+      expect(result.abilities.dexterity).toBe(16);
+      expect(result.abilities.constitution).toBe(12);
+      expect(result.abilities.intelligence).toBe(10);
+      expect(result.abilities.wisdom).toBe(13);
+      expect(result.abilities.charisma).toBe(8);
+      
+      // Should also have the correct frontmatter
+      expect(result.frontmatter.proficiency_bonus).toBe(6);
+      expect(result.frontmatter.level).toBe(20);
+    });
   });
 });
