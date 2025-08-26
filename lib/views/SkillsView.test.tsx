@@ -48,7 +48,7 @@ describe("SkillsView", () => {
   });
 
   it.skip("should handle missing ability block gracefully", () => {
-    // TODO: This test needs to be updated for async behavior in SkillsMarkdown
+    // Note: This test is skipped as it needs to be updated for async behavior in SkillsMarkdown
     // Mock parseAbilityBlockFromDocument to throw an error
     const parseAbilityBlockSpy = vi.spyOn(AbilityService, "parseAbilityBlockFromDocument");
     parseAbilityBlockSpy.mockImplementation(() => {
