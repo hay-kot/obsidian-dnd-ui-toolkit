@@ -91,14 +91,14 @@ export function createTemplateContext(
 
       if (abilityContent) {
         const rawBlock = parseAbilityBlock(abilityContent);
-        
+
         // Set the flag to prevent recursion when processing ability templates
         isProcessingAbilityTemplate = true;
-        
+
         try {
           // Process templates with frontmatter context to get the correct values
           const templateContext = {
-            frontmatter: frontmatter
+            frontmatter: frontmatter,
           };
           const abilityBlock = processAbilityBlockTemplate(rawBlock, templateContext, false);
 

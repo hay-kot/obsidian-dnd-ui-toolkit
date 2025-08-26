@@ -176,7 +176,7 @@ expertise:
           constitution: 12,
           intelligence: 10,
           wisdom: 13,
-          charisma: 8
+          charisma: 8,
         }),
         md: () => ({
           getSectionInfo: () => ({
@@ -194,9 +194,9 @@ proficiencies:
   - intelligence
   - wisdom
 \`\`\`
-`
-          })
-        })
+`,
+          }),
+        }),
       } as any;
 
       const result = createTemplateContext(mockElement, mockFileContext);
@@ -208,7 +208,7 @@ proficiencies:
       expect(result.abilities.intelligence).toBe(10);
       expect(result.abilities.wisdom).toBe(13);
       expect(result.abilities.charisma).toBe(8);
-      
+
       // Should also have the correct frontmatter
       expect(result.frontmatter.proficiency_bonus).toBe(6);
       expect(result.frontmatter.level).toBe(20);
