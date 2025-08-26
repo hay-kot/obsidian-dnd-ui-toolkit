@@ -19,6 +19,23 @@ export type AbilityScores = {
   charisma: number;
 };
 
+// Raw ability scores that can contain template strings
+export type RawAbilityScores = {
+  strength: number | string;
+  dexterity: number | string;
+  constitution: number | string;
+  intelligence: number | string;
+  wisdom: number | string;
+  charisma: number | string;
+};
+
+// Raw ability block used for parsing YAML with potential templates
+export type RawAbilityBlock = {
+  abilities: RawAbilityScores;
+  bonuses: GenericBonus[];
+  proficiencies: string[];
+};
+
 // An GenericBonus is an additional property for the ability block
 // that allows for custom additions to score points. This helps users
 // add things from feats, or other sources that might modify the score.

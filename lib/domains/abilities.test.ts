@@ -7,8 +7,9 @@ import {
   getModifiersForAbility,
   getTotalScore,
   getSavingThrowBonus,
+  processAbilityBlockTemplate,
 } from "./abilities";
-import { GenericBonus } from "../types";
+import { GenericBonus, RawAbilityBlock } from "../types";
 
 describe("abilities", () => {
   describe("parseAbilityBlock", () => {
@@ -462,6 +463,194 @@ abilities:
 
       // Both should default to saving_throw: 2 + 1 = 3
       expect(bonus).toBe(3);
+    });
+  });
+
+  describe("processAbilityBlockTemplate", () => {
+    it("should process numeric values without template context", () => {
+      const rawBlock: RawAbilityBlock = {
+        abilities: {
+          strength: 15,
+          dexterity: 14,
+          constitution: 13,
+          intelligence: 12,
+          wisdom: 10,
+          charisma: 8,
+        },
+        bonuses: [],
+        proficiencies: [],
+      };
+
+      const result = processAbilityBlockTemplate(rawBlock, null);
+
+      expect(result.abilities.strength).toBe(15);
+      expect(result.abilities.dexterity).toBe(14);
+      expect(result.abilities.constitution).toBe(13);
+    });
+
+    it("should process template strings with frontmatter context", () => {
+      const rawBlock: RawAbilityBlock = {
+        abilities: {
+          strength: "{{frontmatter.base_str}}",
+          dexterity: 14,
+          constitution: "{{frontmatter.con_score}}",
+          intelligence: 12,
+          wisdom: 10,
+          charisma: 8,
+        },
+        bonuses: [],
+        proficiencies: [],
+      };
+
+      // Mock the template processing functions
+      vi.doMock("../utils/template", () => ({
+        hasTemplateVariables: (text: string) => text.includes("{{") && text.includes("}}"),
+        processTemplate: (text: string, context: any) => {
+          if (text === "{{frontmatter.base_str}}") return "16";
+          if (text === "{{frontmatter.con_score}}") return "14";
+          return text;
+        },
+      }));
+
+      const context = {
+        frontmatter: {
+          base_str: 16,
+          con_score: 14,
+        },
+      };
+
+      const result = processAbilityBlockTemplate(rawBlock, context);
+
+      expect(result.abilities.strength).toBe(16);
+      expect(result.abilities.dexterity).toBe(14);
+      expect(result.abilities.constitution).toBe(14);
+    });
+
+    it("should handle invalid template results gracefully", () => {
+      const rawBlock: RawAbilityBlock = {
+        abilities: {
+          strength: "{{invalid}}",
+          dexterity: "not_a_number",
+          constitution: 13,
+          intelligence: 12,
+          wisdom: 10,
+          charisma: 8,
+        },
+        bonuses: [],
+        proficiencies: [],
+      };
+
+      vi.doMock("../utils/template", () => ({
+        hasTemplateVariables: (text: string) => text.includes("{{") && text.includes("}}"),
+        processTemplate: (text: string) => {
+          if (text === "{{invalid}}") return "invalid_result";
+          return text;
+        },
+      }));
+
+      const context = { frontmatter: {} };
+
+      // Capture console warnings
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+      const result = processAbilityBlockTemplate(rawBlock, context);
+
+      expect(result.abilities.strength).toBe(0); // Should default to 0 for invalid template
+      expect(result.abilities.dexterity).toBe(0); // Should default to 0 for non-numeric string
+      expect(result.abilities.constitution).toBe(13); // Should preserve valid number
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining("Template processed ability value")
+      );
+
+      warnSpy.mockRestore();
+    });
+
+    it("should handle mixed template and non-template values", () => {
+      const rawBlock: RawAbilityBlock = {
+        abilities: {
+          strength: 15,
+          dexterity: "{{frontmatter.dex}}",
+          constitution: "13", // String but not a template
+          intelligence: 12,
+          wisdom: "{{add frontmatter.base_wis 2}}",
+          charisma: 8,
+        },
+        bonuses: [],
+        proficiencies: [],
+      };
+
+      vi.doMock("../utils/template", () => ({
+        hasTemplateVariables: (text: string) => text.includes("{{") && text.includes("}}"),
+        processTemplate: (text: string) => {
+          if (text === "{{frontmatter.dex}}") return "14";
+          if (text === "{{add frontmatter.base_wis 2}}") return "12";
+          return text;
+        },
+      }));
+
+      const context = {
+        frontmatter: {
+          dex: 14,
+          base_wis: 10,
+        },
+      };
+
+      const result = processAbilityBlockTemplate(rawBlock, context);
+
+      expect(result.abilities.strength).toBe(15); // Direct number
+      expect(result.abilities.dexterity).toBe(14); // From template
+      expect(result.abilities.constitution).toBe(13); // String parsed to number
+      expect(result.abilities.intelligence).toBe(12); // Direct number
+      expect(result.abilities.wisdom).toBe(12); // From template with math
+      expect(result.abilities.charisma).toBe(8); // Direct number
+    });
+
+    it("should preserve bonuses and proficiencies", () => {
+      const rawBlock: RawAbilityBlock = {
+        abilities: {
+          strength: "{{frontmatter.str}}",
+          dexterity: 14,
+          constitution: 13,
+          intelligence: 12,
+          wisdom: 10,
+          charisma: 8,
+        },
+        bonuses: [
+          { name: "Racial", target: "strength", value: 2 },
+        ],
+        proficiencies: ["strength", "constitution"],
+      };
+
+      vi.doMock("../utils/template", () => ({
+        hasTemplateVariables: (text: string) => text.includes("{{") && text.includes("}}"),
+        processTemplate: () => "15",
+      }));
+
+      const context = { frontmatter: { str: 15 } };
+
+      const result = processAbilityBlockTemplate(rawBlock, context);
+
+      expect(result.abilities.strength).toBe(15);
+      expect(result.bonuses).toEqual(rawBlock.bonuses);
+      expect(result.proficiencies).toEqual(rawBlock.proficiencies);
+    });
+
+    it("should parse ability block with template strings", () => {
+      const yaml = `
+abilities:
+  strength: "{{frontmatter.base_str}}"
+  dexterity: 14
+  constitution: 13
+  intelligence: 12
+  wisdom: 10
+  charisma: 8
+`;
+      const result = parseAbilityBlock(yaml);
+
+      // parseAbilityBlock should preserve the template strings
+      expect(result.abilities.strength).toBe("{{frontmatter.base_str}}");
+      expect(result.abilities.dexterity).toBe(14);
     });
   });
 });

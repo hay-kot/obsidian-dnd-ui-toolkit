@@ -1,6 +1,6 @@
 import * as Handlebars from "handlebars";
 import { AbilityScores, Frontmatter, SkillsBlock } from "../types";
-import { parseAbilityBlockFromDocument, calculateModifier, getTotalScore } from "../domains/abilities";
+import { parseAbilityBlock, processAbilityBlockTemplate, calculateModifier, getTotalScore } from "../domains/abilities";
 import { parseSkillsBlock } from "../domains/skills";
 import { FileContext } from "../views/filecontext";
 import { extractFirstCodeBlock } from "./codeblock-extractor";
@@ -54,7 +54,10 @@ export function processTemplate(text: string, context: TemplateContext): string 
   }
 }
 
-export function createTemplateContext(el: HTMLElement, fileContext: FileContext): TemplateContext {
+// Thread-local flag to prevent recursion during template processing
+let isProcessingAbilityTemplate = false;
+
+export function createTemplateContext(el: HTMLElement, fileContext: FileContext, skipAbilities: boolean = false): TemplateContext {
   const frontmatter = fileContext.frontmatter();
 
   let abilities: AbilityScores = {
@@ -73,23 +76,35 @@ export function createTemplateContext(el: HTMLElement, fileContext: FileContext)
     bonuses: [],
   };
 
-  try {
-    // Try to parse abilities from the document
-    const abilityBlock = parseAbilityBlockFromDocument(el, fileContext.md());
+  // Skip ability parsing if we're already processing ability templates to avoid recursion
+  // or if explicitly requested to skip
+  if (!isProcessingAbilityTemplate && !skipAbilities) {
+    try {
+      // Try to parse abilities from the document
+      const sectionInfo = fileContext.md().getSectionInfo(el);
+      const documentText = sectionInfo?.text || "";
+      const abilityContent = extractFirstCodeBlock(documentText, "ability");
 
-    // Calculate total scores including bonuses that modify the score
-    abilities = {
-      strength: getTotalScore(abilityBlock.abilities.strength, "strength", abilityBlock.bonuses),
-      dexterity: getTotalScore(abilityBlock.abilities.dexterity, "dexterity", abilityBlock.bonuses),
-      constitution: getTotalScore(abilityBlock.abilities.constitution, "constitution", abilityBlock.bonuses),
-      intelligence: getTotalScore(abilityBlock.abilities.intelligence, "intelligence", abilityBlock.bonuses),
-      wisdom: getTotalScore(abilityBlock.abilities.wisdom, "wisdom", abilityBlock.bonuses),
-      charisma: getTotalScore(abilityBlock.abilities.charisma, "charisma", abilityBlock.bonuses),
-    };
-  } catch (error) {
-    // If no ability block found, use defaults
-    console.debug("No ability block found, using default values");
-    console.log("Error: ", error);
+      if (abilityContent) {
+        const rawBlock = parseAbilityBlock(abilityContent);
+        // Process without templates to avoid recursion - just convert to numbers
+        const abilityBlock = processAbilityBlockTemplate(rawBlock, null, true);
+
+        // Calculate total scores including bonuses that modify the score
+        abilities = {
+          strength: getTotalScore(abilityBlock.abilities.strength, "strength", abilityBlock.bonuses),
+          dexterity: getTotalScore(abilityBlock.abilities.dexterity, "dexterity", abilityBlock.bonuses),
+          constitution: getTotalScore(abilityBlock.abilities.constitution, "constitution", abilityBlock.bonuses),
+          intelligence: getTotalScore(abilityBlock.abilities.intelligence, "intelligence", abilityBlock.bonuses),
+          wisdom: getTotalScore(abilityBlock.abilities.wisdom, "wisdom", abilityBlock.bonuses),
+          charisma: getTotalScore(abilityBlock.abilities.charisma, "charisma", abilityBlock.bonuses),
+        };
+      }
+    } catch (error) {
+      // If no ability block found, use defaults
+      console.debug("No ability block found, using default values");
+      console.log("Error: ", error);
+    }
   }
 
   try {
@@ -112,4 +127,9 @@ export function createTemplateContext(el: HTMLElement, fileContext: FileContext)
     abilities,
     skills,
   };
+}
+
+// Export a function to set the recursion guard
+export function setProcessingAbilityTemplate(value: boolean) {
+  isProcessingAbilityTemplate = value;
 }
