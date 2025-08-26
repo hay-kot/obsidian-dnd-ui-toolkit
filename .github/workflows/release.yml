@@ -28,11 +28,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tag="${GITHUB_REF#refs/tags/}"
+          
+          # Check if this is a pre-release (contains hyphen in version)
+          if [[ "$tag" == *"-"* ]]; then
+            prerelease_flag="--prerelease"
+          else
+            prerelease_flag=""
+          fi
 
           gh release create "$tag" \
             --title="$tag" \
             --draft=false \
             --notes-from-tag \
+            $prerelease_flag \
             main.js manifest.json styles.css
 
   deploy-docs:
