@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { SkillsView } from "./SkillsView";
 import { App, MarkdownPostProcessorContext } from "obsidian";
-import * as AbilityService from "../domains/abilities";
 
 // Mock the React render function
 vi.mock("react-dom/client", () => ({
@@ -47,13 +46,7 @@ describe("SkillsView", () => {
     } as any;
   });
 
-  it("should handle missing ability block gracefully", () => {
-    // Mock parseAbilityBlockFromDocument to throw an error
-    const parseAbilityBlockSpy = vi.spyOn(AbilityService, "parseAbilityBlockFromDocument");
-    parseAbilityBlockSpy.mockImplementation(() => {
-      throw new Error("No ability code blocks found");
-    });
-
+  it("should render skills block without errors", () => {
     const skillsYaml = `proficiencies:
   - athletics
   - intimidation`;
@@ -63,49 +56,30 @@ describe("SkillsView", () => {
 
     // Should call addChild to register the SkillsMarkdown component
     expect(mockContext.addChild).toHaveBeenCalled();
-
-    parseAbilityBlockSpy.mockRestore();
   });
 
-  it("should use ability scores when ability block is found", () => {
-    // Mock parseAbilityBlockFromDocument to return valid data
-    const parseAbilityBlockSpy = vi.spyOn(AbilityService, "parseAbilityBlockFromDocument");
-    parseAbilityBlockSpy.mockReturnValue({
-      abilities: {
-        strength: 16,
-        dexterity: 14,
-        constitution: 13,
-        intelligence: 12,
-        wisdom: 10,
-        charisma: 8,
-      },
-      bonuses: [],
-      proficiencies: [],
-    });
-
+  it("should render skills block with various proficiency types", () => {
     const skillsYaml = `proficiencies:
-  - athletics`;
+  - athletics
+expertise:
+  - insight
+half_proficiencies:
+  - history`;
 
     // Should not throw an error
     expect(() => skillsView.render(skillsYaml, mockElement, mockContext)).not.toThrow();
 
-    parseAbilityBlockSpy.mockRestore();
+    // Should call addChild to register the SkillsMarkdown component
+    expect(mockContext.addChild).toHaveBeenCalled();
   });
 
-  it("should use default ability scores (10) when no ability block found", () => {
-    // Mock parseAbilityBlockFromDocument to throw an error
-    const parseAbilityBlockSpy = vi.spyOn(AbilityService, "parseAbilityBlockFromDocument");
-    parseAbilityBlockSpy.mockImplementation(() => {
-      throw new Error("No ability code blocks found");
-    });
+  it("should render empty skills block", () => {
+    const skillsYaml = `proficiencies: []`;
 
-    const skillsYaml = `proficiencies:
-  - athletics`;
-
-    // The component should render with default ability scores of 10
-    // This would result in a +0 modifier for all abilities
+    // Should not throw an error
     expect(() => skillsView.render(skillsYaml, mockElement, mockContext)).not.toThrow();
 
-    parseAbilityBlockSpy.mockRestore();
+    // Should call addChild to register the SkillsMarkdown component
+    expect(mockContext.addChild).toHaveBeenCalled();
   });
 });

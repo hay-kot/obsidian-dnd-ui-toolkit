@@ -1,24 +1,7 @@
 import { AbilityBlock, GenericBonus, AbilityScores, RawAbilityBlock, RawAbilityScores } from "lib/types";
-import { MarkdownPostProcessorContext } from "obsidian";
 import * as Utils from "lib/utils/utils";
 import { parse } from "yaml";
-import { extractFirstCodeBlock } from "../utils/codeblock-extractor";
 import { hasTemplateVariables, processTemplate } from "../utils/template";
-
-export function parseAbilityBlockFromDocument(el: HTMLElement, ctx: MarkdownPostProcessorContext): AbilityBlock {
-  const sectionInfo = ctx.getSectionInfo(el);
-  const documentText = sectionInfo?.text || "";
-
-  const abilityContent = extractFirstCodeBlock(documentText, "ability");
-
-  if (!abilityContent) {
-    throw new Error("No ability code blocks found");
-  }
-
-  const rawBlock = parseAbilityBlock(abilityContent);
-  // Process without template context to get pure numbers
-  return processAbilityBlockTemplate(rawBlock, null);
-}
 
 export function parseAbilityBlock(yamlString: string): RawAbilityBlock {
   const def: RawAbilityBlock = {

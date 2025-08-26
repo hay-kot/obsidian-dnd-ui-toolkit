@@ -7,6 +7,7 @@ import * as SkillsService from "lib/domains/skills";
 import { AbilityBlock, AbilityScores } from "lib/types";
 import { useFileContext, FileContext } from "./filecontext";
 import { ReactMarkdown } from "./ReactMarkdown";
+import { createTemplateContext } from "lib/utils/template";
 
 export class SkillsView extends BaseView {
   public codeblock = "skills";
@@ -36,26 +37,15 @@ class SkillsMarkdown extends ReactMarkdown {
   }
 
   private processAndRender() {
-    let abilityBlock: AbilityBlock;
+    // Create template context to get processed abilities (including templated ones)
+    const templateContext = createTemplateContext(this.containerEl, this.fileContext);
 
-    try {
-      abilityBlock = AbilityService.parseAbilityBlockFromDocument(this.containerEl, this.fileContext.md());
-    } catch {
-      console.debug("No ability block found for skills view, using default values");
-      // Use default ability scores if no ability block is found
-      abilityBlock = {
-        abilities: {
-          strength: 10,
-          dexterity: 10,
-          constitution: 10,
-          intelligence: 10,
-          wisdom: 10,
-          charisma: 10,
-        },
-        bonuses: [],
-        proficiencies: [],
-      };
-    }
+    // Use the processed abilities from the template context
+    const abilityBlock: AbilityBlock = {
+      abilities: templateContext.abilities,
+      bonuses: [], // Template context doesn't include bonuses, use empty for now
+      proficiencies: [], // Template context doesn't include proficiencies, use empty for now
+    };
     const skillsBlock = SkillsService.parseSkillsBlock(this.source);
 
     const data: SkillItem[] = [];
