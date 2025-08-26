@@ -28,47 +28,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tag="${GITHUB_REF#refs/tags/}"
-          
-          # Check if this is a pre-release (contains hyphen in version)
-          if [[ "$tag" == *"-"* ]]; then
-            echo "Creating pre-release for $tag"
-            prerelease_flag="--prerelease"
-            
-            # Enhanced pre-release notes
-            notes="🧪 **Pre-release for testing**
-
-⚠️ This is a pre-release version. Please report any issues.
-
-## 🆕 Features in this pre-release:
-
-### Ability Score Templating
-- Ability scores can now use template expressions to reference frontmatter values
-- Example: \`strength: '{{ frontmatter.strength }}'\`
-- Other components (badges, stats) can reference templated abilities seamlessly
-
-### Benefits:
-- **Dynamic Updates**: Change frontmatter → all components update automatically  
-- **Single Source of Truth**: Define ability scores once in frontmatter
-- **Cross-Component References**: Badges can reference \`abilities.dexterity\`
-- **Mathematical Operations**: Use template functions like \`{{ add frontmatter.base_str 2 }}\`
-
-## 🧪 Testing Instructions:
-1. Create frontmatter with ability scores
-2. Use templated abilities: \`strength: '{{ frontmatter.strength }}'\`
-3. Reference in other components: \`value: '{{ modifier abilities.dexterity }}'\`
-
-**Documentation**: https://hay-kot.github.io/obsidian-dnd-ui-toolkit/character-sheet/ability-scores.html#template-support"
-          else
-            echo "Creating stable release for $tag"
-            prerelease_flag=""
-            notes="Release $tag"
-          fi
 
           gh release create "$tag" \
             --title="$tag" \
             --draft=false \
-            --notes="$notes" \
-            $prerelease_flag \
+            --notes-from-tag \
             main.js manifest.json styles.css
 
   deploy-docs:

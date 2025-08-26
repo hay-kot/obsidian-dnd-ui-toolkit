@@ -19,8 +19,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `task build` - Build and optionally copy to plugin directory (if PLUGIN_DIR is set)
 - `task pr` - Prepare for PR (format, lint, type check, and test)
 - `task release` - Release a new minor version (includes format, lint, type check, and test)
-  - On `main` branch: Creates stable release
-  - On feature branches: Creates pre-release automatically
 
 ## Code Style
 
