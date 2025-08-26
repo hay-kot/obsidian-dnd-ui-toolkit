@@ -45,6 +45,7 @@ jobs:
 
   deploy-docs:
     needs: build
+    if: ${{ !contains(github.ref_name, '-') }}
     permissions:
       contents: read
       pages: write
