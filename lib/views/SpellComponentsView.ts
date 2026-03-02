@@ -33,11 +33,7 @@ export class SpellComponentsView extends BaseView {
     // Not used — renderAsync handles everything
   }
 
-  private async renderAsync(
-    source: string,
-    el: HTMLElement,
-    ctx: MarkdownPostProcessorContext,
-  ): Promise<void> {
+  private async renderAsync(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): Promise<void> {
     const parsed = parse(source);
     const data: SpellComponentsBlock = {
       casting_time: parsed.casting_time || parsed.castingTime,
@@ -60,7 +56,7 @@ export class SpellComponentsView extends BaseView {
   private async computeSpellStats(
     data: SpellComponentsBlock,
     el: HTMLElement,
-    ctx: MarkdownPostProcessorContext,
+    ctx: MarkdownPostProcessorContext
   ): Promise<void> {
     const fc = useFileContext(this.app, ctx);
     const localFm = fc.frontmatter();
@@ -98,7 +94,7 @@ export class SpellComponentsView extends BaseView {
       const totalScore = AbilityService.getTotalScore(
         baseScore,
         abilityName as keyof AbilityScores,
-        abilityBlock.bonuses,
+        abilityBlock.bonuses
       );
       const modifier = AbilityService.calculateModifier(totalScore);
       const profBonus = frontmatter.proficiency_bonus;
