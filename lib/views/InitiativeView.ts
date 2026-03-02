@@ -1,12 +1,12 @@
+import { ref } from "vue";
 import { BaseView } from "./BaseView";
-import { App, MarkdownPostProcessorContext, MarkdownRenderChild } from "obsidian";
-import { Initiative } from "lib/components/initiative";
+import { App, MarkdownPostProcessorContext } from "obsidian";
+import Initiative from "lib/components/Initiative.vue";
 import * as InitiativeService from "lib/domains/initiative";
 import type { InitiativeState } from "lib/domains/initiative";
-import * as React from "react";
-import * as ReactDOM from "react-dom/client";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { InitiativeBlock } from "lib/types";
+import { VueMarkdown } from "./VueMarkdown";
 
 export class InitiativeView extends BaseView {
   public codeblock = "initiative";
@@ -24,10 +24,11 @@ export class InitiativeView extends BaseView {
   }
 }
 
-class InitiativeMarkdown extends MarkdownRenderChild {
-  private reactRoot: ReactDOM.Root | null = null;
+class InitiativeMarkdown extends VueMarkdown {
   private source: string;
   private kv: KeyValueStore;
+  private propsRef = ref<Record<string, unknown>>({});
+  private mounted = false;
 
   constructor(el: HTMLElement, source: string, kv: KeyValueStore) {
     super(el);
@@ -43,15 +44,12 @@ class InitiativeMarkdown extends MarkdownRenderChild {
       throw new Error("Initiative block must contain a 'state_key' property.");
     }
 
-    // Initialize with default values
     const defaultState = InitiativeService.getDefaultInitiativeState(initiativeBlock);
 
     try {
-      // Load the initial state
       const savedState = await this.kv.get<InitiativeState>(stateKey);
       const initiativeState = savedState || defaultState;
 
-      // If no saved state exists, save the default state
       if (!savedState) {
         try {
           await this.kv.set(stateKey, defaultState);
@@ -60,11 +58,9 @@ class InitiativeMarkdown extends MarkdownRenderChild {
         }
       }
 
-      // Render with the state we have
       this.renderComponent(initiativeBlock, initiativeState);
     } catch (error) {
       console.error("Error loading initiative state:", error);
-      // Fallback to default state if there's an error
       this.renderComponent(initiativeBlock, defaultState);
     }
   }
@@ -73,24 +69,22 @@ class InitiativeMarkdown extends MarkdownRenderChild {
     const stateKey = block.state_key;
     if (!stateKey) return;
 
-    const data = {
+    const newProps = {
       static: block,
       state: state,
-      onStateChange: (newState: InitiativeState) => {
-        // Update the state first
+      "onUpdate:state": (newState: InitiativeState) => {
         this.handleStateChange(block, newState);
-
-        // Re-render with the new state
         this.renderComponent(block, newState);
       },
     };
 
-    // Create or reuse a React root
-    if (!this.reactRoot) {
-      this.reactRoot = ReactDOM.createRoot(this.containerEl);
+    if (!this.mounted) {
+      this.propsRef.value = newProps;
+      this.mountReactive(Initiative, this.propsRef);
+      this.mounted = true;
+    } else {
+      this.propsRef.value = newProps;
     }
-
-    this.reactRoot.render(React.createElement(Initiative, data));
   }
 
   private async handleStateChange(initiativeBlock: InitiativeBlock, newState: InitiativeState) {
@@ -98,23 +92,9 @@ class InitiativeMarkdown extends MarkdownRenderChild {
     if (!stateKey) return;
 
     try {
-      // Update state in KV store
       await this.kv.set(stateKey, newState);
     } catch (error) {
       console.error(`Error saving initiative state for ${stateKey}:`, error);
-    }
-  }
-
-  onunload() {
-    // Clean up React root to prevent memory leaks
-    if (this.reactRoot) {
-      try {
-        this.reactRoot.unmount();
-      } catch (e) {
-        console.error("Error unmounting React component:", e);
-      }
-      this.reactRoot = null;
-      console.debug("Unmounted React component in InitiativeMarkdown");
     }
   }
 }

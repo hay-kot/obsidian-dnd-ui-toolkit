@@ -1,5 +1,5 @@
 import { MarkdownRenderChild } from "obsidian";
-import { createApp, Component, App as VueApp } from "vue";
+import { createApp, Component, App as VueApp, defineComponent, h, Ref } from "vue";
 
 type Fn = () => void;
 
@@ -12,12 +12,25 @@ export class VueMarkdown extends MarkdownRenderChild {
   }
 
   public mount(component: Component, props: Record<string, unknown>) {
-    // Unmount existing app if re-rendering
     if (this.app) {
       this.app.unmount();
-      this.containerEl.empty(); // Obsidian's HTMLElement.empty()
+      this.containerEl.empty();
     }
     this.app = createApp(component, props);
+    this.app.mount(this.containerEl);
+  }
+
+  public mountReactive(component: Component, propsRef: Ref<Record<string, unknown>>) {
+    if (this.app) {
+      this.app.unmount();
+      this.containerEl.empty();
+    }
+    const Wrapper = defineComponent({
+      setup() {
+        return () => h(component, propsRef.value);
+      },
+    });
+    this.app = createApp(Wrapper);
     this.app.mount(this.containerEl);
   }
 

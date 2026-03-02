@@ -1,9 +1,8 @@
+import { ref } from "vue";
 import { BaseView } from "./BaseView";
 import { App, MarkdownPostProcessorContext } from "obsidian";
 import * as HealthService from "lib/domains/healthpoints";
-import { HealthCard } from "lib/components/health-card";
-import * as React from "react";
-import * as ReactDOM from "react-dom/client";
+import HealthCard from "lib/components/HealthCard.vue";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { HealthState } from "lib/domains/healthpoints";
 import { ParsedHealthBlock } from "lib/types";
@@ -11,7 +10,7 @@ import { msgbus } from "lib/services/event-bus";
 import { hasTemplateVariables, processTemplate, createTemplateContext } from "lib/utils/template";
 import { useFileContext, FileContext } from "./filecontext";
 import { shouldResetOnEvent } from "lib/domains/events";
-import { ReactMarkdown } from "./ReactMarkdown";
+import { VueMarkdown } from "./VueMarkdown";
 
 export class HealthView extends BaseView {
   public codeblock = "healthpoints";
@@ -29,13 +28,15 @@ export class HealthView extends BaseView {
   }
 }
 
-class HealthMarkdown extends ReactMarkdown {
+class HealthMarkdown extends VueMarkdown {
   private source: string;
   private kv: KeyValueStore;
   private filePath: string;
   private fileContext: FileContext;
   private currentHealthBlock: ParsedHealthBlock | null = null;
   private originalHealthValue: number | string;
+  private propsRef = ref<Record<string, unknown>>({});
+  private mounted = false;
 
   constructor(
     el: HTMLElement,
@@ -54,17 +55,13 @@ class HealthMarkdown extends ReactMarkdown {
   }
 
   async onload() {
-    // Set up frontmatter change listener using filecontext
     this.setupFrontmatterChangeListener();
-
-    // Process and render initial state
     await this.processAndRender();
   }
 
   private async processAndRender() {
     let healthBlock = HealthService.parseHealthBlock(this.source);
 
-    // Process template for health value if it contains template variables
     healthBlock = this.processTemplateInHealthBlock(healthBlock);
     this.currentHealthBlock = healthBlock;
 
@@ -73,18 +70,14 @@ class HealthMarkdown extends ReactMarkdown {
       throw new Error("Health block must contain a 'state_key' property.");
     }
 
-    // Initialize with default values
     const defaultState = HealthService.getDefaultHealthState(healthBlock);
 
     try {
-      // Load the initial state
       const savedState = await this.kv.get<HealthState>(stateKey);
       let healthState = savedState || defaultState;
 
-      // Migrate state if needed (for multiclass hit dice support)
       if (savedState) {
         healthState = HealthService.migrateHealthState(savedState, healthBlock);
-        // Save migrated state if it changed
         if (healthState !== savedState) {
           try {
             await this.kv.set(stateKey, healthState);
@@ -93,7 +86,6 @@ class HealthMarkdown extends ReactMarkdown {
           }
         }
       } else {
-        // If no saved state exists, save the default state
         try {
           await this.kv.set(stateKey, defaultState);
         } catch (error) {
@@ -101,18 +93,11 @@ class HealthMarkdown extends ReactMarkdown {
         }
       }
 
-      // Set up event subscription for reset functionality
       this.setupEventSubscription(healthBlock);
-
-      // Render with the state we have
       this.renderComponent(healthBlock, healthState);
     } catch (error) {
       console.error("Error loading health state:", error);
-
-      // Set up event subscription even for error case
       this.setupEventSubscription(healthBlock);
-
-      // Fallback to default state if there's an error
       this.renderComponent(healthBlock, defaultState);
     }
   }
@@ -137,7 +122,6 @@ class HealthMarkdown extends ReactMarkdown {
   private setupFrontmatterChangeListener() {
     this.addUnloadFn(
       this.fileContext.onFrontmatterChange(() => {
-        // Only re-process if we have template variables in the original health value
         if (typeof this.originalHealthValue === "string" && hasTemplateVariables(this.originalHealthValue)) {
           console.debug(`Frontmatter changed for ${this.filePath}, re-processing health template`);
           this.handleFrontmatterChange();
@@ -147,7 +131,6 @@ class HealthMarkdown extends ReactMarkdown {
   }
 
   private setupEventSubscription(healthBlock: ParsedHealthBlock) {
-    // Use the reset_on property or default to 'long-rest'
     const resetOn = healthBlock.reset_on || [{ event: "long-rest" }];
 
     this.addUnloadFn(
@@ -164,13 +147,11 @@ class HealthMarkdown extends ReactMarkdown {
     if (!this.currentHealthBlock) return;
 
     try {
-      // Re-process the template with updated frontmatter
       const updatedHealthBlock = this.processTemplateInHealthBlock({
         ...this.currentHealthBlock,
         health: this.originalHealthValue,
       });
 
-      // Check if the processed health value actually changed
       const oldHealth = typeof this.currentHealthBlock.health === "number" ? this.currentHealthBlock.health : 6;
       const newHealth = typeof updatedHealthBlock.health === "number" ? updatedHealthBlock.health : 6;
 
@@ -179,7 +160,6 @@ class HealthMarkdown extends ReactMarkdown {
 
         this.currentHealthBlock = updatedHealthBlock;
 
-        // Get current state and re-render with new max health
         const stateKey = updatedHealthBlock.state_key;
         if (stateKey) {
           try {
@@ -201,24 +181,22 @@ class HealthMarkdown extends ReactMarkdown {
     const stateKey = healthBlock.state_key;
     if (!stateKey) return;
 
-    const data = {
+    const newProps = {
       static: healthBlock,
       state: state,
-      onStateChange: (newState: HealthState) => {
-        // Update the state first
+      "onUpdate:state": (newState: HealthState) => {
         this.handleStateChange(healthBlock, newState);
-
-        // Re-render with the new state
         this.renderComponent(healthBlock, newState);
       },
     };
 
-    // Create or reuse a React root
-    if (!this.reactRoot) {
-      this.reactRoot = ReactDOM.createRoot(this.containerEl);
+    if (!this.mounted) {
+      this.propsRef.value = newProps;
+      this.mountReactive(HealthCard, this.propsRef);
+      this.mounted = true;
+    } else {
+      this.propsRef.value = newProps;
     }
-
-    this.reactRoot.render(React.createElement(HealthCard, data));
   }
 
   private async handleStateChange(healthBlock: ParsedHealthBlock, newState: HealthState) {
@@ -226,7 +204,6 @@ class HealthMarkdown extends ReactMarkdown {
     if (!stateKey) return;
 
     try {
-      // Update state in KV store
       await this.kv.set(stateKey, newState);
     } catch (error) {
       console.error(`Error saving health state for ${stateKey}:`, error);
@@ -238,24 +215,18 @@ class HealthMarkdown extends ReactMarkdown {
     if (!stateKey) return;
 
     try {
-      // Ensure health is a number for reset
       const maxHealth = typeof healthBlock.health === "number" ? healthBlock.health : 6;
-
-      // Get default state to properly initialize hitdiceUsed
       const defaultState = HealthService.getDefaultHealthState(healthBlock);
 
-      // Reset to full health and clear hit dice usage and death saves
       const resetState: HealthState = {
-        current: maxHealth, // Restore to maximum health
-        temporary: 0, // Clear temporary HP
-        hitdiceUsed: defaultState.hitdiceUsed, // Reset hit dice with proper structure
-        deathSaveSuccesses: 0, // Clear death saves
-        deathSaveFailures: 0, // Clear death saves
+        current: maxHealth,
+        temporary: 0,
+        hitdiceUsed: defaultState.hitdiceUsed,
+        deathSaveSuccesses: 0,
+        deathSaveFailures: 0,
       };
 
       await this.kv.set(stateKey, resetState);
-
-      // Re-render with the reset state
       this.renderComponent(healthBlock, resetState);
     } catch (error) {
       console.error(`Error resetting health state for ${stateKey}:`, error);

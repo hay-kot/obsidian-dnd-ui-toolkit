@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { defineComponent, h } from "vue";
+import { defineComponent, h, ref, nextTick } from "vue";
 import { VueMarkdown } from "./VueMarkdown";
 
 const TestComponent = defineComponent({
@@ -70,5 +70,36 @@ describe("VueMarkdown", () => {
 
     expect(fn1).toHaveBeenCalledOnce();
     expect(fn2).toHaveBeenCalledOnce();
+  });
+
+  it("mountReactive() renders with initial props", () => {
+    const propsRef = ref<Record<string, unknown>>({ message: "Reactive" });
+    vm.mountReactive(TestComponent, propsRef);
+
+    expect(container.querySelector(".test")).not.toBeNull();
+    expect(container.textContent).toContain("Reactive");
+  });
+
+  it("mountReactive() updates when ref changes", async () => {
+    const propsRef = ref<Record<string, unknown>>({ message: "Before" });
+    vm.mountReactive(TestComponent, propsRef);
+
+    expect(container.textContent).toContain("Before");
+
+    propsRef.value = { message: "After" };
+    await nextTick();
+
+    expect(container.textContent).toContain("After");
+  });
+
+  it("mountReactive() cleans up on unload", () => {
+    const propsRef = ref<Record<string, unknown>>({ message: "Test" });
+    vm.mountReactive(TestComponent, propsRef);
+
+    expect(container.querySelector(".test")).not.toBeNull();
+
+    vm.onunload();
+
+    expect(container.textContent).toBe("");
   });
 });
