@@ -212,5 +212,26 @@ describe("frontmatter", () => {
       expect(result.stats).toEqual({ str: 16, dex: 14 });
       expect(result.equipment).toEqual(["sword", "shield"]);
     });
+
+    it("should parse spellcasting_ability from snake_case", () => {
+      const fm: UnparsedFrontmatter = { spellcasting_ability: "wisdom" };
+      const result = anyIntoFrontMatter(fm);
+
+      expect(result.spellcasting_ability).toBe("wisdom");
+    });
+
+    it("should parse spellcastingAbility from camelCase", () => {
+      const fm: UnparsedFrontmatter = { spellcastingAbility: "charisma" };
+      const result = anyIntoFrontMatter(fm);
+
+      expect(result.spellcasting_ability).toBe("charisma");
+    });
+
+    it("should parse Spellcasting Ability from title case", () => {
+      const fm: UnparsedFrontmatter = { "Spellcasting Ability": "intelligence" };
+      const result = anyIntoFrontMatter(fm);
+
+      expect(result.spellcasting_ability).toBe("intelligence");
+    });
   });
 });

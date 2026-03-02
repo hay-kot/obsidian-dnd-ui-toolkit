@@ -4,6 +4,8 @@ export type { AbilityScores } from "./domains/dnd/types";
 export type Frontmatter = {
   proficiency_bonus: number;
   level?: number;
+  spellcasting_ability?: string;
+  character_file?: string;
   [key: string]: any; // Allow other frontmatter properties
 };
 
@@ -121,6 +123,10 @@ export type SpellComponentsBlock = {
   range?: string;
   components?: string;
   duration?: string;
+  save?: string;
+  attack?: boolean;
+  save_dc?: number;
+  attack_bonus?: number;
 };
 
 export type SkillItem = {

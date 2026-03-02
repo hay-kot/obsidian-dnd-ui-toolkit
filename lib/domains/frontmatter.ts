@@ -11,6 +11,8 @@ export interface UnparsedFrontmatter {
 const FrontMatterKeys: Record<keyof Frontmatter, string[]> = {
   proficiency_bonus: ["proficiencyBonus", "Proficiency Bonus", "proficiency_bonus"],
   level: ["level", "Level"],
+  spellcasting_ability: ["spellcasting_ability", "spellcastingAbility", "Spellcasting Ability"],
+  character_file: ["character_file", "characterFile", "Character File"],
 };
 
 /**
