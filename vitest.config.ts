@@ -1,7 +1,9 @@
 import { defineConfig } from "vitest/config";
+import vue from "@vitejs/plugin-vue";
 import path from "path";
 
 export default defineConfig({
+  plugins: [vue()],
   test: {
     environment: "happy-dom",
     globals: true,
@@ -22,6 +24,7 @@ export default defineConfig({
     alias: {
       lib: path.resolve(__dirname, "lib"),
       settings: path.resolve(__dirname, "settings.ts"),
+      obsidian: path.resolve(__dirname, "__mocks__/obsidian.ts"),
     },
   },
 });

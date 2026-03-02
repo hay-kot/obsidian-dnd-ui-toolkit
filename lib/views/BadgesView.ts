@@ -1,16 +1,12 @@
 import { BaseView } from "./BaseView";
-import { BadgesRow } from "../components/badges";
+import BadgesRow from "../components/BadgesRow.vue";
 import { App, MarkdownPostProcessorContext } from "obsidian";
 import { BadgeItem, BadgesBlock } from "lib/types";
 import { parse } from "yaml";
 import { hasTemplateVariables, processTemplate, createTemplateContext, TemplateContext } from "../utils/template";
 import { FileContext, useFileContext } from "./filecontext";
-import { ReactMarkdown } from "./ReactMarkdown";
-
-import { StatsGridItems } from "../components/stat-cards";
-
-import * as React from "react";
-import * as ReactDOM from "react-dom/client";
+import { VueMarkdown } from "./VueMarkdown";
+import StatCards from "../components/StatCards.vue";
 
 export class StatsView extends BaseView {
   public codeblock = "stats";
@@ -31,11 +27,11 @@ export class BadgesView extends BaseView {
   }
 }
 
-class StatsLikeComponent extends ReactMarkdown {
-  layout: "badges" | "cards" = "badges"; // Default layout
+class StatsLikeComponent extends VueMarkdown {
+  layout: "badges" | "cards" = "badges";
   ctx: FileContext;
-  source: string; // The source code of the badges block
-  isTemplate: boolean; // Indicates that atleast one badge is a template
+  source: string;
+  isTemplate: boolean;
 
   constructor(el: HTMLElement, source: string, app: App, ctx: MarkdownPostProcessorContext) {
     super(el);
@@ -53,7 +49,6 @@ class StatsLikeComponent extends ReactMarkdown {
     const items = Array.isArray(parsed.items) ? parsed.items : [];
     const grid = parsed.grid || {};
 
-    // Check if any items contain template variables
     const hasTemplates = items.some(
       (item: Partial<BadgeItem>) =>
         hasTemplateVariables(String(item.label || "")) || hasTemplateVariables(String(item.value || ""))
@@ -96,38 +91,24 @@ class StatsLikeComponent extends ReactMarkdown {
       },
     };
 
-    if (!this.reactRoot) {
-      this.reactRoot = ReactDOM.createRoot(this.containerEl);
-    }
-
     if (this.layout === "badges") {
-      this.reactRoot.render(React.createElement(BadgesRow, { data: badgesBlock }));
+      this.mount(BadgesRow, { data: badgesBlock });
     } else if (this.layout === "cards") {
-      this.reactRoot.render(React.createElement(StatsGridItems, badgesBlock));
+      this.mount(StatCards, { items: badgesBlock.items, grid: badgesBlock.grid, dense: badgesBlock.dense });
     }
   }
 
   private setupListeners() {
     this.addUnloadFn(
       this.ctx.onFrontmatterChange((_) => {
-        if (!this.isTemplate) {
-          // No template means we have nothing to do.
-          return;
-        }
-
-        // recall processAndRender()
+        if (!this.isTemplate) return;
         this.processAndRender();
       })
     );
 
     this.addUnloadFn(
       this.ctx.onAbilitiesChange(() => {
-        if (!this.isTemplate) {
-          // No template means we have nothing to do.
-          return;
-        }
-
-        // recall processAndRender()
+        if (!this.isTemplate) return;
         this.processAndRender();
       })
     );
