@@ -5,7 +5,7 @@ import { App } from "obsidian";
  * BaseView handles the basic registration of components and creates consistent logic for rendering.
  * It can be used for simple views that are static and don't review dynamic data or re-rendering
  * For more complex components, it's implementation needs to be expetended to support the mounting
- * of react components.
+ * of Vue components.
  * */
 export abstract class BaseView {
   public app: App;

@@ -19,7 +19,9 @@ function getSkillCardClasses(item: SkillItem): string[] {
   <div class="dnd-ui-skills-grid">
     <div v-for="(item, index) in items" :key="index" :class="getSkillCardClasses(item)">
       <div class="dnd-ui-skills-values-container">
-        <p class="dnd-ui-skill-ability"><em>{{ item.ability }}</em></p>
+        <p class="dnd-ui-skill-ability">
+          <em>{{ item.ability }}</em>
+        </p>
         <p class="dnd-ui-skill-name">{{ item.label }}</p>
       </div>
       <div class="dnd-ui-skills-values-container">

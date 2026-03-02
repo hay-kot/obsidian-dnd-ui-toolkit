@@ -32,11 +32,7 @@ onMounted(() => {
 
 <template>
   <div ref="containerRef" class="dnd-ui-consumables-column">
-    <div
-      v-for="consumable in props.consumables"
-      :key="consumable.state_key"
-      class="dnd-ui-consumable-item"
-    >
+    <div v-for="consumable in props.consumables" :key="consumable.state_key" class="dnd-ui-consumable-item">
       <ConsumableCheckboxes
         :static="consumable"
         :state="props.states[consumable.state_key] || { value: 0 }"

@@ -7,8 +7,8 @@
     "dev": "vite build --watch --mode development",
     "build": "tsc -noEmit -skipLibCheck && vite build --mode production",
     "version": "node version-bump.mjs && git add manifest.json versions.json",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json}\"",
-    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json}\"",
+    "format": "prettier --write \"**/*.{js,ts,json,vue}\"",
+    "format:check": "prettier --check \"**/*.{js,ts,json,vue}\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit --skipLibCheck",
@@ -24,8 +24,6 @@
   "devDependencies": {
     "@mermaid-js/mermaid-mindmap": "^9.3.0",
     "@types/node": "^24.0.13",
-    "@types/react": "^18.3.10",
-    "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^8.36.0",
     "@typescript-eslint/parser": "^8.36.0",
     "@vitejs/plugin-vue": "^6.0.4",
@@ -44,8 +42,6 @@
   },
   "dependencies": {
     "handlebars": "^4.7.8",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "typescript-eslint": "^8.37.0",
     "vue": "^3.5.29",
     "yaml": "^2.8.0"

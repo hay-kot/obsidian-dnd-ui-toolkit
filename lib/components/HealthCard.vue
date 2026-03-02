@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import type { ParsedHealthBlock } from "lib/types";
-import {
-  HealthState,
-  isSingleHitDiceState,
-  isMultiHitDiceState,
-  hasSingleHitDice,
-} from "lib/domains/healthpoints";
+import { HealthState, isSingleHitDiceState, isMultiHitDiceState, hasSingleHitDice } from "lib/domains/healthpoints";
 import Checkbox from "lib/components/Checkbox.vue";
 
 const props = defineProps<{
@@ -20,13 +15,9 @@ const emit = defineEmits<{
 
 const inputValue = ref("1");
 
-const maxHealth = computed(() =>
-  typeof props.static.health === "number" ? props.static.health : 6,
-);
+const maxHealth = computed(() => (typeof props.static.health === "number" ? props.static.health : 6));
 
-const healthPercentage = computed(() =>
-  Math.max(0, Math.min(100, (props.state.current / maxHealth.value) * 100)),
-);
+const healthPercentage = computed(() => Math.max(0, Math.min(100, (props.state.current / maxHealth.value) * 100)));
 
 function handleHeal() {
   const value = parseInt(inputValue.value) || 0;
@@ -147,9 +138,7 @@ function getHitDiceUsed(hd: { dice: string; value: number }): number {
       <div class="dnd-ui-health-value">
         {{ props.state.current }}
         <span class="dnd-ui-health-max">/ {{ maxHealth }}</span>
-        <span v-if="props.state.temporary > 0" class="dnd-ui-health-temp"
-          >+{{ props.state.temporary }} temp</span
-        >
+        <span v-if="props.state.temporary > 0" class="dnd-ui-health-temp">+{{ props.state.temporary }} temp</span>
       </div>
     </div>
 
@@ -166,19 +155,9 @@ function getHitDiceUsed(hd: { dice: string; value: number }): number {
         aria-label="Health points"
         @input="inputValue = ($event.target as HTMLInputElement).value"
       />
-      <button type="button" class="dnd-ui-health-button dnd-ui-health-heal" @click="handleHeal">
-        Heal
-      </button>
-      <button
-        type="button"
-        class="dnd-ui-health-button dnd-ui-health-damage"
-        @click="handleDamage"
-      >
-        Damage
-      </button>
-      <button type="button" class="dnd-ui-health-button dnd-ui-health-temp" @click="handleTempHP">
-        Temp HP
-      </button>
+      <button type="button" class="dnd-ui-health-button dnd-ui-health-heal" @click="handleHeal">Heal</button>
+      <button type="button" class="dnd-ui-health-button dnd-ui-health-damage" @click="handleDamage">Damage</button>
+      <button type="button" class="dnd-ui-health-button dnd-ui-health-temp" @click="handleTempHP">Temp HP</button>
     </div>
 
     <template v-if="props.static.hitdice && props.static.hitdice.length > 0">

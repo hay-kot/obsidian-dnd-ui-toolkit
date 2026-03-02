@@ -1,17 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import type {
-  InitiativeBlock,
-  InitiativeItem,
-  InitiativeConsumable,
-  ParsedConsumableBlock,
-} from "lib/types";
-import {
-  getSortedInitiativeItems,
-  getMaxHp,
-  itemHashKey,
-  InitiativeState,
-} from "lib/domains/initiative";
+import type { InitiativeBlock, InitiativeItem, InitiativeConsumable, ParsedConsumableBlock } from "lib/types";
+import { getSortedInitiativeItems, getMaxHp, itemHashKey, InitiativeState } from "lib/domains/initiative";
 import MultiConsumableCheckboxes from "lib/components/MultiConsumableCheckboxes.vue";
 import type { ConsumableState } from "lib/domains/consumables";
 
@@ -26,9 +16,7 @@ const emit = defineEmits<{
 
 const inputValue = ref("1");
 
-const sortedItems = computed(() =>
-  getSortedInitiativeItems(props.static.items, props.state.initiatives),
-);
+const sortedItems = computed(() => getSortedInitiativeItems(props.static.items, props.state.initiatives));
 
 function adaptInitiativeConsumable(consumable: InitiativeConsumable): ParsedConsumableBlock {
   return {
@@ -51,12 +39,7 @@ function handleSetInitiative(item: InitiativeItem, value: string) {
   });
 }
 
-function handleDamage(
-  item: InitiativeItem,
-  monsterKey: string,
-  value: string,
-  type: "damage" | "heal" = "damage",
-) {
+function handleDamage(item: InitiativeItem, monsterKey: string, value: string, type: "damage" | "heal" = "damage") {
   const parsedValue = parseInt(value) || 0;
   if (parsedValue <= 0) return;
 
@@ -93,9 +76,7 @@ function handleNext() {
   let newRound = props.state.round;
   const newConsumables = { ...(props.state.consumables || {}) };
 
-  const currentActiveItemIndex = sortedItems.value.findIndex(
-    (item) => item.index === currentActiveIndex,
-  );
+  const currentActiveItemIndex = sortedItems.value.findIndex((item) => item.index === currentActiveIndex);
 
   if (currentActiveItemIndex === -1 || currentActiveItemIndex === sortedItems.value.length - 1) {
     nextActiveIndex = sortedItems.value[0].index;
@@ -129,9 +110,7 @@ function handlePrev() {
   let prevActiveIndex = -1;
   let newRound = props.state.round;
 
-  const currentActiveItemIndex = sortedItems.value.findIndex(
-    (item) => item.index === currentActiveIndex,
-  );
+  const currentActiveItemIndex = sortedItems.value.findIndex((item) => item.index === currentActiveIndex);
 
   if (currentActiveItemIndex === -1 || currentActiveItemIndex === 0) {
     prevActiveIndex = sortedItems.value[sortedItems.value.length - 1].index;
@@ -220,7 +199,7 @@ function consumableStates(): Record<string, ConsumableState> {
     props.static.consumables.map((consumable) => [
       consumable.state_key,
       { value: props.state.consumables?.[consumable.state_key] || 0 },
-    ]),
+    ])
   );
 }
 </script>
@@ -263,9 +242,7 @@ function consumableStates(): Record<string, ConsumableState> {
     />
 
     <div class="dnd-ui-initiative-list">
-      <div v-if="sortedItems.length === 0" class="dnd-ui-initiative-empty-state">
-        No combatants added
-      </div>
+      <div v-if="sortedItems.length === 0" class="dnd-ui-initiative-empty-state">No combatants added</div>
       <div v-else class="dnd-ui-initiative-items">
         <div
           v-for="{ item, index, initiative } in sortedItems"
@@ -273,9 +250,7 @@ function consumableStates(): Record<string, ConsumableState> {
           :class="[
             'dnd-ui-initiative-item',
             index === props.state.activeIndex ? 'dnd-ui-initiative-item-active' : '',
-            item.hp !== undefined &&
-            typeof item.hp === 'object' &&
-            Object.keys(item.hp).length > 1
+            item.hp !== undefined && typeof item.hp === 'object' && Object.keys(item.hp).length > 1
               ? 'dnd-ui-initiative-item-group'
               : '',
           ]"
@@ -287,19 +262,12 @@ function consumableStates(): Record<string, ConsumableState> {
                 :value="initiative || ''"
                 class="dnd-ui-initiative-input"
                 placeholder="0"
-                @change="
-                  handleSetInitiative(
-                    props.static.items[index],
-                    ($event.target as HTMLInputElement).value,
-                  )
-                "
+                @change="handleSetInitiative(props.static.items[index], ($event.target as HTMLInputElement).value)"
               />
             </div>
             <div>
               <div class="dnd-ui-initiative-name">
-                <a v-if="item.link" :href="item.link" class="dnd-ui-initiative-link">{{
-                  item.name
-                }}</a>
+                <a v-if="item.link" :href="item.link" class="dnd-ui-initiative-link">{{ item.name }}</a>
                 <template v-else>{{ item.name }}</template>
               </div>
               <div class="dnd-ui-initiative-ac">
@@ -308,22 +276,12 @@ function consumableStates(): Record<string, ConsumableState> {
             </div>
 
             <!-- Single monster HP inline -->
-            <template
-              v-if="
-                item.hp !== undefined &&
-                !(typeof item.hp === 'object' && Object.keys(item.hp).length > 1)
-              "
-            >
-              <div
-                :class="[
-                  'dnd-ui-initiative-hp-inline',
-                  getSingleMonsterStatusClass(item),
-                ]"
-              >
+            <template v-if="item.hp !== undefined && !(typeof item.hp === 'object' && Object.keys(item.hp).length > 1)">
+              <div :class="['dnd-ui-initiative-hp-inline', getSingleMonsterStatusClass(item)]">
                 <div class="dnd-ui-initiative-hp-display">
                   <span class="dnd-ui-initiative-hp-value">{{
                     props.state.hp[itemHashKey(item)]?.[
-                      Object.keys(props.state.hp[itemHashKey(item)] || {})[0] || 'main'
+                      Object.keys(props.state.hp[itemHashKey(item)] || {})[0] || "main"
                     ] || 0
                   }}</span>
                   <span class="dnd-ui-initiative-hp-separator">/</span>
@@ -344,7 +302,7 @@ function consumableStates(): Record<string, ConsumableState> {
                       handleDamage(
                         props.static.items[index],
                         Object.keys(props.state.hp[itemHashKey(item)] || {})[0] || 'main',
-                        inputValue,
+                        inputValue
                       );
                       inputValue = '1';
                     "
@@ -359,7 +317,7 @@ function consumableStates(): Record<string, ConsumableState> {
                         props.static.items[index],
                         Object.keys(props.state.hp[itemHashKey(item)] || {})[0] || 'main',
                         inputValue,
-                        'heal',
+                        'heal'
                       );
                       inputValue = '1';
                     "
@@ -372,13 +330,7 @@ function consumableStates(): Record<string, ConsumableState> {
           </div>
 
           <!-- Group monster HP -->
-          <template
-            v-if="
-              item.hp !== undefined &&
-              typeof item.hp === 'object' &&
-              Object.keys(item.hp).length > 1
-            "
-          >
+          <template v-if="item.hp !== undefined && typeof item.hp === 'object' && Object.keys(item.hp).length > 1">
             <div class="dnd-ui-divider"></div>
             <div class="dnd-ui-initiative-group-container">
               <div class="dnd-ui-initiative-group-hp">
@@ -391,10 +343,7 @@ function consumableStates(): Record<string, ConsumableState> {
                     <span
                       :class="[
                         'dnd-ui-initiative-monster-name',
-                        getMonsterStatusClass(
-                          props.state.hp[itemHashKey(item)]?.[key] || 0,
-                          maxHp,
-                        ),
+                        getMonsterStatusClass(props.state.hp[itemHashKey(item)]?.[key] || 0, maxHp),
                       ]"
                       >{{ key }}</span
                     >
