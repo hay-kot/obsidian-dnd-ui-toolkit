@@ -1,8 +1,9 @@
 import { defineConfig } from "vitest/config";
+import path from "path";
 
 export default defineConfig({
   test: {
-    environment: "node",
+    environment: "happy-dom",
     globals: true,
     coverage: {
       reporter: ["text", "json", "html"],
@@ -12,15 +13,15 @@ export default defineConfig({
         "coverage/",
         "**/*.config.*",
         "main.ts",
-        "esbuild.config.mjs",
+        "vite.config.ts",
         "version-bump.mjs",
       ],
     },
   },
   resolve: {
     alias: {
-      "@": "/lib",
-      "@lib": "/lib",
+      lib: path.resolve(__dirname, "lib"),
+      settings: path.resolve(__dirname, "settings.ts"),
     },
   },
 });

@@ -1,3 +1,4 @@
+import "lib/styles/index.css";
 import { App, Plugin, PluginSettingTab, Setting } from "obsidian";
 import { AbilityScoreView } from "lib/views/AbilityScoreView";
 import { BaseView } from "lib/views/BaseView";
