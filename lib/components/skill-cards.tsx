@@ -15,7 +15,7 @@ export type SkillItem = {
 
 export function SkillGrid(props: SkillGridProps) {
   return (
-    <div className="skills-grid">
+    <div className="dnd-ui-skills-grid">
       {props.items.map((item, index) => (
         <SkillItem item={item} key={index} />
       ))}
@@ -25,27 +25,27 @@ export function SkillGrid(props: SkillGridProps) {
 
 function SkillItem({ item }: { item: SkillItem }) {
   const getSkillCardClasses = () => {
-    const classes = ["skill-card"];
+    const classes = ["dnd-ui-skill-card"];
     if (item.isExpert) {
-      classes.push("expert");
+      classes.push("dnd-ui-expert");
     } else if (item.isProficient) {
-      classes.push("proficient");
+      classes.push("dnd-ui-proficient");
     } else if (item.isHalfProficient) {
-      classes.push("half-proficient");
+      classes.push("dnd-ui-half-proficient");
     }
     return classes.join(" ");
   };
 
   return (
     <div className={getSkillCardClasses()}>
-      <div className="skills-values-container">
-        <p className="skill-ability">
+      <div className="dnd-ui-skills-values-container">
+        <p className="dnd-ui-skill-ability">
           <em>{item.ability}</em>
         </p>
-        <p className="skill-name">{item.label}</p>
+        <p className="dnd-ui-skill-name">{item.label}</p>
       </div>
-      <div className="skills-values-container">
-        <p className="skill-value">{AbilityService.formatModifier(item.modifier)}</p>
+      <div className="dnd-ui-skills-values-container">
+        <p className="dnd-ui-skill-value">{AbilityService.formatModifier(item.modifier)}</p>
       </div>
     </div>
   );

@@ -3,17 +3,17 @@ import { Ability } from "../types";
 
 export function AbilityView(data: Ability[]) {
   return (
-    <div className="ability-scores-container">
-      <div className="ability-scores-grid">
+    <div className="dnd-ui-ability-scores-container">
+      <div className="dnd-ui-ability-scores-grid">
         {data.map((item) => (
-          <div className={`ability-score-card ${item.isProficient ? "proficient" : ""}`} key={item.label}>
-            <div className="ability-header">
-              <p className="ability-name">{item.label}</p>
-              <p className="ability-value">{item.total}</p>
+          <div className={`dnd-ui-ability-score-card ${item.isProficient ? "dnd-ui-proficient" : ""}`} key={item.label}>
+            <div className="dnd-ui-ability-header">
+              <p className="dnd-ui-ability-name">{item.label}</p>
+              <p className="dnd-ui-ability-value">{item.total}</p>
             </div>
-            <p className="ability-modifier">{AbilityService.formatModifier(item.modifier)}</p>
+            <p className="dnd-ui-ability-modifier">{AbilityService.formatModifier(item.modifier)}</p>
 
-            <div className="ability-modifier-saving">
+            <div className="dnd-ui-ability-modifier-saving">
               <em>Saving {AbilityService.formatModifier(item.savingThrow)}</em>
             </div>
           </div>

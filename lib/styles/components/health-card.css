@@ -1,60 +1,60 @@
 /* Health Card Styles */
-.health-card {
+.dnd-ui-health-card {
     display: flex;
     height: fit-content;
     flex-direction: column;
-    gap: var(--std-gap);
+    gap: var(--dnd-ui-std-gap);
     padding: 0.75rem;
     width: 100%;
 }
 
-.health-card p {
+.dnd-ui-health-card p {
     margin-block-start: 0 !important;
     margin-block-end: 0 !important;
 }
 
-.health-card-header {
+.dnd-ui-health-card-header {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     width: 100%;
 }
 
-.health-value {
+.dnd-ui-health-value {
     font-size: 1.5rem;
     font-weight: bold;
-    color: var(--color-text-bright);
+    color: var(--dnd-ui-color-text-bright);
     display: flex;
     align-items: baseline;
     gap: 0.2rem;
 }
 
-.health-max {
+.dnd-ui-health-max {
     font-size: 1rem;
-    color: var(--color-text-muted);
+    color: var(--dnd-ui-color-text-muted);
 }
 
-.health-temp {
+.dnd-ui-health-temp {
     font-size: 0.8rem;
-    color: var(--color-accent-teal);
+    color: var(--dnd-ui-color-accent-teal);
 }
 
-.health-progress-container {
+.dnd-ui-health-progress-container {
     width: 100%;
     height: 0.5rem;
-    background-color: var(--color-bg-secondary);
+    background-color: var(--dnd-ui-color-bg-secondary);
     border-radius: 0.25rem;
     overflow: hidden;
     margin: 0.3rem 0;
 }
 
-.health-progress-bar {
+.dnd-ui-health-progress-bar {
     height: 100%;
-    background-color: var(--color-border-active);
+    background-color: var(--dnd-ui-color-border-active);
     transition: width 0.3s ease;
 }
 
-.health-controls {
+.dnd-ui-health-controls {
     display: flex;
     gap: 0.5rem;
     width: 100%;
@@ -62,85 +62,85 @@
     flex-wrap: wrap;
 }
 
-.health-input {
+.dnd-ui-health-input {
     width: 5rem;
-    background-color: var(--color-bg-secondary);
-    border: 1px solid var(--color-border-active);
+    background-color: var(--dnd-ui-color-bg-secondary);
+    border: 1px solid var(--dnd-ui-color-border-active);
     border-radius: 0.25rem;
-    color: var(--color-text-primary);
+    color: var(--dnd-ui-color-text-primary);
     padding: 0.3rem;
     text-align: center;
 }
 
-.health-button {
+.dnd-ui-health-button {
     flex: 0.8;
     min-width: fit-content;
-    background-color: var(--color-bg-secondary);
-    border: 1px solid var(--color-border-primary);
+    background-color: var(--dnd-ui-color-bg-secondary);
+    border: 1px solid var(--dnd-ui-color-border-primary);
     border-radius: 0.25rem;
-    color: var(--color-text-primary);
+    color: var(--dnd-ui-color-text-primary);
     padding: 0.3rem 0.4rem;
     font-size: 0.8rem;
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
 
-.health-button:hover {
-    background-color: var(--color-bg-hover);
+.dnd-ui-health-button:hover {
+    background-color: var(--dnd-ui-color-bg-hover);
 }
 
-.health-heal {
-    border-color: var(--color-accent-teal);
-    color: var(--color-accent-teal);
+.dnd-ui-health-heal {
+    border-color: var(--dnd-ui-color-accent-teal);
+    color: var(--dnd-ui-color-accent-teal);
 }
 
-.health-damage {
-    border-color: var(--color-accent-red);
-    color: var(--color-accent-red);
+.dnd-ui-health-damage {
+    border-color: var(--dnd-ui-color-accent-red);
+    color: var(--dnd-ui-color-accent-red);
 }
 
-.health-temp {
-    border-color: var(--color-accent-purple);
-    color: var(--color-accent-purple);
+.dnd-ui-health-temp {
+    border-color: var(--dnd-ui-color-accent-purple);
+    color: var(--dnd-ui-color-accent-purple);
 }
 
-.health-divider {
+.dnd-ui-health-divider {
     width: 100%;
     height: 1px;
-    background-color: var(--color-border-primary);
+    background-color: var(--dnd-ui-color-border-primary);
     margin: 0.5rem 0;
 }
 
-.hit-dice-container {
+.dnd-ui-hit-dice-container {
     width: 100%;
     margin-top: 0.3rem;
     margin-bottom: 0.3rem;
 }
 
-.hit-dice-list {
+.dnd-ui-hit-dice-list {
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
     width: 100%;
 }
 
-.hit-dice-row {
+.dnd-ui-hit-dice-row {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
-.hit-dice-label {
+.dnd-ui-hit-dice-label {
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--color-text-secondary);
+    color: var(--dnd-ui-color-text-secondary);
     margin: 0 !important;
     text-align: left;
     flex-shrink: 0;
 }
 
-.hit-dice-boxes {
+.dnd-ui-hit-dice-boxes {
     display: flex;
     flex-wrap: wrap;
     gap: 0.3rem;
@@ -148,41 +148,41 @@
 }
 
 /* Death Saves Styles */
-.death-saves-container {
+.dnd-ui-death-saves-container {
     width: 100%;
     margin-top: 0.3rem;
     margin-bottom: 0.3rem;
 }
 
-.death-saves-tracker {
+.dnd-ui-death-saves-tracker {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 1rem;
 }
 
-.death-saves-failures {
+.dnd-ui-death-saves-failures {
     display: flex;
     gap: 0.3rem;
 }
 
-.death-saves-successes {
+.dnd-ui-death-saves-successes {
     display: flex;
     gap: 0.3rem;
 }
 
-.death-saves-skull {
+.dnd-ui-death-saves-skull {
     font-size: 1.5rem;
     user-select: none;
 }
 
 /* Death Save Checkbox Styles */
-.death-save-failure[aria-pressed="true"] {
-    background-color: var(--color-accent-red) !important;
-    border-color: var(--color-accent-red) !important;
+.dnd-ui-death-save-failure[aria-pressed="true"] {
+    background-color: var(--dnd-ui-color-accent-red) !important;
+    border-color: var(--dnd-ui-color-accent-red) !important;
 }
 
-.death-save-success[aria-pressed="true"] {
-    background-color: var(--color-accent-teal) !important;
-    border-color: var(--color-accent-teal) !important;
+.dnd-ui-death-save-success[aria-pressed="true"] {
+    background-color: var(--dnd-ui-color-accent-teal) !important;
+    border-color: var(--dnd-ui-color-accent-teal) !important;
 }

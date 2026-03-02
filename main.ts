@@ -24,7 +24,7 @@ export default class DndUIToolkitPlugin extends Plugin {
     const apply = (root: HTMLElement) => {
       Object.entries(this.settings).forEach(([key, value]) => {
         if (key.startsWith("color")) {
-          const cssVarName = `--${key.replace(/([A-Z])/g, "-$1").toLowerCase()}`;
+          const cssVarName = `--dnd-ui-${key.replace(/([A-Z])/g, "-$1").toLowerCase()}`;
           root.style.setProperty(cssVarName, value as string);
         }
       });

@@ -11,15 +11,15 @@ export function EventButtons(props: EventButtonsProps) {
   };
 
   return (
-    <div className="event-buttons-container">
+    <div className="dnd-ui-event-buttons-container">
       {props.config.items.map((button, index) => (
         <button
           key={index}
-          className="event-button"
+          className="dnd-ui-event-button"
           onClick={() => handleClick(button.value)}
           title={`Trigger ${button.name} event`}
         >
-          <span className="event-button-text">{button.name}</span>
+          <span className="dnd-ui-event-button-text">{button.name}</span>
         </button>
       ))}
     </div>

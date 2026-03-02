@@ -4,29 +4,29 @@ export function SpellComponents({ data }: { data: SpellComponentsBlock }) {
   const { casting_time, range, components, duration } = data;
 
   return (
-    <div className="spell-components">
+    <div className="dnd-ui-spell-components">
       {casting_time && (
-        <div className="spell-component-item">
-          <span className="spell-component-label">Casting Time</span>
-          <span className="spell-component-value">{casting_time}</span>
+        <div className="dnd-ui-spell-component-item">
+          <span className="dnd-ui-spell-component-label">Casting Time</span>
+          <span className="dnd-ui-spell-component-value">{casting_time}</span>
         </div>
       )}
       {range && (
-        <div className="spell-component-item">
-          <span className="spell-component-label">Range</span>
-          <span className="spell-component-value">{range}</span>
+        <div className="dnd-ui-spell-component-item">
+          <span className="dnd-ui-spell-component-label">Range</span>
+          <span className="dnd-ui-spell-component-value">{range}</span>
         </div>
       )}
       {components && (
-        <div className="spell-component-item">
-          <span className="spell-component-label">Components</span>
-          <span className="spell-component-value">{components}</span>
+        <div className="dnd-ui-spell-component-item">
+          <span className="dnd-ui-spell-component-label">Components</span>
+          <span className="dnd-ui-spell-component-value">{components}</span>
         </div>
       )}
       {duration && (
-        <div className="spell-component-item">
-          <span className="spell-component-label">Duration</span>
-          <span className="spell-component-value">{duration}</span>
+        <div className="dnd-ui-spell-component-item">
+          <span className="dnd-ui-spell-component-label">Duration</span>
+          <span className="dnd-ui-spell-component-value">{duration}</span>
         </div>
       )}
     </div>

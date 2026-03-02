@@ -44,9 +44,9 @@ export function ConsumableCheckboxes(props: ConsumableCheckboxesProps) {
   };
 
   return (
-    <div className="consumable-container">
-      {props.static.label && <span className="consumable-label">{props.static.label}</span>}
-      <div className="consumable-boxes">{renderCheckboxes()}</div>
+    <div className="dnd-ui-consumable-container">
+      {props.static.label && <span className="dnd-ui-consumable-label">{props.static.label}</span>}
+      <div className="dnd-ui-consumable-boxes">{renderCheckboxes()}</div>
     </div>
   );
 }

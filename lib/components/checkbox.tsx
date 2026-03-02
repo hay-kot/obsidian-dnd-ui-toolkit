@@ -9,7 +9,7 @@ export function Checkbox({ id, checked, onChange, className }: CheckboxProps) {
   return (
     <button
       id={id}
-      className={`checkbox-button clickable-icon ${className || ""}`}
+      className={`dnd-ui-checkbox-button clickable-icon ${className || ""}`}
       onClick={onChange}
       aria-pressed={checked}
       type="button"

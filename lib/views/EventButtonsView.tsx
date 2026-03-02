@@ -31,7 +31,7 @@ class EventButtonsMarkdown extends MarkdownRenderChild {
     this.source = source;
     this.filePath = filePath;
     this.container = document.createElement("div");
-    this.container.className = "event-buttons-wrapper";
+    this.container.className = "dnd-ui-event-buttons-wrapper";
     el.appendChild(this.container);
   }
 

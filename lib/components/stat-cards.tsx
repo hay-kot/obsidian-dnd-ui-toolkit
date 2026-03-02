@@ -3,10 +3,10 @@ import { ReactNode } from "react";
 
 export function StatCard({ item, dense }: { item: StatItem & { isProficient?: boolean }; dense?: boolean }) {
   return (
-    <div className={`generic-card ${item.isProficient ? "proficient" : ""} ${dense ? "dense" : ""}`}>
-      <div className="generic-card-label">{item.label}</div>
-      <div className="generic-card-value">{item.value}</div>
-      {item.sublabel && <div className="generic-card-sublabel">{item.sublabel}</div>}
+    <div className={`dnd-ui-generic-card ${item.isProficient ? "dnd-ui-proficient" : ""} ${dense ? "dnd-ui-dense" : ""}`}>
+      <div className="dnd-ui-generic-card-label">{item.label}</div>
+      <div className="dnd-ui-generic-card-value">{item.value}</div>
+      {item.sublabel && <div className="dnd-ui-generic-card-sublabel">{item.sublabel}</div>}
     </div>
   );
 }
@@ -19,7 +19,7 @@ interface StatGridProps {
 
 export function StatGrid({ cols, children, dense }: StatGridProps) {
   return (
-    <div className={`card-grid ${dense ? "dense" : ""}`} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+    <div className={`dnd-ui-card-grid ${dense ? "dnd-ui-dense" : ""}`} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
       {children}
     </div>
   );

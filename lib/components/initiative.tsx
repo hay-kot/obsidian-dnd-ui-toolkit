@@ -203,32 +203,32 @@ export function Initiative(props: InitiativeProps) {
     const healthPercent = maxHp > 0 ? (currentHp / maxHp) * 100 : 0;
     let statusClass = "";
     if (currentHp <= 0) {
-      statusClass = "monster-status-dead";
+      statusClass = "dnd-ui-monster-status-dead";
     } else if (healthPercent <= 33) {
-      statusClass = "monster-status-injured";
+      statusClass = "dnd-ui-monster-status-injured";
     } else if (healthPercent >= 90) {
-      statusClass = "monster-status-healthy";
+      statusClass = "dnd-ui-monster-status-healthy";
     }
 
     return (
-      <div key={`${index}-${monsterKey}`} className="initiative-monster">
-        <div className="initiative-monster-header">
-          <span className={`initiative-monster-name ${statusClass}`}>{monsterLabel}</span>
-          <span className="initiative-monster-hp">
-            <span className="initiative-hp-value">{currentHp}</span>
-            <span className="initiative-hp-separator">/</span>
-            <span className="initiative-hp-max">{maxHp}</span>
+      <div key={`${index}-${monsterKey}`} className="dnd-ui-initiative-monster">
+        <div className="dnd-ui-initiative-monster-header">
+          <span className={`dnd-ui-initiative-monster-name ${statusClass}`}>{monsterLabel}</span>
+          <span className="dnd-ui-initiative-monster-hp">
+            <span className="dnd-ui-initiative-hp-value">{currentHp}</span>
+            <span className="dnd-ui-initiative-hp-separator">/</span>
+            <span className="dnd-ui-initiative-hp-max">{maxHp}</span>
           </span>
         </div>
-        <div className="initiative-monster-actions">
+        <div className="dnd-ui-initiative-monster-actions">
           <input
             type="number"
-            className="initiative-hp-input"
+            className="dnd-ui-initiative-hp-input"
             placeholder="0"
             onChange={(e) => setInputValue(e.target.value)}
           />
           <button
-            className="initiative-hp-button initiative-damage"
+            className="dnd-ui-initiative-hp-button dnd-ui-initiative-damage"
             onClick={() => {
               handleDamage(props.static.items[index], monsterKey, inputValue);
               setInputValue("1");
@@ -238,7 +238,7 @@ export function Initiative(props: InitiativeProps) {
             −
           </button>
           <button
-            className="initiative-hp-button initiative-heal"
+            className="dnd-ui-initiative-hp-button dnd-ui-initiative-heal"
             onClick={() => {
               handleDamage(props.static.items[index], monsterKey, inputValue, "heal");
               setInputValue("1");
@@ -264,7 +264,7 @@ export function Initiative(props: InitiativeProps) {
     if (isGroup) {
       // It's a group of monsters with individual HP tracking
       return (
-        <div className="initiative-group-hp">
+        <div className="dnd-ui-initiative-group-hp">
           {Object.entries(item.hp as Record<string, number>).map(([key, maxHp]) =>
             renderMonsterHp(item, index, key, key, maxHp)
           )}
@@ -280,29 +280,29 @@ export function Initiative(props: InitiativeProps) {
       const healthPercent = maxHp > 0 ? (currentHp / maxHp) * 100 : 0;
       let statusClass = "";
       if (currentHp <= 0) {
-        statusClass = "monster-status-dead";
+        statusClass = "dnd-ui-monster-status-dead";
       } else if (healthPercent <= 33) {
-        statusClass = "monster-status-injured";
+        statusClass = "dnd-ui-monster-status-injured";
       }
 
       // Always render HP with inline controls
       return (
-        <div className={`initiative-hp-inline ${statusClass}`}>
-          <div className="initiative-hp-display">
-            <span className="initiative-hp-value">{currentHp}</span>
-            <span className="initiative-hp-separator">/</span>
-            <span className="initiative-hp-max">{maxHp}</span>
+        <div className={`dnd-ui-initiative-hp-inline ${statusClass}`}>
+          <div className="dnd-ui-initiative-hp-display">
+            <span className="dnd-ui-initiative-hp-value">{currentHp}</span>
+            <span className="dnd-ui-initiative-hp-separator">/</span>
+            <span className="dnd-ui-initiative-hp-max">{maxHp}</span>
           </div>
-          <div className="initiative-hp-controls">
+          <div className="dnd-ui-initiative-hp-controls">
             <input
               type="number"
-              className="initiative-hp-input"
+              className="dnd-ui-initiative-hp-input"
               placeholder="0"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
             />
             <button
-              className="initiative-hp-button initiative-damage"
+              className="dnd-ui-initiative-hp-button dnd-ui-initiative-damage"
               onClick={() => {
                 handleDamage(props.static.items[index], monsterKey, inputValue);
                 setInputValue("1");
@@ -312,7 +312,7 @@ export function Initiative(props: InitiativeProps) {
               −
             </button>
             <button
-              className="initiative-hp-button initiative-heal"
+              className="dnd-ui-initiative-hp-button dnd-ui-initiative-heal"
               onClick={() => {
                 handleDamage(props.static.items[index], monsterKey, inputValue, "heal");
                 setInputValue("1");
@@ -328,23 +328,23 @@ export function Initiative(props: InitiativeProps) {
   };
 
   return (
-    <div className="initiative-tracker">
-      <div className="initiative-tracker-controls">
-        <div className="initiative-round-counter">
-          Round: <span className="initiative-round-value">{props.state.round}</span>
+    <div className="dnd-ui-initiative-tracker">
+      <div className="dnd-ui-initiative-tracker-controls">
+        <div className="dnd-ui-initiative-round-counter">
+          Round: <span className="dnd-ui-initiative-round-value">{props.state.round}</span>
         </div>
         <button
-          className="initiative-control-button initiative-prev"
+          className="dnd-ui-initiative-control-button dnd-ui-initiative-prev"
           onClick={handlePrev}
           aria-label="Previous combatant"
         >
           ◀ Prev
         </button>
-        <button className="initiative-control-button initiative-next" onClick={handleNext} aria-label="Next combatant">
+        <button className="dnd-ui-initiative-control-button dnd-ui-initiative-next" onClick={handleNext} aria-label="Next combatant">
           Next ▶
         </button>
         <button
-          className="initiative-control-button initiative-reset"
+          className="dnd-ui-initiative-control-button dnd-ui-initiative-reset"
           onClick={handleReset}
           aria-label="Reset initiative"
         >
@@ -366,11 +366,11 @@ export function Initiative(props: InitiativeProps) {
         />
       )}
 
-      <div className="initiative-list">
+      <div className="dnd-ui-initiative-list">
         {sortedItems.length === 0 ? (
-          <div className="initiative-empty-state">No combatants added</div>
+          <div className="dnd-ui-initiative-empty-state">No combatants added</div>
         ) : (
-          <div className="initiative-items">
+          <div className="dnd-ui-initiative-items">
             {sortedItems.map(({ item, index, initiative }) => {
               const isActive = index === props.state.activeIndex;
               const hasHp = item.hp !== undefined;
@@ -379,30 +379,30 @@ export function Initiative(props: InitiativeProps) {
               return (
                 <div
                   key={index}
-                  className={`initiative-item ${isActive ? "initiative-item-active" : ""} ${isGroupMonster ? "initiative-item-group" : ""}`}
+                  className={`dnd-ui-initiative-item ${isActive ? "dnd-ui-initiative-item-active" : ""} ${isGroupMonster ? "dnd-ui-initiative-item-group" : ""}`}
                 >
-                  <div className="initiative-item-main">
-                    <div className="initiative-roll">
+                  <div className="dnd-ui-initiative-item-main">
+                    <div className="dnd-ui-initiative-roll">
                       <input
                         type="number"
                         value={initiative || ""}
                         onChange={(e) => handleSetInitiative(props.static.items[index], e.target.value)}
-                        className="initiative-input"
+                        className="dnd-ui-initiative-input"
                         placeholder="0"
                       />
                     </div>
                     <div>
-                      <div className="initiative-name">
+                      <div className="dnd-ui-initiative-name">
                         {item.link ? (
-                          <a href={item.link} className="initiative-link">
+                          <a href={item.link} className="dnd-ui-initiative-link">
                             {item.name}
                           </a>
                         ) : (
                           item.name
                         )}
                       </div>
-                      <div className="initiative-ac">
-                        AC: <span className="initiative-ac-value">{item.ac}</span>
+                      <div className="dnd-ui-initiative-ac">
+                        AC: <span className="dnd-ui-initiative-ac-value">{item.ac}</span>
                       </div>
                     </div>
 
@@ -413,8 +413,8 @@ export function Initiative(props: InitiativeProps) {
 
                   {isGroupMonster && (
                     <>
-                      <div className="divider"></div>
-                      <div className="initiative-group-container">{renderHpSection(item, index)}</div>
+                      <div className="dnd-ui-divider"></div>
+                      <div className="dnd-ui-initiative-group-container">{renderHpSection(item, index)}</div>
                     </>
                   )}
                 </div>

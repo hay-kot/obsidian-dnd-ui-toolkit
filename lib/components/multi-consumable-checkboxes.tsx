@@ -30,12 +30,12 @@ export function MultiConsumableCheckboxes(props: MultiConsumableCheckboxesProps)
   }, [props.consumables]);
 
   return (
-    <div ref={containerRef} className="consumables-column">
+    <div ref={containerRef} className="dnd-ui-consumables-column">
       {props.consumables.map((consumable) => {
         const state = props.states[consumable.state_key] || { value: 0 };
 
         return (
-          <div key={consumable.state_key} className="consumable-item">
+          <div key={consumable.state_key} className="dnd-ui-consumable-item">
             <ConsumableCheckboxes
               static={consumable}
               state={state}

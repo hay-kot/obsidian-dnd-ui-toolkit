@@ -40,7 +40,7 @@ class ConsumableMarkdown extends MarkdownRenderChild {
     this.kv = kv;
     this.filePath = filePath;
     this.consumablesContainer = document.createElement("div");
-    this.consumablesContainer.className = "consumables-column";
+    this.consumablesContainer.className = "dnd-ui-consumables-column";
     el.appendChild(this.consumablesContainer);
   }
 
@@ -68,7 +68,7 @@ class ConsumableMarkdown extends MarkdownRenderChild {
         }
 
         const itemContainer = document.createElement("div");
-        itemContainer.className = "consumable-item";
+        itemContainer.className = "dnd-ui-consumable-item";
         itemContainer.setAttribute("data-state-key", stateKey);
         this.consumablesContainer.appendChild(itemContainer);
 

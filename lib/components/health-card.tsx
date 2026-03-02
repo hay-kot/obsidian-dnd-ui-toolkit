@@ -146,7 +146,7 @@ export function HealthCard(props: HealthCardProps) {
     if (!props.static.hitdice || props.static.hitdice.length === 0) return null;
 
     return (
-      <div className="hit-dice-list">
+      <div className="dnd-ui-hit-dice-list">
         {props.static.hitdice.map((hd) => {
           // Get the used count based on state structure
           let used: number = 0;
@@ -172,9 +172,9 @@ export function HealthCard(props: HealthCardProps) {
           }
 
           return (
-            <div key={hd.dice} className="hit-dice-row">
-              <p className="hit-dice-label">HIT DICE ({hd.dice})</p>
-              <div className="hit-dice-boxes">{hitDiceArray}</div>
+            <div key={hd.dice} className="dnd-ui-hit-dice-row">
+              <p className="dnd-ui-hit-dice-label">HIT DICE ({hd.dice})</p>
+              <div className="dnd-ui-hit-dice-boxes">{hitDiceArray}</div>
             </div>
           );
         })}
@@ -197,7 +197,7 @@ export function HealthCard(props: HealthCardProps) {
           checked={i < props.state.deathSaveFailures}
           id={`death-save-failure-${i}`}
           onChange={() => toggleDeathSave("failure", i)}
-          className="death-save-failure"
+          className="dnd-ui-death-save-failure"
         />
       );
     }
@@ -210,7 +210,7 @@ export function HealthCard(props: HealthCardProps) {
           checked={i < props.state.deathSaveSuccesses}
           id={`death-save-success-${i}`}
           onChange={() => toggleDeathSave("success", i)}
-          className="death-save-success"
+          className="dnd-ui-death-save-success"
         />
       );
     }
@@ -219,55 +219,55 @@ export function HealthCard(props: HealthCardProps) {
   };
 
   return (
-    <div className="health-card generic-card">
-      <div className="health-card-header">
-        <div className="generic-card-label">{props.static.label || "Hit Points"}</div>
-        <div className="health-value">
+    <div className="dnd-ui-health-card dnd-ui-generic-card">
+      <div className="dnd-ui-health-card-header">
+        <div className="dnd-ui-generic-card-label">{props.static.label || "Hit Points"}</div>
+        <div className="dnd-ui-health-value">
           {props.state.current}
-          <span className="health-max">/ {maxHealth}</span>
-          {props.state.temporary > 0 && <span className="health-temp">+{props.state.temporary} temp</span>}
+          <span className="dnd-ui-health-max">/ {maxHealth}</span>
+          {props.state.temporary > 0 && <span className="dnd-ui-health-temp">+{props.state.temporary} temp</span>}
         </div>
       </div>
 
-      <div className="health-progress-container">
-        <div className="health-progress-bar" style={{ width: `${healthPercentage}%` }} />
+      <div className="dnd-ui-health-progress-container">
+        <div className="dnd-ui-health-progress-bar" style={{ width: `${healthPercentage}%` }} />
       </div>
 
-      <div className="health-controls">
+      <div className="dnd-ui-health-controls">
         <input
           type="number"
-          className="health-input"
+          className="dnd-ui-health-input"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="0"
           aria-label="Health points"
         />
-        <button type="button" className="health-button health-heal" onClick={handleHeal}>
+        <button type="button" className="dnd-ui-health-button dnd-ui-health-heal" onClick={handleHeal}>
           Heal
         </button>
-        <button type="button" className="health-button health-damage" onClick={handleDamage}>
+        <button type="button" className="dnd-ui-health-button dnd-ui-health-damage" onClick={handleDamage}>
           Damage
         </button>
-        <button type="button" className="health-button health-temp" onClick={handleTempHP}>
+        <button type="button" className="dnd-ui-health-button dnd-ui-health-temp" onClick={handleTempHP}>
           Temp HP
         </button>
       </div>
 
       {props.static.hitdice && props.static.hitdice.length > 0 && (
         <>
-          <div className="health-divider" />
-          <div className="hit-dice-container">{renderHitDice()}</div>
+          <div className="dnd-ui-health-divider" />
+          <div className="dnd-ui-hit-dice-container">{renderHitDice()}</div>
         </>
       )}
 
       {props.static.death_saves && props.state.current <= 0 && (
         <>
-          <div className="health-divider" />
-          <div className="death-saves-container">
-            <div className="death-saves-tracker">
-              <div className="death-saves-failures">{renderDeathSaves()?.failures}</div>
-              <div className="death-saves-skull">💀</div>
-              <div className="death-saves-successes">{renderDeathSaves()?.successes}</div>
+          <div className="dnd-ui-health-divider" />
+          <div className="dnd-ui-death-saves-container">
+            <div className="dnd-ui-death-saves-tracker">
+              <div className="dnd-ui-death-saves-failures">{renderDeathSaves()?.failures}</div>
+              <div className="dnd-ui-death-saves-skull">💀</div>
+              <div className="dnd-ui-death-saves-successes">{renderDeathSaves()?.successes}</div>
             </div>
           </div>
         </>
