@@ -48,7 +48,9 @@ class InitiativeMarkdown extends VueMarkdown {
 
     try {
       const savedState = await this.kv.get<InitiativeState>(stateKey);
-      const initiativeState = savedState || defaultState;
+      const initiativeState = savedState
+        ? InitiativeService.mergeInitiativeState(initiativeBlock, savedState)
+        : defaultState;
 
       if (!savedState) {
         try {
