@@ -9,6 +9,8 @@ import { BadgesView, StatsView } from "lib/views/BadgesView";
 import { InitiativeView } from "lib/views/InitiativeView";
 import { SpellComponentsView } from "lib/views/SpellComponentsView";
 import { EventButtonsView } from "lib/views/EventButtonsView";
+import { RawAbilityView } from "lib/views/RawAbilityView";
+import { RawSkillsView } from "lib/views/RawSkillsView";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { JsonDataStore } from "./lib/services/kv/local-file-store";
 import { DEFAULT_SETTINGS, DndUIToolkitSettings } from "settings";
@@ -84,6 +86,8 @@ export default class DndUIToolkitPlugin extends Plugin {
       new BadgesView(app),
       new SpellComponentsView(app),
       new EventButtonsView(app),
+      new RawAbilityView(app),
+      new RawSkillsView(app),
 
       // Dynamic/Stateful
       new HealthView(app, kv),

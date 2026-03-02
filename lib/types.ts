@@ -1,3 +1,6 @@
+import type { AbilityScores } from "./domains/dnd/types";
+export type { AbilityScores } from "./domains/dnd/types";
+
 export type Frontmatter = {
   proficiency_bonus: number;
   level?: number;
@@ -8,15 +11,6 @@ export type AbilityBlock = {
   abilities: AbilityScores;
   bonuses: GenericBonus[];
   proficiencies: string[];
-};
-
-export type AbilityScores = {
-  strength: number;
-  dexterity: number;
-  constitution: number;
-  intelligence: number;
-  wisdom: number;
-  charisma: number;
 };
 
 // An GenericBonus is an additional property for the ability block
@@ -127,6 +121,15 @@ export type SpellComponentsBlock = {
   range?: string;
   components?: string;
   duration?: string;
+};
+
+export type SkillItem = {
+  isProficient?: boolean;
+  isExpert?: boolean;
+  isHalfProficient?: boolean;
+  ability: string;
+  label: string;
+  modifier: number;
 };
 
 export type Ability = {

@@ -40,8 +40,7 @@ export default defineConfig(({ mode }) => ({
         ...builtins,
       ],
       output: {
-        assetFileNames: (info) =>
-          info.name?.endsWith(".css") ? "styles.css" : (info.name ?? "asset"),
+        assetFileNames: (info) => (info.name?.endsWith(".css") ? "styles.css" : (info.name ?? "asset")),
       },
     },
   },

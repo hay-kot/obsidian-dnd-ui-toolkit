@@ -340,7 +340,11 @@ export function Initiative(props: InitiativeProps) {
         >
           ◀ Prev
         </button>
-        <button className="dnd-ui-initiative-control-button dnd-ui-initiative-next" onClick={handleNext} aria-label="Next combatant">
+        <button
+          className="dnd-ui-initiative-control-button dnd-ui-initiative-next"
+          onClick={handleNext}
+          aria-label="Next combatant"
+        >
           Next ▶
         </button>
         <button
