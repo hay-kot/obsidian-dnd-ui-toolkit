@@ -9,7 +9,7 @@ export class RawAbilityView extends BaseView {
 
   public render(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): void {
     const parsed = parse(source);
-    const items = (parsed.items || []).map((item: any) => ({
+    const items = (parsed?.items || []).map((item: any) => ({
       label: item.label || "",
       total: 0,
       modifier: item.value || "",

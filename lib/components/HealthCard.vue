@@ -69,6 +69,7 @@ function handleTempHP() {
   const value = parseInt(inputValue.value) || 0;
   if (value <= 0) return;
 
+  // D&D 5e: temp HP doesn't stack, keep whichever is higher
   const newTemp = Math.max(props.state.temporary, value);
 
   emit("update:state", {

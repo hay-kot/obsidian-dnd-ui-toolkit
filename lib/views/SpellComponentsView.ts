@@ -25,7 +25,8 @@ export class SpellComponentsView extends BaseView {
     this.renderAsync(source, el, ctx).catch((e) => {
       console.error("Error rendering spell components", e);
       const errorMessage = e instanceof Error ? e.message : String(e);
-      el.createEl("div").innerHTML = `<div class="notice">Error parsing spell components: ${errorMessage}</div>`;
+      const errorDiv = el.createEl("div", { cls: "notice" });
+      errorDiv.textContent = `Error parsing spell components: ${errorMessage}`;
     });
   }
 
@@ -99,6 +100,7 @@ export class SpellComponentsView extends BaseView {
       const modifier = AbilityService.calculateModifier(totalScore);
       const profBonus = frontmatter.proficiency_bonus;
 
+      // D&D 5e spell save DC = 8 + proficiency bonus + spellcasting modifier
       if (data.save) {
         data.save_dc = 8 + profBonus + modifier;
       }

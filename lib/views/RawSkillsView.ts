@@ -10,7 +10,7 @@ export class RawSkillsView extends BaseView {
 
   public render(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): void {
     const parsed = parse(source);
-    const items: SkillItem[] = (parsed.items || []).map((item: any) => ({
+    const items: SkillItem[] = (parsed?.items || []).map((item: any) => ({
       label: item.label || "",
       ability: item.ability || "",
       modifier: item.modifier ?? 0,

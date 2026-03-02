@@ -14,7 +14,21 @@ const emit = defineEmits<{
   "update:state": [newState: InitiativeState];
 }>();
 
-const inputValue = ref("1");
+const inputValues = ref<Record<string, string>>({});
+
+function getInputValue(key: string): string {
+  return inputValues.value[key] ?? "1";
+}
+
+function setInputValue(key: string, value: string) {
+  inputValues.value = { ...inputValues.value, [key]: value };
+}
+
+function resetInputValue(key: string) {
+  const updated = { ...inputValues.value };
+  delete updated[key];
+  inputValues.value = updated;
+}
 
 const sortedItems = computed(() => getSortedInitiativeItems(props.static.items, props.state.initiatives));
 
@@ -292,8 +306,8 @@ function consumableStates(): Record<string, ConsumableState> {
                     type="number"
                     class="dnd-ui-initiative-hp-input"
                     placeholder="0"
-                    :value="inputValue"
-                    @input="inputValue = ($event.target as HTMLInputElement).value"
+                    :value="getInputValue(itemHashKey(item))"
+                    @input="setInputValue(itemHashKey(item), ($event.target as HTMLInputElement).value)"
                   />
                   <button
                     class="dnd-ui-initiative-hp-button dnd-ui-initiative-damage"
@@ -302,9 +316,9 @@ function consumableStates(): Record<string, ConsumableState> {
                       handleDamage(
                         props.static.items[index],
                         Object.keys(props.state.hp[itemHashKey(item)] || {})[0] || 'main',
-                        inputValue
+                        getInputValue(itemHashKey(item))
                       );
-                      inputValue = '1';
+                      resetInputValue(itemHashKey(item));
                     "
                   >
                     &#x2212;
@@ -316,10 +330,10 @@ function consumableStates(): Record<string, ConsumableState> {
                       handleDamage(
                         props.static.items[index],
                         Object.keys(props.state.hp[itemHashKey(item)] || {})[0] || 'main',
-                        inputValue,
+                        getInputValue(itemHashKey(item)),
                         'heal'
                       );
-                      inputValue = '1';
+                      resetInputValue(itemHashKey(item));
                     "
                   >
                     +
@@ -360,14 +374,15 @@ function consumableStates(): Record<string, ConsumableState> {
                       type="number"
                       class="dnd-ui-initiative-hp-input"
                       placeholder="0"
-                      @input="inputValue = ($event.target as HTMLInputElement).value"
+                      :value="getInputValue(`${itemHashKey(item)}-${key}`)"
+                      @input="setInputValue(`${itemHashKey(item)}-${key}`, ($event.target as HTMLInputElement).value)"
                     />
                     <button
                       class="dnd-ui-initiative-hp-button dnd-ui-initiative-damage"
                       title="Damage"
                       @click="
-                        handleDamage(props.static.items[index], key, inputValue);
-                        inputValue = '1';
+                        handleDamage(props.static.items[index], key, getInputValue(`${itemHashKey(item)}-${key}`));
+                        resetInputValue(`${itemHashKey(item)}-${key}`);
                       "
                     >
                       &#x2212;
@@ -376,8 +391,13 @@ function consumableStates(): Record<string, ConsumableState> {
                       class="dnd-ui-initiative-hp-button dnd-ui-initiative-heal"
                       title="Heal"
                       @click="
-                        handleDamage(props.static.items[index], key, inputValue, 'heal');
-                        inputValue = '1';
+                        handleDamage(
+                          props.static.items[index],
+                          key,
+                          getInputValue(`${itemHashKey(item)}-${key}`),
+                          'heal'
+                        );
+                        resetInputValue(`${itemHashKey(item)}-${key}`);
                       "
                     >
                       +

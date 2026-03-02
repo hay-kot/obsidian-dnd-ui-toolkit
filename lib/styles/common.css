@@ -7,7 +7,7 @@
     --dnd-ui-ability-card-padding: 0.3rem;
     --dnd-ui-std-grid-gap: 0.5rem;
 
-    /* Colors set by user */
+    /* Color variables are set by the plugin settings tab */
 }
 
 .dnd-ui-card-grid {

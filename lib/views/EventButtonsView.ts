@@ -67,7 +67,8 @@ class EventButtonsMarkdown extends VueMarkdown {
     } catch (error) {
       console.error("Error parsing event buttons block:", error);
       const errorMessage = error instanceof Error ? error.message : String(error);
-      this.containerEl.innerHTML = `<div class="notice">Error parsing event buttons block: ${errorMessage}</div>`;
+      const errorDiv = this.containerEl.createEl("div", { cls: "notice" });
+      errorDiv.textContent = `Error parsing event buttons block: ${errorMessage}`;
     }
   }
 }
