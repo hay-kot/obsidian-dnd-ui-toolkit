@@ -2,10 +2,12 @@
 
 Certain front matter within the Character Sheet can aid in component rendering.
 
-| Property            | Type   | Default | Description                                                        |
-| ------------------- | ------ | ------- | ------------------------------------------------------------------ |
-| `proficiency_bonus` | Number | 2       | Set's your characters proficiency bonus used in skill calculations |
-| `level`             | Number | -       | Character level, auto-calculates proficiency bonus if not explicitly set |
+| Property               | Type   | Default | Description                                                             |
+| ---------------------- | ------ | ------- | ----------------------------------------------------------------------- |
+| `proficiency_bonus`    | Number | 2       | Sets your character's proficiency bonus used in skill and spell calculations |
+| `level`                | Number | -       | Character level, auto-calculates proficiency bonus if not explicitly set |
+| `spellcasting_ability` | String | -       | Ability used for spell calculations (e.g., "intelligence", "wisdom", "charisma") |
+| `character_file`       | String | -       | Link to another note containing ability scores and proficiency (e.g., `"[[My Character]]"`) |
 
 ## Auto-calculation
 
