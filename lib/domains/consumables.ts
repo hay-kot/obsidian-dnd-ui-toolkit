@@ -7,11 +7,16 @@ export interface ConsumableState {
   value: number;
 }
 
+// Intermediate type before template resolution where uses can still be a string
+type UnresolvedConsumableBlock = Omit<ParsedConsumableBlock, "uses"> & {
+  uses: number | string;
+};
+
 export interface ConsumablesBlock {
-  items: ParsedConsumableBlock[];
+  items: UnresolvedConsumableBlock[];
 }
 
-export function parseConsumableBlock(yamlString: string): ParsedConsumableBlock {
+export function parseConsumableBlock(yamlString: string): UnresolvedConsumableBlock {
   const def: ConsumableBlock = {
     label: "Consumable",
     // @ts-expect-error - no viable default for state_key
@@ -24,7 +29,7 @@ export function parseConsumableBlock(yamlString: string): ParsedConsumableBlock 
   const merged = Utils.mergeWithDefaults(parsed, def);
 
   // Normalize reset_on to always be an array of ResetConfig objects
-  const normalized: ParsedConsumableBlock = {
+  const normalized: UnresolvedConsumableBlock = {
     ...merged,
     reset_on: normalizeResetConfig(merged.reset_on),
   };
@@ -51,7 +56,7 @@ export function parseConsumablesBlock(yamlString: string): ConsumablesBlock {
         return {
           ...merged,
           reset_on: normalizeResetConfig(merged.reset_on),
-        } as ParsedConsumableBlock;
+        } as UnresolvedConsumableBlock;
       }),
     };
   }

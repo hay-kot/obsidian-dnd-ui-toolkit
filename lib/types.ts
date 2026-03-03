@@ -53,11 +53,16 @@ export type HitDice = {
   value: number;
 };
 
+export type RawHitDice = {
+  dice: string;
+  value: number | string; // Allow string for template support (e.g., "{{frontmatter.level}}")
+};
+
 export type HealthBlock = {
   label: string;
   state_key: string;
   health: number | string; // Allow string for template support
-  hitdice?: HitDice | HitDice[]; // Support both single and multiple hit dice
+  hitdice?: RawHitDice | RawHitDice[]; // Support both single and multiple hit dice
   death_saves?: boolean | "always";
   reset_on?: string | string[]; // Event type(s) that trigger a reset, defaults to 'long-rest'
 };
@@ -70,17 +75,26 @@ export type ResetConfig = {
 export type ConsumableBlock = {
   label: string;
   state_key: string;
-  uses: number;
+  uses: number | string; // Allow string for template support (e.g., "{{modifier abilities.charisma}}")
   reset_on?: string | string[] | { event: string; amount: number }[]; // Event type(s) that trigger a reset (e.g., 'long-rest', ['short-rest', 'long-rest'], [{event: 'short-rest', amount: 1}])
 };
 
-export type ParsedConsumableBlock = Omit<ConsumableBlock, "reset_on"> & {
+export type ParsedConsumableBlock = Omit<ConsumableBlock, "reset_on" | "uses"> & {
+  uses: number; // Always resolved to a number after template processing
   reset_on?: ResetConfig[]; // Normalized to always be an array of objects
 };
 
-export type ParsedHealthBlock = Omit<HealthBlock, "reset_on" | "hitdice"> & {
-  reset_on?: ResetConfig[]; // Normalized to always be an array of objects
-  hitdice?: HitDice[]; // Normalized to always be an array
+// Before template resolution — hitdice values may still be template strings
+export type UnresolvedHealthBlock = Omit<HealthBlock, "reset_on" | "hitdice"> & {
+  reset_on?: ResetConfig[];
+  hitdice?: RawHitDice[];
+};
+
+// After template resolution — all values are numbers
+export type ParsedHealthBlock = Omit<HealthBlock, "reset_on" | "hitdice" | "health"> & {
+  health: number | string;
+  reset_on?: ResetConfig[];
+  hitdice?: HitDice[];
 };
 
 export type BadgeItem = {
