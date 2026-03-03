@@ -9,7 +9,7 @@ Each `state_key` defined in **any** component needs to be unique as they are all
 ## Features
 
 - Customize 'Hit Points' label
-- Death save tracking
+- Death save tracking (can be shown always or only at 0 HP)
 - Supports temporary HP
 - Supports **Reset Events** - See [Event System](../concepts/event-systems.md) for more details. By default it is configured for `long-rest`.
 
@@ -40,6 +40,17 @@ hitdice:
     value: 5
   - dice: d8   # Cleric levels
     value: 3
+```
+````
+
+### Always Show Death Saves
+By default, death saves only appear when HP reaches 0. Set `death_saves: always` to display them at any HP level.
+
+````yaml
+```healthpoints
+state_key: din_health
+health: 24
+death_saves: always
 ```
 ````
 
