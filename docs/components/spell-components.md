@@ -74,3 +74,12 @@ All properties are optional - include only what you need for each spell.
 | `duration`     | String  | How long the spell lasts                                                    |
 | `save`         | String  | Ability save required (e.g., "dexterity", "wisdom"). Triggers DC display    |
 | `attack`       | Boolean | Set to `true` to display the spell attack bonus                             |
+
+### Frontmatter Properties
+
+These frontmatter properties are used by spell components for auto-calculating save DC and attack bonus.
+
+| Property               | Type   | Description                                                                           |
+| ---------------------- | ------ | ------------------------------------------------------------------------------------- |
+| `spellcasting_ability` | String | Ability used for spell calculations (e.g., "intelligence", "wisdom", "charisma")      |
+| `character_file`       | String | Link to another note containing ability scores and proficiency (e.g., `"[[My Character]]"`) |

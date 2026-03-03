@@ -2,12 +2,10 @@
 
 Certain front matter within the Character Sheet can aid in component rendering.
 
-| Property               | Type   | Default | Description                                                             |
-| ---------------------- | ------ | ------- | ----------------------------------------------------------------------- |
-| `proficiency_bonus`    | Number | 2       | Sets your character's proficiency bonus used in skill and spell calculations |
-| `level`                | Number | -       | Character level, auto-calculates proficiency bonus if not explicitly set |
-| `spellcasting_ability` | String | -       | Ability used for spell save DC and attack bonus calculations. See [Spell Components](/components/spell-components) |
-| `character_file`       | String | -       | Link to another note for cross-file ability score lookups. See [Spell Components](/components/spell-components) |
+| Property            | Type   | Default | Description                                                        |
+| ------------------- | ------ | ------- | ------------------------------------------------------------------ |
+| `proficiency_bonus` | Number | 2       | Sets your character's proficiency bonus used in skill and spell calculations |
+| `level`             | Number | -       | Character level, auto-calculates proficiency bonus if not explicitly set |
 
 ## Auto-calculation
 
