@@ -1,5 +1,5 @@
 import * as Utils from "lib/utils/utils";
-import { HealthBlock, ParsedHealthBlock } from "lib/types";
+import { HealthBlock, ParsedHealthBlock, UnresolvedHealthBlock } from "lib/types";
 import { parse } from "yaml";
 import { normalizeResetConfig } from "lib/domains/events";
 
@@ -30,7 +30,7 @@ export function hasMultipleHitDice(block: ParsedHealthBlock): boolean {
   return block.hitdice !== undefined && block.hitdice.length > 1;
 }
 
-export function parseHealthBlock(yamlString: string): ParsedHealthBlock {
+export function parseHealthBlock(yamlString: string): UnresolvedHealthBlock {
   const def: HealthBlock = {
     label: "Hit Points",
     // @ts-expect-error - no viable default for state_key
@@ -45,7 +45,7 @@ export function parseHealthBlock(yamlString: string): ParsedHealthBlock {
   const merged = Utils.mergeWithDefaults(parsed, def);
 
   // Normalize hitdice to always be an array
-  let normalizedHitdice: ParsedHealthBlock["hitdice"] = undefined;
+  let normalizedHitdice: UnresolvedHealthBlock["hitdice"] = undefined;
   if (merged.hitdice) {
     if (Array.isArray(merged.hitdice)) {
       normalizedHitdice = merged.hitdice;
@@ -56,7 +56,7 @@ export function parseHealthBlock(yamlString: string): ParsedHealthBlock {
   }
 
   // Normalize reset_on to always be an array of ResetConfig objects
-  const normalized: ParsedHealthBlock = {
+  const normalized: UnresolvedHealthBlock = {
     ...merged,
     reset_on: normalizeResetConfig(merged.reset_on),
     hitdice: normalizedHitdice,

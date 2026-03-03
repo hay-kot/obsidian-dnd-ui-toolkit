@@ -8,6 +8,8 @@ import { ConsumableState } from "lib/domains/consumables";
 import { msgbus } from "lib/services/event-bus";
 import { shouldResetOnEvent, getResetAmount } from "lib/domains/events";
 import { ParsedConsumableBlock } from "lib/types";
+import { hasTemplateVariables, processTemplate, createTemplateContext } from "lib/utils/template";
+import { useFileContext, FileContext } from "./filecontext";
 import { VueMarkdown } from "./VueMarkdown";
 
 export class ConsumableView extends BaseView {
@@ -21,7 +23,7 @@ export class ConsumableView extends BaseView {
   }
 
   public render(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): void {
-    const consumableMarkdown = new ConsumableMarkdown(el, source, this.kv, ctx.sourcePath);
+    const consumableMarkdown = new ConsumableMarkdown(el, source, this.kv, ctx.sourcePath, ctx, this);
     ctx.addChild(consumableMarkdown);
   }
 }
@@ -30,21 +32,33 @@ class ConsumableMarkdown extends VueMarkdown {
   private source: string;
   private kv: KeyValueStore;
   private filePath: string;
+  private fileContext: FileContext;
   private propsRef = ref<Record<string, unknown>>({});
   private mounted = false;
   private consumables: ParsedConsumableBlock[] = [];
   private states: Record<string, ConsumableState> = {};
+  private originalUsesValues: Map<string, number | string> = new Map();
 
-  constructor(el: HTMLElement, source: string, kv: KeyValueStore, filePath: string) {
+  constructor(
+    el: HTMLElement,
+    source: string,
+    kv: KeyValueStore,
+    filePath: string,
+    ctx: MarkdownPostProcessorContext,
+    baseView: BaseView
+  ) {
     super(el);
     this.source = source;
     this.kv = kv;
     this.filePath = filePath;
+    this.fileContext = useFileContext(baseView.app, ctx);
   }
 
   async onload() {
     const consumablesBlock = ConsumableService.parseConsumablesBlock(this.source);
-    this.consumables = consumablesBlock.items;
+    this.consumables = consumablesBlock.items.map((item) => this.processTemplateInConsumable(item));
+
+    this.setupFrontmatterChangeListener();
 
     // Calculate label width
     let maxLabelLength = 0;
@@ -98,6 +112,81 @@ class ConsumableMarkdown extends VueMarkdown {
     );
 
     this.renderAll();
+  }
+
+  private processTemplateInConsumable(
+    consumable: { uses: number | string } & Omit<ParsedConsumableBlock, "uses">
+  ): ParsedConsumableBlock {
+    const usesValue = consumable.uses;
+
+    // Store original value for re-processing on frontmatter changes
+    this.originalUsesValues.set(consumable.state_key, usesValue);
+
+    if (typeof usesValue === "string" && hasTemplateVariables(usesValue)) {
+      const templateContext = createTemplateContext(this.containerEl, this.fileContext);
+      const processedUses = processTemplate(usesValue, templateContext);
+      const parsedUses = parseInt(processedUses, 10);
+
+      if (!isNaN(parsedUses) && parsedUses > 0) {
+        return { ...consumable, uses: parsedUses };
+      } else {
+        console.warn(
+          `Template processed uses value "${processedUses}" is not a valid positive number, using default of 1`
+        );
+        return { ...consumable, uses: 1 };
+      }
+    }
+
+    // Ensure uses is a number even if not templated
+    if (typeof usesValue === "string") {
+      const parsed = parseInt(usesValue, 10);
+      return { ...consumable, uses: isNaN(parsed) ? 1 : parsed };
+    }
+
+    return { ...consumable, uses: usesValue };
+  }
+
+  private setupFrontmatterChangeListener() {
+    const hasTemplates = Array.from(this.originalUsesValues.values()).some(
+      (v) => typeof v === "string" && hasTemplateVariables(v)
+    );
+
+    if (!hasTemplates) return;
+
+    this.addUnloadFn(
+      this.fileContext.onFrontmatterChange(() => {
+        console.debug(`Frontmatter changed for ${this.filePath}, re-processing consumable templates`);
+        this.handleFrontmatterChange();
+      })
+    );
+  }
+
+  private async handleFrontmatterChange() {
+    let changed = false;
+
+    this.consumables = this.consumables.map((consumable) => {
+      const originalUses = this.originalUsesValues.get(consumable.state_key);
+      if (typeof originalUses !== "string" || !hasTemplateVariables(originalUses)) {
+        return consumable;
+      }
+
+      const templateContext = createTemplateContext(this.containerEl, this.fileContext);
+      const processedUses = processTemplate(originalUses, templateContext);
+      const parsedUses = parseInt(processedUses, 10);
+      const newUses = !isNaN(parsedUses) && parsedUses > 0 ? parsedUses : 1;
+
+      if (newUses !== consumable.uses) {
+        console.debug(`Consumable ${consumable.state_key} uses changed from ${consumable.uses} to ${newUses}`);
+        changed = true;
+        return { ...consumable, uses: newUses };
+      }
+
+      return consumable;
+    });
+
+    if (changed) {
+      this.renderAll();
+    }
   }
 
   private renderAll() {
