@@ -112,6 +112,14 @@ describe("HealthCard", () => {
     expect(wrapper.find(".dnd-ui-death-saves-container").exists()).toBe(false);
   });
 
+  it("shows death saves at any HP when death_saves is 'always'", () => {
+    const wrapper = mount(HealthCard, {
+      props: makeProps({ static: { death_saves: "always" }, state: { current: 20 } }),
+    });
+
+    expect(wrapper.find(".dnd-ui-death-saves-container").exists()).toBe(true);
+  });
+
   it("renders hit dice when provided", () => {
     const wrapper = mount(HealthCard, {
       props: makeProps({

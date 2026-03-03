@@ -9,7 +9,7 @@ Each `state_key` defined in **any** component needs to be unique as they are all
 ## Features
 
 - Customize 'Hit Points' label
-- Death save tracking
+- Death save tracking (can be shown always or only at 0 HP)
 - Supports temporary HP
 - Supports **Reset Events** - See [Event System](../concepts/event-systems.md) for more details. By default it is configured for `long-rest`.
 
@@ -43,6 +43,17 @@ hitdice:
 ```
 ````
 
+### Always Show Death Saves
+By default, death saves only appear when HP reaches 0. Set `death_saves: always` to display them at any HP level.
+
+````yaml
+```healthpoints
+state_key: din_health
+health: 24
+death_saves: always
+```
+````
+
 ### Dynamic Health Example
 ::: tip
 The `health` key supports dynamic content. This allows you to read your HP from frontmatter.
@@ -66,7 +77,7 @@ hitdice:
 | `health`      | Number       | **Required** | Maximum health points               |
 | `label`       | String       | "Hit Points" | Custom label for the component      |
 | `hitdice`     | Object/Array | null         | Hit dice configuration (single object or array for multiclass) |
-| `death_saves` | Boolean      | true         | Whether to show death saves         |
+| `death_saves` | Boolean/"always" | true     | Show death saves (`true` = at 0 HP only, `"always"` = at any HP, `false` = never) |
 | `reset_on`    | String/Array/Object | "long-rest"  | Events that reset health     |
 
 ### Reset Configuration

@@ -58,7 +58,7 @@ export type HealthBlock = {
   state_key: string;
   health: number | string; // Allow string for template support
   hitdice?: HitDice | HitDice[]; // Support both single and multiple hit dice
-  death_saves?: boolean;
+  death_saves?: boolean | "always";
   reset_on?: string | string[]; // Event type(s) that trigger a reset, defaults to 'long-rest'
 };
 
