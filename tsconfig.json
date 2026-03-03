@@ -12,7 +12,8 @@
     "isolatedModules": true,
     "strictNullChecks": true,
     "lib": ["DOM", "ES5", "ES6", "ES7"],
-    "jsx": "react-jsx"
+    "types": ["vite/client"]
   },
-  "include": ["**/*.ts", "lib/views/ReactMarkdown.tsx"]
+  "include": ["**/*.ts", "**/*.vue"],
+  "exclude": ["node_modules", "vite.config.ts", "vitest.config.ts"]
 }

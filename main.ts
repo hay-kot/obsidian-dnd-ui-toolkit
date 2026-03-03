@@ -1,3 +1,4 @@
+import "lib/styles/index.css";
 import { App, Plugin, PluginSettingTab, Setting } from "obsidian";
 import { AbilityScoreView } from "lib/views/AbilityScoreView";
 import { BaseView } from "lib/views/BaseView";
@@ -8,6 +9,8 @@ import { BadgesView, StatsView } from "lib/views/BadgesView";
 import { InitiativeView } from "lib/views/InitiativeView";
 import { SpellComponentsView } from "lib/views/SpellComponentsView";
 import { EventButtonsView } from "lib/views/EventButtonsView";
+import { RawAbilityView } from "lib/views/RawAbilityView";
+import { RawSkillsView } from "lib/views/RawSkillsView";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { JsonDataStore } from "./lib/services/kv/local-file-store";
 import { DEFAULT_SETTINGS, DndUIToolkitSettings } from "settings";
@@ -23,7 +26,7 @@ export default class DndUIToolkitPlugin extends Plugin {
     const apply = (root: HTMLElement) => {
       Object.entries(this.settings).forEach(([key, value]) => {
         if (key.startsWith("color")) {
-          const cssVarName = `--${key.replace(/([A-Z])/g, "-$1").toLowerCase()}`;
+          const cssVarName = `--dnd-ui-${key.replace(/([A-Z])/g, "-$1").toLowerCase()}`;
           root.style.setProperty(cssVarName, value as string);
         }
       });
@@ -83,6 +86,8 @@ export default class DndUIToolkitPlugin extends Plugin {
       new BadgesView(app),
       new SpellComponentsView(app),
       new EventButtonsView(app),
+      new RawAbilityView(app),
+      new RawSkillsView(app),
 
       // Dynamic/Stateful
       new HealthView(app, kv),

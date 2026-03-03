@@ -3,16 +3,16 @@
  * */
 :root {
     /* Spacing */
-    --std-gap: 0.3rem;
-    --ability-card-padding: 0.3rem;
-    --std-grid-gap: 0.5rem;
+    --dnd-ui-std-gap: 0.3rem;
+    --dnd-ui-ability-card-padding: 0.3rem;
+    --dnd-ui-std-grid-gap: 0.5rem;
 
-    /* Colors set by user */
+    /* Color variables are set by the plugin settings tab */
 }
 
-.card-grid {
+.dnd-ui-card-grid {
     display: grid;
-    gap: var(--std-grid-gap);
+    gap: var(--dnd-ui-std-grid-gap);
     align-items: start;
 }
 
@@ -20,7 +20,7 @@
  * Generic Card Styles
  * */
 
-.generic-card {
+.dnd-ui-generic-card {
     display: flex;
     height: 100%;
     flex-direction: column;
@@ -28,52 +28,52 @@
     justify-content: start;
     padding: 0.75rem;
     border-radius: 0.4rem;
-    background-color: var(--color-bg-primary);
-    color: var(--color-text-primary);
-    border: 1px solid var(--color-border-primary);
+    background-color: var(--dnd-ui-color-bg-primary);
+    color: var(--dnd-ui-color-text-primary);
+    border: 1px solid var(--dnd-ui-color-border-primary);
     min-height: 80px;
 }
 
-.generic-card-label {
+.dnd-ui-generic-card-label {
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--color-text-secondary);
+    color: var(--dnd-ui-color-text-secondary);
     margin-bottom: 0.5rem;
 }
 
-.generic-card-value {
+.dnd-ui-generic-card-value {
     font-size: 1.2rem;
     font-weight: bold;
-    color: var(--color-text-bright);
+    color: var(--dnd-ui-color-text-bright);
 }
 
-.generic-card-sublabel {
+.dnd-ui-generic-card-sublabel {
     font-size: 0.7rem;
-    color: var(--color-text-sublabel);
+    color: var(--dnd-ui-color-text-sublabel);
     margin-top: 0.3rem;
 }
 
 /* Dense card styles */
-.card-grid.dense {
-    gap: calc(var(--std-grid-gap) * 0.6);
+.dnd-ui-card-grid.dnd-ui-dense {
+    gap: calc(var(--dnd-ui-std-grid-gap) * 0.6);
 }
 
-.generic-card.dense {
+.dnd-ui-generic-card.dnd-ui-dense {
     padding: 0.5rem;
     min-height: 60px;
 }
 
-.generic-card.dense .generic-card-label {
+.dnd-ui-generic-card.dnd-ui-dense .dnd-ui-generic-card-label {
     font-size: 0.7rem;
     margin-bottom: 0.3rem;
 }
 
-.generic-card.dense .generic-card-value {
+.dnd-ui-generic-card.dnd-ui-dense .dnd-ui-generic-card-value {
     font-size: 1rem;
 }
 
-.generic-card.dense .generic-card-sublabel {
+.dnd-ui-generic-card.dnd-ui-dense .dnd-ui-generic-card-sublabel {
     font-size: 0.65rem;
     margin-top: 0.2rem;
 }

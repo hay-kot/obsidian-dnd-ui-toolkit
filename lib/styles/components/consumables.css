@@ -1,27 +1,27 @@
 /*
  * Consumable Component
  * */
-.consumable-item {
+.dnd-ui-consumable-item {
     margin-bottom: 0.3rem;
 }
 
-.consumable-container {
+.dnd-ui-consumable-container {
     display: flex;
     align-items: center;
-    gap: var(--std-grid-gap);
+    gap: var(--dnd-ui-std-grid-gap);
     margin: 0.2rem 0;
 }
 
-.consumable-label {
+.dnd-ui-consumable-label {
     font-size: 0.9rem;
     font-weight: 500;
-    color: var(--color-text-primary);
+    color: var(--dnd-ui-color-text-primary);
     display: inline-block;
     width: var(--consumable-label-width, 3.5rem);
     text-align: left;
 }
 
-.consumable-boxes {
+.dnd-ui-consumable-boxes {
     display: inline-flex;
     flex-wrap: wrap;
     gap: 0.3rem;

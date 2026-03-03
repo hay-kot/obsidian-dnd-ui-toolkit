@@ -1,33 +1,71 @@
 /*
  * Spell Components
  * */
-.spell-components {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
-    gap: 0.75rem;
+.dnd-ui-spell-components {
+    display: flex;
+    border: 1px solid var(--dnd-ui-color-border-primary);
+    border-radius: 0.25rem;
+    overflow: hidden;
 }
 
-.spell-component-item {
+.dnd-ui-spell-accent {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
-    padding: 0.35rem;
-    background-color: var(--color-bg-tertiary);
-    border-radius: 0.25rem;
-    border: 1px solid var(--color-border-primary);
-    text-align: center;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--dnd-ui-color-bg-secondary);
+    border-right: 1px solid var(--dnd-ui-color-border-primary);
+    min-width: 5rem;
 }
 
-.spell-component-label {
+.dnd-ui-spell-accent-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+}
+
+.dnd-ui-spell-accent-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dnd-ui-color-text-bright);
+}
+
+.dnd-ui-spell-accent-label {
+    font-size: 0.6rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--dnd-ui-color-text-muted);
+}
+
+.dnd-ui-spell-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    flex: 1;
+    background-color: var(--dnd-ui-color-bg-primary);
+}
+
+.dnd-ui-spell-grid-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.dnd-ui-spell-grid-label {
     font-weight: bold;
-    color: var(--color-text-secondary);
+    color: var(--dnd-ui-color-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-size: 0.65rem;
 }
 
-.spell-component-value {
-    color: var(--color-text-primary);
+.dnd-ui-spell-grid-value {
+    color: var(--dnd-ui-color-text-primary);
     font-size: 0.8rem;
     font-weight: 500;
 }

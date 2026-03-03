@@ -1,10 +1,10 @@
 /* Initiative Tracker Styles */
-.initiative-tracker {
+.dnd-ui-initiative-tracker {
 	display: grid;
-	gap: var(--std-gap);
+	gap: var(--dnd-ui-std-gap);
 }
 
-.initiative-tracker-header {
+.dnd-ui-initiative-tracker-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -12,94 +12,94 @@
 	margin-bottom: 0.5rem;
 }
 
-.initiative-tracker-title {
+.dnd-ui-initiative-tracker-title {
 	font-size: 1rem;
 	text-transform: uppercase;
 	letter-spacing: 1px;
-	color: var(--color-text-secondary);
+	color: var(--dnd-ui-color-text-secondary);
 	margin: 0;
 }
 
-.initiative-tracker-controls {
+.dnd-ui-initiative-tracker-controls {
 	display: flex;
 	align-items: center;
 	margin: 0.5rem 0;
 	gap: 0.3rem;
 }
 
-.initiative-round-counter {
+.dnd-ui-initiative-round-counter {
 	font-size: 0.9rem;
-	color: var(--color-text-secondary);
+	color: var(--dnd-ui-color-text-secondary);
 	padding: 0.3rem 0.6rem;
-	background-color: var(--color-bg-secondary);
-	border: 1px solid var(--color-border-primary);
+	background-color: var(--dnd-ui-color-bg-secondary);
+	border: 1px solid var(--dnd-ui-color-border-primary);
 	border-radius: 0.25rem;
 }
 
-.initiative-round-value {
+.dnd-ui-initiative-round-value {
 	font-weight: bold;
-	color: var(--color-text-primary);
+	color: var(--dnd-ui-color-text-primary);
 }
 
-.initiative-control-button {
-	background-color: var(--color-bg-secondary);
-	border: 1px solid var(--color-border-primary);
+.dnd-ui-initiative-control-button {
+	background-color: var(--dnd-ui-color-bg-secondary);
+	border: 1px solid var(--dnd-ui-color-border-primary);
 	border-radius: 0.25rem;
-	color: var(--color-text-primary);
+	color: var(--dnd-ui-color-text-primary);
 	padding: 0.3rem 0.5rem;
 	font-size: 0.8rem;
 	cursor: pointer;
 	transition: background-color 0.2s ease;
 }
 
-.initiative-control-button:hover {
-	background-color: var(--color-bg-hover);
+.dnd-ui-initiative-control-button:hover {
+	background-color: var(--dnd-ui-color-bg-hover);
 }
 
-.initiative-prev {
+.dnd-ui-initiative-prev {
 	margin-left: auto;
 }
 
-.initiative-prev,
-.initiative-next {
-	border-color: var(--color-border-active);
-	color: var(--color-text-secondary);
+.dnd-ui-initiative-prev,
+.dnd-ui-initiative-next {
+	border-color: var(--dnd-ui-color-border-active);
+	color: var(--dnd-ui-color-text-secondary);
 }
 
-.initiative-reset {
-	border-color: var(--color-accent-red);
-	color: var(--color-accent-red);
+.dnd-ui-initiative-reset {
+	border-color: var(--dnd-ui-color-accent-red);
+	color: var(--dnd-ui-color-accent-red);
 }
 
-.initiative-list {
+.dnd-ui-initiative-list {
 	width: 100%;
 }
 
-.initiative-items {
+.dnd-ui-initiative-items {
 	display: flex;
 	flex-direction: column;
 	gap: 0.2rem;
 	width: 100%;
 }
 
-.initiative-item {
+.dnd-ui-initiative-item {
 	display: flex;
 	flex-direction: column;
 	padding: 0.3rem;
 	border-radius: 0.3rem;
-	background-color: var(--color-bg-secondary);
-	border: 1px solid var(--color-border-primary);
+	background-color: var(--dnd-ui-color-bg-secondary);
+	border: 1px solid var(--dnd-ui-color-border-primary);
 	transition:
 		background-color 0.2s ease,
 		border-color 0.2s ease;
 }
 
-.initiative-item-active {
-	background-color: var(--color-bg-tertiary);
-	border-color: var(--color-border-active);
+.dnd-ui-initiative-item-active {
+	background-color: var(--dnd-ui-color-bg-tertiary);
+	border-color: var(--dnd-ui-color-border-active);
 }
 
-.initiative-item-main {
+.dnd-ui-initiative-item-main {
 	display: flex;
 	align-items: center;
 	gap: 0.3rem;
@@ -107,17 +107,17 @@
 }
 
 /* Make initiative roll more prominent */
-.initiative-roll {
+.dnd-ui-initiative-roll {
 	flex: 0 0 2.5rem;
 	position: relative;
 }
 
-.initiative-input {
+.dnd-ui-initiative-input {
 	width: 100%;
-	background-color: var(--color-bg-primary);
-	border: 1px solid var(--color-border-primary);
+	background-color: var(--dnd-ui-color-bg-primary);
+	border: 1px solid var(--dnd-ui-color-border-primary);
 	border-radius: 0.25rem;
-	color: var(--color-text-primary);
+	color: var(--dnd-ui-color-text-primary);
 	padding: 0.3rem 0.5rem;
 	text-align: center;
 	font-size: 1.2rem !important;
@@ -125,7 +125,7 @@
 	/* Larger initiative font */
 }
 
-.initiative-name {
+.dnd-ui-initiative-name {
 	flex: 1;
 	font-weight: bold;
 	overflow: hidden;
@@ -134,58 +134,58 @@
 	font-size: 1rem;
 }
 
-.divider {
+.dnd-ui-divider {
 	width: 100%;
 	height: 1.5px;
-	background-color: var(--color-text-bright);
+	background-color: var(--dnd-ui-color-text-bright);
 	margin-top: 0.5rem;
 	margin-bottom: 0.3rem;
 	opacity: 25%;
 }
 
-.initiative-link {
+.dnd-ui-initiative-link {
 	font-weight: bold;
-	color: var(--color-text-bright);
+	color: var(--dnd-ui-color-text-bright);
 	text-decoration: none !important;
 }
 
-.initiative-ac {
+.dnd-ui-initiative-ac {
 	font-style: italic;
 	font-size: 0.7rem;
 	opacity: 70%;
 }
 
-.initiative-ac-value {
+.dnd-ui-initiative-ac-value {
 	font-weight: bold;
 }
 
-.initiative-hp {
+.dnd-ui-initiative-hp {
 	display: flex;
 	align-items: center;
 	gap: 0.2rem;
 	flex: 0 0 auto;
 	padding: 0.1rem 0.3rem;
-	background-color: var(--color-bg-primary);
+	background-color: var(--dnd-ui-color-bg-primary);
 	border-radius: 0.25rem;
 	font-size: 0.9rem;
 	margin-bottom: auto;
 	margin-left: auto;
 }
 
-.initiative-hp-value {
+.dnd-ui-initiative-hp-value {
 	font-weight: bold;
-	color: var(--color-text-primary);
+	color: var(--dnd-ui-color-text-primary);
 }
 
-.initiative-hp-separator {
-	color: var(--color-border-active);
+.dnd-ui-initiative-hp-separator {
+	color: var(--dnd-ui-color-border-active);
 }
 
-.initiative-hp-max {
-	color: var(--color-text-secondary);
+.dnd-ui-initiative-hp-max {
+	color: var(--dnd-ui-color-text-secondary);
 }
 
-.initiative-item-actions {
+.dnd-ui-initiative-item-actions {
 	display: flex;
 	gap: 0.3rem;
 	margin-top: 0.3rem;
@@ -194,24 +194,24 @@
 	margin-left: auto;
 }
 
-.initiative-hp-input {
+.dnd-ui-initiative-hp-input {
 	width: 3rem;
-	background-color: var(--color-bg-primary);
-	border: 1px solid var(--color-border-primary);
+	background-color: var(--dnd-ui-color-bg-primary);
+	border: 1px solid var(--dnd-ui-color-border-primary);
 	border-radius: 0.25rem;
-	color: var(--color-text-primary);
+	color: var(--dnd-ui-color-text-primary);
 	padding: 0.2rem;
 	text-align: center;
 	font-size: 0.8rem;
 }
 
 /* More subtle action buttons with icons */
-.initiative-hp-button {
+.dnd-ui-initiative-hp-button {
 	flex: 0 0 auto;
 	background-color: transparent;
-	border: 1px solid var(--color-border-primary);
+	border: 1px solid var(--dnd-ui-color-border-primary);
 	border-radius: 0.25rem;
-	color: var(--color-text-primary);
+	color: var(--dnd-ui-color-text-primary);
 	width: 1.8rem;
 	height: 1.8rem;
 	font-size: 0.8rem;
@@ -223,154 +223,154 @@
 	transition: background-color 0.2s ease;
 }
 
-.initiative-hp-button:hover {
-	background-color: var(--color-bg-darker);
+.dnd-ui-initiative-hp-button:hover {
+	background-color: var(--dnd-ui-color-bg-darker);
 }
 
-.initiative-damage {
-	border-color: var(--color-accent-red);
-	color: var(--color-accent-red);
+.dnd-ui-initiative-damage {
+	border-color: var(--dnd-ui-color-accent-red);
+	color: var(--dnd-ui-color-accent-red);
 }
 
-.initiative-heal {
-	border-color: var(--color-accent-teal);
-	color: var(--color-accent-teal);
+.dnd-ui-initiative-heal {
+	border-color: var(--dnd-ui-color-accent-teal);
+	color: var(--dnd-ui-color-accent-teal);
 }
 
-.initiative-empty-state {
+.dnd-ui-initiative-empty-state {
 	padding: 1rem;
 	text-align: center;
-	color: var(--color-text-secondary);
+	color: var(--dnd-ui-color-text-secondary);
 	font-style: italic;
 }
 
 /* Group monster styles */
-.initiative-group-container {
+.dnd-ui-initiative-group-container {
 	margin-top: 0.3rem;
 	width: 100%;
 }
 
 /* Group name header */
-.initiative-group-header {
+.dnd-ui-initiative-group-header {
 	padding: 0.3rem 0.5rem;
 	margin-bottom: 0.5rem;
-	background-color: var(--color-bg-group);
+	background-color: var(--dnd-ui-color-bg-group);
 	border-radius: 0.25rem;
 	font-weight: bold;
 	font-size: 0.9rem;
-	color: var(--color-text-group);
+	color: var(--dnd-ui-color-text-group);
 	letter-spacing: 0.5px;
 }
 
-.initiative-group-hp {
+.dnd-ui-initiative-group-hp {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 	gap: 0.3rem;
 	width: 100%;
 }
 
-.initiative-monster {
-	background-color: var(--color-bg-primary);
+.dnd-ui-initiative-monster {
+	background-color: var(--dnd-ui-color-bg-primary);
 	border-radius: 0.25rem;
 	padding: 0.2rem 0.3rem;
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
-	border: 1px solid var(--color-border-primary);
+	border: 1px solid var(--dnd-ui-color-border-primary);
 }
 
-.initiative-monster-header {
+.dnd-ui-initiative-monster-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	flex: 1;
 }
 
-.initiative-monster-name {
+.dnd-ui-initiative-monster-name {
 	font-size: 0.8rem;
 	font-weight: bold;
-	color: var(--color-text-primary);
+	color: var(--dnd-ui-color-text-primary);
 }
 
-.initiative-monster-hp {
+.dnd-ui-initiative-monster-hp {
 	display: flex;
 	align-items: center;
 	gap: 0.2rem;
-	background-color: var(--color-bg-darker);
+	background-color: var(--dnd-ui-color-bg-darker);
 	padding: 0.1rem 0.3rem;
 	border-radius: 0.2rem;
 	font-size: 0.8rem;
 }
 
-.initiative-monster-actions {
+.dnd-ui-initiative-monster-actions {
 	display: flex;
 	align-items: center;
 	gap: 0.3rem;
 }
 
 /* Status indicators for monsters */
-.monster-status-dead {
+.dnd-ui-monster-status-dead {
 	text-decoration: line-through;
 	opacity: 0.5;
 }
 
-.monster-status-injured {
-	color: var(--color-accent-red);
+.dnd-ui-monster-status-injured {
+	color: var(--dnd-ui-color-accent-red);
 }
 
 /* Apply dead status only to HP display, not controls */
-.initiative-hp-inline.monster-status-dead {
+.dnd-ui-initiative-hp-inline.dnd-ui-monster-status-dead {
 	text-decoration: none;
 	opacity: 1;
 }
 
-.initiative-hp-inline.monster-status-dead .initiative-hp-display {
+.dnd-ui-initiative-hp-inline.dnd-ui-monster-status-dead .dnd-ui-initiative-hp-display {
 	text-decoration: line-through;
 	opacity: 0.5;
 }
 
 /* Consumables section styles */
-.initiative-consumables {
+.dnd-ui-initiative-consumables {
 	display: flex;
 	flex-direction: column;
 	gap: 0.3rem;
 	margin-top: 0.5rem;
 	padding: 0.3rem;
-	background-color: var(--color-bg-secondary);
+	background-color: var(--dnd-ui-color-bg-secondary);
 	border-radius: 0.3rem;
-	border: 1px solid var(--color-border-primary);
+	border: 1px solid var(--dnd-ui-color-border-primary);
 }
 
-.initiative-consumable {
+.dnd-ui-initiative-consumable {
 	display: flex;
 	flex-direction: column;
 	gap: 0.2rem;
 }
 
-.initiative-consumable-header {
+.dnd-ui-initiative-consumable-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	flex-wrap: wrap;
 }
 
-.initiative-consumable-label {
+.dnd-ui-initiative-consumable-label {
 	font-weight: bold;
-	color: var(--color-text-primary);
+	color: var(--dnd-ui-color-text-primary);
 	font-size: 0.8rem;
 }
 
-.initiative-consumable-reset-indicator {
+.dnd-ui-initiative-consumable-reset-indicator {
 	font-size: 0.6rem;
-	color: var(--color-text-secondary);
+	color: var(--dnd-ui-color-text-secondary);
 	font-style: italic;
-	background-color: var(--color-bg-primary);
+	background-color: var(--dnd-ui-color-bg-primary);
 	padding: 0.05rem 0.2rem;
 	border-radius: 0.2rem;
-	border: 1px solid var(--color-border-primary);
+	border: 1px solid var(--dnd-ui-color-border-primary);
 }
 
-.initiative-consumable-boxes {
+.dnd-ui-initiative-consumable-boxes {
 	display: flex;
 	gap: 0.3rem;
 	flex-wrap: wrap;
@@ -379,7 +379,7 @@
 /* Removed duplicate styles - now using defaults above */
 
 /* Inline health controls for dense mode */
-.initiative-hp-inline {
+.dnd-ui-initiative-hp-inline {
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
@@ -387,27 +387,27 @@
 	margin-left: auto;
 }
 
-.initiative-hp-display {
+.dnd-ui-initiative-hp-display {
 	display: flex;
 	align-items: center;
 	gap: 0.2rem;
 	padding: 0.2rem 0.4rem;
-	background-color: var(--color-bg-primary);
+	background-color: var(--dnd-ui-color-bg-primary);
 	border-radius: 0.25rem;
 	font-size: 1.1rem;
 }
 
-.initiative-hp-controls {
+.dnd-ui-initiative-hp-controls {
 	display: flex;
 	align-items: center;
 	gap: 0.3rem;
 }
 
-.initiative-hp-inline {
+.dnd-ui-initiative-hp-inline {
 	gap: 0.3rem;
 }
 
-.initiative-hp-display {
+.dnd-ui-initiative-hp-display {
 	font-size: 0.9rem;
 	padding: 0.2rem 0.4rem;
 	height: 1.8rem;
@@ -416,11 +416,11 @@
 	justify-content: center;
 }
 
-.initiative-hp-controls {
+.dnd-ui-initiative-hp-controls {
 	gap: 0.2rem;
 }
 
-.initiative-hp-controls .initiative-hp-input {
+.dnd-ui-initiative-hp-controls .dnd-ui-initiative-hp-input {
 	width: 2.5rem;
 	height: 2rem;
 	padding: 0.2rem;
@@ -428,7 +428,7 @@
 	box-sizing: border-box;
 }
 
-.initiative-hp-controls .initiative-hp-button {
+.dnd-ui-initiative-hp-controls .dnd-ui-initiative-hp-button {
 	width: 1.8rem;
 	height: 1.8rem;
 	font-size: 0.8rem;
@@ -437,24 +437,24 @@
 
 /* Responsive adjustments for mobile */
 @media (max-width: 600px) {
-	.initiative-item-main {
+	.dnd-ui-initiative-item-main {
 		flex-wrap: wrap;
 	}
 
-	.initiative-roll {
+	.dnd-ui-initiative-roll {
 		flex: 0 0 2.5rem;
 	}
 
-	.initiative-name {
+	.dnd-ui-initiative-name {
 		flex: 1 1 calc(100% - 7rem);
 	}
 
-	.initiative-ac,
-	.initiative-hp {
+	.dnd-ui-initiative-ac,
+	.dnd-ui-initiative-hp {
 		flex: 0 0 auto;
 	}
 
-	.initiative-group-hp {
+	.dnd-ui-initiative-group-hp {
 		grid-template-columns: 1fr;
 	}
 }

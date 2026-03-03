@@ -4,8 +4,8 @@ import { App } from "obsidian";
 /**
  * BaseView handles the basic registration of components and creates consistent logic for rendering.
  * It can be used for simple views that are static and don't review dynamic data or re-rendering
- * For more complex components, it's implementation needs to be expetended to support the mounting
- * of react components.
+ * For more complex components, its implementation needs to be extended to support the mounting
+ * of Vue components.
  * */
 export abstract class BaseView {
   public app: App;
@@ -39,7 +39,8 @@ export abstract class BaseView {
       console.error("Error rendering code block", e);
       // Using a type assertion to handle the potential error type mismatch
       const errorMessage = e instanceof Error ? e.message : String(e);
-      div.innerHTML = `<div class="notice">Error parsing stats block: ${errorMessage}</div>`;
+      const errorDiv = div.createEl("div", { cls: "notice" });
+      errorDiv.textContent = `Error parsing stats block: ${errorMessage}`;
     }
   }
 }

@@ -38,19 +38,16 @@ export function getDefaultInitiativeState(block: InitiativeBlock): InitiativeSta
   const consumables: Record<string, number> = {};
 
   // Initialize with default values (0 for initiative, max hp for health)
-  block.items.forEach((item, index) => {
-    initiatives[index.toString()] = 0;
-    hp[index.toString()] = {};
+  block.items.forEach((item) => {
+    const key = itemHashKey(item);
+    initiatives[key] = 0;
+    hp[key] = {};
 
-    // If HP is provided as a number, use it as max HP for a single monster
     if (typeof item.hp === "number") {
-      hp[index.toString()]["main"] = item.hp;
-    }
-
-    // If HP is provided as a record, it's a group of monsters
-    else if (item.hp && typeof item.hp === "object") {
-      Object.entries(item.hp).forEach(([key, value]) => {
-        hp[index.toString()][key] = value as number;
+      hp[key]["main"] = item.hp;
+    } else if (item.hp && typeof item.hp === "object") {
+      Object.entries(item.hp).forEach(([k, value]) => {
+        hp[key][k] = value as number;
       });
     }
   });
@@ -68,6 +65,27 @@ export function getDefaultInitiativeState(block: InitiativeBlock): InitiativeSta
     hp,
     round: 1, // Start at round 1
     consumables,
+  };
+}
+
+export function mergeInitiativeState(block: InitiativeBlock, saved: InitiativeState): InitiativeState {
+  const defaults = getDefaultInitiativeState(block);
+
+  const initiatives: Record<string, number> = {};
+  const hp: Record<string, Record<string, number>> = {};
+
+  block.items.forEach((item) => {
+    const key = itemHashKey(item);
+    initiatives[key] = saved.initiatives[key] ?? defaults.initiatives[key] ?? 0;
+    hp[key] = saved.hp[key] ?? defaults.hp[key] ?? {};
+  });
+
+  return {
+    activeIndex: saved.activeIndex,
+    initiatives,
+    hp,
+    round: saved.round,
+    consumables: { ...defaults.consumables, ...saved.consumables },
   };
 }
 

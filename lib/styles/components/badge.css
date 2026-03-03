@@ -1,40 +1,40 @@
 /*
  * Badges Component
  * */
-.badges-row {
+.dnd-ui-badges-row {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
     align-items: center;
 }
 
-.badges-row.dense {
+.dnd-ui-badges-row.dnd-ui-dense {
     gap: 0.3rem;
 }
 
-.badges-row.dense .badge-item {
+.dnd-ui-badges-row.dnd-ui-dense .dnd-ui-badge-item {
     padding: 0.15rem 0.3rem;
     font-size: 0.7rem;
 }
 
-.badge-item {
+.dnd-ui-badge-item {
     display: flex;
     align-items: center;
     gap: 0.3rem;
     padding: 0.25rem 0.5rem;
-    background-color: var(--color-bg-secondary);
+    background-color: var(--dnd-ui-color-bg-secondary);
     border-radius: 0.25rem;
-    border: 1px solid var(--color-border-primary);
+    border: 1px solid var(--dnd-ui-color-border-primary);
     font-size: 0.8rem;
 }
 
-.badge-label {
+.dnd-ui-badge-label {
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--color-text-secondary);
+    color: var(--dnd-ui-color-text-secondary);
 }
 
-.badge-value {
+.dnd-ui-badge-value {
     font-weight: bold;
-    color: var(--color-text-bright);
+    color: var(--dnd-ui-color-text-bright);
 }

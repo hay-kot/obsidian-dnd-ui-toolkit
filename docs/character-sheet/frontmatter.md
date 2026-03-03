@@ -4,7 +4,7 @@ Certain front matter within the Character Sheet can aid in component rendering.
 
 | Property            | Type   | Default | Description                                                        |
 | ------------------- | ------ | ------- | ------------------------------------------------------------------ |
-| `proficiency_bonus` | Number | 2       | Set's your characters proficiency bonus used in skill calculations |
+| `proficiency_bonus` | Number | 2       | Sets your character's proficiency bonus used in skill and spell calculations |
 | `level`             | Number | -       | Character level, auto-calculates proficiency bonus if not explicitly set |
 
 ## Auto-calculation

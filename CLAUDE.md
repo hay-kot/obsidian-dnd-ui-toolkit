@@ -23,8 +23,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Code Style
 
 - **TypeScript:** Use strict typing (noImplicitAny, strictNullChecks)
-- **React:** Use functional components with explicit props interfaces
-- **JSX:** Use React JSX syntax with function components
+- **Vue:** Use SFCs with `<script setup lang="ts">`, `defineProps`, and `defineEmits`
+- **Templates:** Use Vue template syntax; avoid render functions
 - **Imports:** Group by: 1) external packages, 2) local files; sort alphabetically within groups
 - **Naming:** PascalCase for components/classes/interfaces, camelCase for functions/variables
 - **Types:** Define in lib/types.ts with explicit interfaces; use TypeScript generics where appropriate
@@ -33,27 +33,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Domain Logic:** Place domain-specific code in lib/domains/
 - **Views:** Place UI views in lib/views/; extend BaseView where applicable
 - **Formatting:** Use consistent indentation (2 spaces), trailing commas, and semi-colons
-- **State Management:** Use React hooks (useState) for component state
+- **State Management:** Use Vue reactivity (ref, computed) for component state; extract shared logic into composables
 - **CSS:** Prefix all styles with plugin namespace; place component styles in lib/styles/components/
 - **File Structure:** Keep code aligned with domain separation (domains, components, views)
 
 ## Architecture
 
-- **Plugin Structure:** Obsidian plugin with React components for D&D UI elements
+- **Plugin Structure:** Obsidian plugin with Vue components for D&D UI elements
 - **Code Block Processors:** Each View class processes specific YAML code blocks (ability, skills, stats, etc.)
 - **State Management:** Uses KeyValueStore with JsonDataStore for persistent state across sessions
 - **Component Architecture:**
   - Views: Handle code block parsing and rendering (extend BaseView)
-  - Components: React components for UI elements
+  - Components: Vue SFC components for UI elements
   - Domains: Business logic for D&D mechanics (abilities, skills, combat)
   - Services: KV store for state persistence and event bus for communication
-- **Rendering:** Views register markdown post-processors that transform YAML into interactive React components
+- **Rendering:** Views register markdown post-processors that transform YAML into interactive Vue components
 - **Plugin Settings:** Configurable color scheme and state file path in settings tab
 - **Event System:** Uses message bus (msgbus) for communication between components and frontmatter changes
 - **Frontmatter Integration:** Automatically syncs with Obsidian frontmatter for character data like proficiency bonus and level
 - **View Registration Pattern:** Each view extends BaseView and implements:
   - `registerView()`: Registers code block processor with plugin
-  - `render()`: Transforms parsed YAML data into React components
+  - `render()`: Transforms parsed YAML data into Vue components via VueMarkdown
   - State persistence handled automatically via KV store integration
 - **State Persistence:**
   - In-memory cache with automatic disk persistence
@@ -61,6 +61,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - State file location configurable in plugin settings
 - **Template System:** Handlebars-style templating for dynamic content (e.g., {{dex_mod}} in ability descriptions)
 - **D&D Mechanics:** Implements 5e rules for ability modifiers, proficiency bonuses, skill calculations
+- **Build System:** Vite (replaced esbuild) for bundling and development
+
+### Vue Integration Patterns
+
+- **VueMarkdown:** Base class extending Obsidian's `MarkdownRenderChild` that bridges Vue and Obsidian. Provides `mount()` and `mountReactive()` methods for mounting Vue components into Obsidian's DOM.
+- **Composables:** Shared reactive logic in `lib/composables/` (e.g., `usePersistedState.ts`). Follow Vue conventions: `use` prefix, return reactive refs and functions.
+- **D&D Mechanics Module:** Core D&D logic extracted into `lib/domains/dnd/` for ability modifiers, proficiency bonuses, and skill calculations.
+- **Component Structure:** All Vue components use `<script setup lang="ts">` with `defineProps` and `defineEmits` for type-safe props and events.
 
 ## Testing
 

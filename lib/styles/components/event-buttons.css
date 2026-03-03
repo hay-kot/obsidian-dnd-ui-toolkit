@@ -1,4 +1,4 @@
-.event-buttons-container {
+.dnd-ui-event-buttons-container {
   display: flex;
   flex-direction: row;
   gap: 8px;
@@ -6,15 +6,15 @@
   margin: 8px 0;
 }
 
-.event-button {
+.dnd-ui-event-button {
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  border: 1px solid var(--color-border-primary);
+  border: 1px solid var(--dnd-ui-color-border-primary);
   border-radius: 4px;
-  background-color: var(--color-bg-secondary);
-  color: var(--color-text-primary);
+  background-color: var(--dnd-ui-color-bg-secondary);
+  color: var(--dnd-ui-color-text-primary);
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
@@ -22,29 +22,29 @@
   white-space: nowrap;
 }
 
-.event-button:hover {
-  background-color: var(--color-bg-hover);
-  border-color: var(--color-border-active);
+.dnd-ui-event-button:hover {
+  background-color: var(--dnd-ui-color-bg-hover);
+  border-color: var(--dnd-ui-color-border-active);
   transform: translateY(-1px);
 }
 
-.event-button:active {
+.dnd-ui-event-button:active {
   transform: translateY(0);
-  background-color: var(--color-bg-darker);
+  background-color: var(--dnd-ui-color-bg-darker);
 }
 
-.event-button:focus {
+.dnd-ui-event-button:focus {
   outline: none;
-  box-shadow: 0 0 0 2px var(--color-border-focus);
+  box-shadow: 0 0 0 2px var(--dnd-ui-color-border-focus);
 }
 
-.event-button-icon {
+.dnd-ui-event-button-icon {
   display: flex;
   align-items: center;
   font-size: 16px;
   line-height: 1;
 }
 
-.event-button-text {
+.dnd-ui-event-button-text {
   font-weight: 500;
 }

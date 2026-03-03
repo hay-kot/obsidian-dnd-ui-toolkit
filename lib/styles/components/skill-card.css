@@ -2,13 +2,13 @@
  * Skills Grid Cards
  * */
 
-.skills-grid {
+.dnd-ui-skills-grid {
     column-count: 2;
     column-gap: 2rem;
     align-items: start;
-    background-color: var(--color-bg-primary);
-    color: var(--color-text-primary);
-    border: 1px solid var(--color-border-primary);
+    background-color: var(--dnd-ui-color-bg-primary);
+    color: var(--dnd-ui-color-text-primary);
+    border: 1px solid var(--dnd-ui-color-border-primary);
     overflow: hidden;
     border-radius: 0.4rem;
     padding: 0.5rem;
@@ -16,17 +16,17 @@
 
 /* on small screens on render single column */
 @media (max-width: 600px) {
-    .skills-grid {
+    .dnd-ui-skills-grid {
         column-count: 1;
     }
 }
 
-.skill-card p {
+.dnd-ui-skill-card p {
     margin-block-start: 0 !important;
     margin-block-end: 0 !important;
 }
 
-.skill-card {
+.dnd-ui-skill-card {
     display: flex;
     justify-content: space-between;
     gap: 0.2rem;
@@ -36,47 +36,47 @@
     position: relative;
 }
 
-.skill-card:hover {
-    background-color: var(--color-bg-hover);
+.dnd-ui-skill-card:hover {
+    background-color: var(--dnd-ui-color-bg-hover);
 }
 
-.skill-card.proficient::before {
+.dnd-ui-skill-card.dnd-ui-proficient::before {
     content: "•";
     position: absolute;
     left: -0.25rem;
-    color: var(--color-accent-teal);
+    color: var(--dnd-ui-color-accent-teal);
     font-size: 1.2rem;
     line-height: 1.1;
 }
 
-.skill-card.expert::before {
+.dnd-ui-skill-card.dnd-ui-expert::before {
     content: "•";
     position: absolute;
     left: -0.25rem;
-    color: var(--color-accent-purple);
+    color: var(--dnd-ui-color-accent-purple);
     font-size: 1.2rem;
     line-height: 1.1;
     font-weight: bold;
 }
 
-.skill-card.half-proficient::before {
+.dnd-ui-skill-card.dnd-ui-half-proficient::before {
     content: "◦";
     position: absolute;
     left: -0.25rem;
-    color: var(--color-text-muted);
+    color: var(--dnd-ui-color-text-muted);
     font-size: 1.2rem;
     line-height: 1.1;
 }
 
-.skills-values-container {
+.dnd-ui-skills-values-container {
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-.skill-ability {
+.dnd-ui-skill-ability {
     font-size: 0.8rem;
-    color: var(--color-text-muted);
+    color: var(--dnd-ui-color-text-muted);
     border-radius: 3px;
     width: 1.8rem;
     margin-right: 0.2rem;

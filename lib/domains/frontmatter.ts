@@ -1,4 +1,5 @@
 import { Frontmatter } from "lib/types";
+import { levelToProficiencyBonus } from "./dnd/proficiency";
 
 export interface UnparsedFrontmatter {
   [key: string]: any;
@@ -10,6 +11,8 @@ export interface UnparsedFrontmatter {
 const FrontMatterKeys: Record<keyof Frontmatter, string[]> = {
   proficiency_bonus: ["proficiencyBonus", "Proficiency Bonus", "proficiency_bonus"],
   level: ["level", "Level"],
+  spellcasting_ability: ["spellcasting_ability", "spellcastingAbility", "Spellcasting Ability"],
+  character_file: ["character_file", "characterFile", "Character File"],
 };
 
 /**
@@ -34,16 +37,7 @@ export function isProficiencyBonusInFrontmatter(fm: any): boolean {
   return false;
 }
 
-/**
- * Calculates the proficiency bonus based on the character's level.
- * */
-export function levelToProficiencyBonus(level: number): number {
-  if (level >= 17) return 6;
-  if (level >= 13) return 5;
-  if (level >= 9) return 4;
-  if (level >= 5) return 3;
-  return 2;
-}
+export { levelToProficiencyBonus } from "./dnd/proficiency";
 
 export function anyIntoFrontMatter(fm: UnparsedFrontmatter): Frontmatter {
   const frontmatter: Frontmatter = {
