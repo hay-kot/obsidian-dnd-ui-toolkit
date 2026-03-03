@@ -28,8 +28,10 @@ export default withMermaid(
 				{
 					text: "General Components",
 					items: [
+						{ text: "Ability Cards", link: "/components/ability-cards" },
 						{ text: "Badges", link: "/components/badges" },
 						{ text: "Consumables", link: "/components/consumables" },
+						{ text: "Skill Cards", link: "/components/skill-cards" },
 						{ text: "Spell Components", link: "/components/spell-components" },
 						{ text: "Stats", link: "/components/stats" },
 					],
