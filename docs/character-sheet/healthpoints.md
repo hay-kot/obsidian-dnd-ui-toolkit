@@ -66,7 +66,7 @@ hitdice:
 | `health`      | Number       | **Required** | Maximum health points               |
 | `label`       | String       | "Hit Points" | Custom label for the component      |
 | `hitdice`     | Object/Array | null         | Hit dice configuration (single object or array for multiclass) |
-| `death_saves` | Boolean      | true         | Whether to show death saves         |
+| `death_saves` | Boolean/"always" | true     | Show death saves (`true` = at 0 HP only, `"always"` = at any HP, `false` = never) |
 | `reset_on`    | String/Array/Object | "long-rest"  | Events that reset health     |
 
 ### Reset Configuration

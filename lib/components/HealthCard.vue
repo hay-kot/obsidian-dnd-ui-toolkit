@@ -181,7 +181,7 @@ function getHitDiceUsed(hd: { dice: string; value: number }): number {
       </div>
     </template>
 
-    <template v-if="props.static.death_saves && props.state.current <= 0">
+    <template v-if="props.static.death_saves && (props.static.death_saves === 'always' || props.state.current <= 0)">
       <div class="dnd-ui-health-divider" />
       <div class="dnd-ui-death-saves-container">
         <div class="dnd-ui-death-saves-tracker">
