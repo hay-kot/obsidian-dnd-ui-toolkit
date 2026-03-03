@@ -114,7 +114,9 @@ class ConsumableMarkdown extends VueMarkdown {
     this.renderAll();
   }
 
-  private processTemplateInConsumable(consumable: { uses: number | string } & Omit<ParsedConsumableBlock, "uses">): ParsedConsumableBlock {
+  private processTemplateInConsumable(
+    consumable: { uses: number | string } & Omit<ParsedConsumableBlock, "uses">
+  ): ParsedConsumableBlock {
     const usesValue = consumable.uses;
 
     // Store original value for re-processing on frontmatter changes
