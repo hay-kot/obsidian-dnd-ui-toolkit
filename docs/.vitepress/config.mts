@@ -7,6 +7,7 @@ export default withMermaid(
 		title: "Obsidian DnD UI Toolkit",
 		description: "Modern UI elements for playing Dungeons and Dragons in Obsidian",
 		base: "/obsidian-dnd-ui-toolkit/",
+		head: [["link", { rel: "icon", type: "image/svg+xml", href: "/obsidian-dnd-ui-toolkit/favicon.svg" }]],
 		themeConfig: {
 			// https://vitepress.dev/reference/default-theme-config
 			search: {
