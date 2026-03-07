@@ -11,9 +11,7 @@ const block: InitiativeBlock = {
     { name: "Goblin", ac: 12, hp: { "Goblin 1": 7, "Goblin 2": 7, "Goblin 3": 7 } },
     { name: "Aragorn", ac: 18, hp: 52 },
   ],
-  consumables: [
-    { label: "Legendary Actions", state_key: "demo_legendary", uses: 3, reset_on_round: true },
-  ],
+  consumables: [{ label: "Legendary Actions", state_key: "demo_legendary", uses: 3, reset_on_round: true }],
 };
 
 const state = ref<InitiativeState>(getDefaultInitiativeState(block));

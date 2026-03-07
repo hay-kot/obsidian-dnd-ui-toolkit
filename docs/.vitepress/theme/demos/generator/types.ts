@@ -43,4 +43,5 @@ export interface ClassDefinition {
   spellSlotResetOn?: string | string[];
   classConsumables: ClassConsumable[];
   acTemplate: string | null;
+  optimizedAbilities: CharacterData["abilities"];
 }

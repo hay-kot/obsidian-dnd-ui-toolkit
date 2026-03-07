@@ -15,6 +15,7 @@ export const classDefinitions: Record<string, ClassDefinition> = {
     spellSlots: [],
     classConsumables: [{ label: "Rage", uses: 2, resetOn: "long-rest" }],
     acTemplate: "{{ add 10 (modifier abilities.dexterity) (modifier abilities.constitution) }}",
+    optimizedAbilities: { strength: 15, dexterity: 13, constitution: 14, intelligence: 8, wisdom: 12, charisma: 10 },
   },
   Bard: {
     name: "Bard",
@@ -33,6 +34,7 @@ export const classDefinitions: Record<string, ClassDefinition> = {
       },
     ],
     acTemplate: null,
+    optimizedAbilities: { strength: 8, dexterity: 14, constitution: 12, intelligence: 10, wisdom: 13, charisma: 15 },
   },
   Cleric: {
     name: "Cleric",
@@ -45,6 +47,7 @@ export const classDefinitions: Record<string, ClassDefinition> = {
     spellSlots: [{ level: 1, slots: 2 }],
     classConsumables: [],
     acTemplate: null,
+    optimizedAbilities: { strength: 8, dexterity: 10, constitution: 14, intelligence: 12, wisdom: 15, charisma: 13 },
   },
   Druid: {
     name: "Druid",
@@ -66,6 +69,7 @@ export const classDefinitions: Record<string, ClassDefinition> = {
     spellSlots: [{ level: 1, slots: 2 }],
     classConsumables: [],
     acTemplate: null,
+    optimizedAbilities: { strength: 8, dexterity: 10, constitution: 14, intelligence: 12, wisdom: 15, charisma: 13 },
   },
   Fighter: {
     name: "Fighter",
@@ -87,6 +91,7 @@ export const classDefinitions: Record<string, ClassDefinition> = {
     spellSlots: [],
     classConsumables: [{ label: "Second Wind", uses: 1, resetOn: ["short-rest", "long-rest"] }],
     acTemplate: null,
+    optimizedAbilities: { strength: 15, dexterity: 13, constitution: 14, intelligence: 8, wisdom: 12, charisma: 10 },
   },
   Monk: {
     name: "Monk",
@@ -99,6 +104,7 @@ export const classDefinitions: Record<string, ClassDefinition> = {
     spellSlots: [],
     classConsumables: [],
     acTemplate: "{{ add 10 (modifier abilities.dexterity) (modifier abilities.wisdom) }}",
+    optimizedAbilities: { strength: 8, dexterity: 15, constitution: 13, intelligence: 10, wisdom: 14, charisma: 12 },
   },
   Paladin: {
     name: "Paladin",
@@ -118,6 +124,7 @@ export const classDefinitions: Record<string, ClassDefinition> = {
       { label: "Lay on Hands", uses: 5, resetOn: "long-rest" },
     ],
     acTemplate: null,
+    optimizedAbilities: { strength: 15, dexterity: 8, constitution: 13, intelligence: 10, wisdom: 12, charisma: 14 },
   },
   Ranger: {
     name: "Ranger",
@@ -139,6 +146,7 @@ export const classDefinitions: Record<string, ClassDefinition> = {
     spellSlots: [],
     classConsumables: [],
     acTemplate: null,
+    optimizedAbilities: { strength: 8, dexterity: 15, constitution: 12, intelligence: 10, wisdom: 14, charisma: 13 },
   },
   Rogue: {
     name: "Rogue",
@@ -163,6 +171,7 @@ export const classDefinitions: Record<string, ClassDefinition> = {
     spellSlots: [],
     classConsumables: [],
     acTemplate: null,
+    optimizedAbilities: { strength: 8, dexterity: 15, constitution: 12, intelligence: 14, wisdom: 13, charisma: 10 },
   },
   Sorcerer: {
     name: "Sorcerer",
@@ -175,6 +184,7 @@ export const classDefinitions: Record<string, ClassDefinition> = {
     spellSlots: [{ level: 1, slots: 2 }],
     classConsumables: [],
     acTemplate: null,
+    optimizedAbilities: { strength: 8, dexterity: 12, constitution: 14, intelligence: 10, wisdom: 13, charisma: 15 },
   },
   Warlock: {
     name: "Warlock",
@@ -188,6 +198,7 @@ export const classDefinitions: Record<string, ClassDefinition> = {
     spellSlotResetOn: ["short-rest", "long-rest"],
     classConsumables: [],
     acTemplate: null,
+    optimizedAbilities: { strength: 8, dexterity: 12, constitution: 14, intelligence: 10, wisdom: 13, charisma: 15 },
   },
   Wizard: {
     name: "Wizard",
@@ -200,6 +211,7 @@ export const classDefinitions: Record<string, ClassDefinition> = {
     spellSlots: [{ level: 1, slots: 2 }],
     classConsumables: [{ label: "Arcane Recovery", uses: 1, resetOn: "long-rest" }],
     acTemplate: null,
+    optimizedAbilities: { strength: 8, dexterity: 12, constitution: 14, intelligence: 15, wisdom: 13, charisma: 10 },
   },
   Artificer: {
     name: "Artificer",
@@ -212,5 +224,6 @@ export const classDefinitions: Record<string, ClassDefinition> = {
     spellSlots: [{ level: 1, slots: 2 }],
     classConsumables: [],
     acTemplate: null,
+    optimizedAbilities: { strength: 8, dexterity: 12, constitution: 14, intelligence: 15, wisdom: 13, charisma: 10 },
   },
 };

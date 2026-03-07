@@ -25,10 +25,6 @@ function handleStateChange(stateKey: string, newState: ConsumableState) {
 
 <template>
   <div class="dnd-ui-demo">
-    <MultiConsumableCheckboxes
-      :consumables="consumables"
-      :states="states"
-      @update:state-change="handleStateChange"
-    />
+    <MultiConsumableCheckboxes :consumables="consumables" :states="states" @update:state-change="handleStateChange" />
   </div>
 </template>

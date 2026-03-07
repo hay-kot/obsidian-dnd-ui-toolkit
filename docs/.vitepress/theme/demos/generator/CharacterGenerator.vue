@@ -26,6 +26,9 @@ const classDef = computed(() => {
 
 watch(selectedClass, () => {
   selectedSkills.value = [];
+  if (classDef.value) {
+    abilities.value = { ...classDef.value.optimizedAbilities };
+  }
 });
 
 const atSkillLimit = computed(() => {
@@ -110,6 +113,10 @@ const abilityLabels: { key: keyof typeof abilities.value; label: string }[] = [
     <!-- Ability Scores -->
     <section class="gen-section">
       <h3>Ability Scores</h3>
+      <p class="section-note">
+        Scores are pre-filled with the standard array (15, 14, 13, 12, 10, 8) optimized for the selected class. You can
+        change them to whatever you'd like.
+      </p>
       <div class="ability-grid">
         <label v-for="ab in abilityLabels" :key="ab.key" class="form-label ability-label">
           {{ ab.label }}
@@ -167,6 +174,12 @@ const abilityLabels: { key: keyof typeof abilities.value; label: string }[] = [
   font-size: 1rem;
   font-weight: 600;
   color: var(--vp-c-text-1);
+}
+
+.section-note {
+  margin: -0.25rem 0 0.75rem;
+  font-size: 0.85rem;
+  color: var(--vp-c-text-2);
 }
 
 .form-row {
