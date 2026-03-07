@@ -138,6 +138,7 @@
     margin: 0 !important;
     text-align: left;
     flex-shrink: 0;
+    min-width: var(--hit-dice-label-width);
 }
 
 .dnd-ui-hit-dice-boxes {

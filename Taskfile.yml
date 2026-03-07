@@ -1,31 +1,27 @@
 version: "3"
 dotenv:
   - .env
+
+vars:
+  DEV_VAULT: dev/dnd-ui-dev
+  DEV_PLUGIN_DIR: "{{.DEV_VAULT}}/.obsidian/plugins/dnd-ui-toolkit"
+  HOT_RELOAD_DIR: "{{.DEV_VAULT}}/.obsidian/plugins/hot-reload"
+  HOT_RELOAD_REPO: https://github.com/pjeby/hot-reload.git
 tasks:
-  build:
-    desc: Runs the build, supports '--watch' flag
+  dev:
+    desc: Build plugin and copy to PLUGIN_DIR (supports --watch)
+    deps: [dev:setup]
+    env:
+      PLUGIN_DIR: '{{.PLUGIN_DIR | default .DEV_PLUGIN_DIR}}'
     cmds:
       - npm run build
-      # Copy output to $PLUGIN_DIR, forcibly overwriting existing files
-      - |
-        if [ -n "$PLUGIN_DIR" ]; then
-          echo "Copying files to $PLUGIN_DIR (overwriting existing files)"
-          mkdir -p "$PLUGIN_DIR"
-          cp -f main.js manifest.json "$PLUGIN_DIR/"
-          if [ -f styles.css ]; then
-            cp -f styles.css "$PLUGIN_DIR/"
-          fi
-          if [ -d assets ]; then
-            mkdir -p "$PLUGIN_DIR/assets"
-            cp -rf assets/* "$PLUGIN_DIR/assets/"
-          fi
-          echo "Files copied successfully!"
-        else
-          echo "PLUGIN_DIR not set. Skipping copy."
-        fi
+      - mkdir -p "$PLUGIN_DIR"
+      - cp -f main.js manifest.json "$PLUGIN_DIR/"
+      - if [ -f styles.css ]; then cp -f styles.css "$PLUGIN_DIR/"; fi
+      - echo "Installed to $PLUGIN_DIR"
     sources:
       - "**/*.ts"
-      - "**/*.tsx"
+      - "**/*.vue"
       - "**/*.css"
       - "!node_modules/**/*"
       - "!dist/**/*"
@@ -33,8 +29,40 @@ tasks:
       - "main.js"
       - "styles.css"
 
-  pr:
-    desc: Prepare for PR - format code, lint, and type check
+  dev:setup:
+    desc: Set up dev vault with hot-reload and plugin markers
+    cmds:
+      - mkdir -p {{.DEV_PLUGIN_DIR}}
+      - touch {{.DEV_PLUGIN_DIR}}/.hotreload
+      - |
+        if [ ! -d "{{.HOT_RELOAD_DIR}}" ]; then
+          echo "Installing hot-reload plugin..."
+          git clone {{.HOT_RELOAD_REPO}} {{.HOT_RELOAD_DIR}}
+        fi
+      - |
+        PLUGINS_FILE="{{.DEV_VAULT}}/.obsidian/community-plugins.json"
+        if [ ! -f "$PLUGINS_FILE" ]; then
+          echo '["hot-reload", "dnd-ui-toolkit"]' > "$PLUGINS_FILE"
+        else
+          # Ensure both plugins are listed
+          for PLUGIN in hot-reload dnd-ui-toolkit; do
+            if ! grep -q "\"$PLUGIN\"" "$PLUGINS_FILE"; then
+              sed -i '' "s/\]/, \"$PLUGIN\"\]/" "$PLUGINS_FILE"
+            fi
+          done
+        fi
+    status:
+      - test -d {{.HOT_RELOAD_DIR}}
+      - test -f {{.DEV_PLUGIN_DIR}}/.hotreload
+      - test -f {{.DEV_VAULT}}/.obsidian/community-plugins.json
+
+  dev:open:
+    desc: Open the dev vault in Obsidian
+    cmds:
+      - open "obsidian://open?vault=dnd-ui-dev"
+
+  check:
+    desc: Run all checks - format, lint, type check, and test
     cmds:
       - npm run format
       - npm run lint

@@ -26,3 +26,9 @@ styles.css
 .claude
 docs/.vitepress/cache/deps
 docs/.vitepress/dist
+
+# Dev vault generated files
+dev/**/.obsidian/plugins/
+dev/**/.obsidian/workspace.json
+dev/**/.dnd-ui-toolkit-state.json
+dev/**/.DS_Store
