@@ -113,10 +113,7 @@ describe("ConsumableView template resolution", () => {
 
     await renderAndGetChild(yaml);
 
-    expect(processTemplateMock).toHaveBeenCalledWith(
-      "{{frontmatter.level}}",
-      expect.any(Object)
-    );
+    expect(processTemplateMock).toHaveBeenCalledWith("{{frontmatter.level}}", expect.any(Object));
 
     const state = await kv.get("spell_slots_tmpl");
     expect(state).toEqual({ value: 0 });

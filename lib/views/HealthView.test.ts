@@ -107,10 +107,7 @@ health: "{{multiply frontmatter.level 6}}"`;
 
       await renderAndGetChild(yaml);
 
-      expect(processTemplateMock).toHaveBeenCalledWith(
-        "{{multiply frontmatter.level 6}}",
-        expect.any(Object)
-      );
+      expect(processTemplateMock).toHaveBeenCalledWith("{{multiply frontmatter.level 6}}", expect.any(Object));
 
       const state = await kv.get("hp_template");
       expect(state).toMatchObject({ current: 30, temporary: 0 });
@@ -170,10 +167,7 @@ hitdice:
 
       await renderAndGetChild(yaml);
 
-      expect(processTemplateMock).toHaveBeenCalledWith(
-        "{{frontmatter.level}}",
-        expect.any(Object)
-      );
+      expect(processTemplateMock).toHaveBeenCalledWith("{{frontmatter.level}}", expect.any(Object));
     });
 
     it("should fall back to 1 when hitdice template resolves to non-numeric", async () => {
@@ -224,10 +218,7 @@ hitdice:
 
       // Only the d6 template should trigger processTemplate
       expect(processTemplateMock).toHaveBeenCalledTimes(1);
-      expect(processTemplateMock).toHaveBeenCalledWith(
-        "{{frontmatter.level}}",
-        expect.any(Object)
-      );
+      expect(processTemplateMock).toHaveBeenCalledWith("{{frontmatter.level}}", expect.any(Object));
     });
 
     it("should parse non-template string hitdice value to a number", async () => {
