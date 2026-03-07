@@ -1,22 +1,10 @@
 # Badges
 
-The badges component can be used to display any generic Key/Value data in a more condensed view. Optionally, you can also omit they Key/Value and display only one.
+The badges component displays Key/Value data in a condensed inline format. You can optionally omit the key or value to display only one.
 
-![Rendered Example](../images/example-badges.webp)
+<BadgesDemo />
 
-## Dynamic Content
-
-Badges support dynamic content using template variables with <span v-pre>`{{ }}`</span> style templates. This allows creating badges with data from the frontmatter or even calculations based off abilities or skills. This is great for things like
-
-- Armor Class
-- Attack Bonus
-- Initiative
-
-Using dynamic content helps keep your character sheet updated as you level up.
-
-See the [Dynamic Content](../concepts/dynamic-content.md) page for more information on using templates.
-
-## Static Example
+## Example
 
 ````yaml
 ```badges
@@ -36,15 +24,18 @@ items:
 
 ## Configuration
 
-| Property | Type    | Default      | Description                          |
-| -------- | ------- | ------------ | ------------------------------------ |
-| `items`  | Array   | **Required** | List of badge items to display       |
-| `dense`  | Boolean | false        | Whether to use smaller badge styling |
+| Property | Type    | Default  | Description                          |
+| -------- | ------- | -------- | ------------------------------------ |
+| `items`  | Array   | Required | List of badge items to display       |
+| `dense`  | Boolean | false    | Whether to use smaller badge styling |
 
 ### Item Object
 
-| Property  | Type          | Description                              |
-| --------- | ------------- | ---------------------------------------- |
-| `label`   | String        | The label text (optional)                |
-| `value`   | String/Number | The value to display (optional)          |
-| `reverse` | Boolean       | Whether to reverse label and value order |
+| Property  | Type          | Default | Description                              |
+| --------- | ------------- | ------- | ---------------------------------------- |
+| `label` †   | String        | —       | The label text                           |
+| `value` †   | String/Number | —       | The value to display                     |
+| `sublabel` † | String      | —       | Additional text below the value          |
+| `reverse` | Boolean       | false   | Whether to reverse label and value order |
+
+† Supports [dynamic content](/concepts/dynamic-content) templates

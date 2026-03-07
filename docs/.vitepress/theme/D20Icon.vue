@@ -11,31 +11,31 @@ const { isDark } = useData();
 const colors = computed(() => {
   if (isDark.value) {
     return {
-      faceStart: "#a78bfa",
-      faceStartOpacity: "0.2",
-      faceEnd: "#7c3aed",
-      faceEndOpacity: "0.35",
-      edgeStart: "#c084fc",
-      edgeMid: "#a78bfa",
-      edgeEnd: "#c084fc",
+      faceStart: "#64d8cb",
+      faceStartOpacity: "0.15",
+      faceEnd: "#b39ddb",
+      faceEndOpacity: "0.25",
+      edgeStart: "#64d8cb",
+      edgeMid: "#8bb4d8",
+      edgeEnd: "#b39ddb",
       strokeWidth: "1.5",
-      textFill: "#e9d5ff",
+      textFill: "#e0f2f1",
       glowOpacity: "0.8",
-      dropShadow: "drop-shadow(0 0 24px rgba(167, 139, 250, 0.5))",
+      dropShadow: "drop-shadow(0 0 24px rgba(100, 216, 203, 0.4)) drop-shadow(0 0 48px rgba(179, 157, 219, 0.2))",
     };
   }
   return {
-    faceStart: "#7c3aed",
+    faceStart: "#4db6ac",
     faceStartOpacity: "0.08",
-    faceEnd: "#5b21b6",
-    faceEndOpacity: "0.18",
-    edgeStart: "#8b5cf6",
-    edgeMid: "#6d28d9",
-    edgeEnd: "#7c3aed",
+    faceEnd: "#9575cd",
+    faceEndOpacity: "0.12",
+    edgeStart: "#4db6ac",
+    edgeMid: "#7a9bc0",
+    edgeEnd: "#9575cd",
     strokeWidth: "1.2",
-    textFill: "#5b21b6",
+    textFill: "#2e8b83",
     glowOpacity: "0.4",
-    dropShadow: "drop-shadow(0 0 16px rgba(124, 58, 237, 0.2))",
+    dropShadow: "drop-shadow(0 0 16px rgba(100, 216, 203, 0.2))",
   };
 });
 </script>
@@ -56,9 +56,9 @@ const colors = computed(() => {
           <feColorMatrix
             in="blur"
             type="matrix"
-            :values="`0 0 0 0 0.486
-                      0 0 0 0 0.231
-                      0 0 0 0 0.929
+            :values="`0 0 0 0 0.392
+                      0 0 0 0 0.847
+                      0 0 0 0 0.796
                       0 0 0 ${colors.glowOpacity} 0`"
             result="glow"
           />
@@ -213,11 +213,11 @@ const colors = computed(() => {
   0%,
   100% {
     opacity: 0.9;
-    fill: #c084fc;
+    fill: #64d8cb;
   }
   50% {
     opacity: 1;
-    fill: #f3e8ff;
+    fill: #b39ddb;
   }
 }
 
@@ -225,11 +225,11 @@ const colors = computed(() => {
   0%,
   100% {
     opacity: 0.9;
-    fill: #5b21b6;
+    fill: #2e8b83;
   }
   50% {
     opacity: 1;
-    fill: #6d28d9;
+    fill: #7e57c2;
   }
 }
 

@@ -73,7 +73,7 @@ Components can reset in different ways when they receive an event:
 
 #### Example: Partial Reset Configuration
 
-```yaml
+````yaml
 ```consumable
 items:
   - label: "Warlock Spell Slots"
@@ -90,7 +90,7 @@ items:
         amount: 1  # Restore only 1 use on short rest
       - event: long-rest  # Complete reset on long rest
 ```
-```
+````
 
 ## File Scope Behavior
 

@@ -1,11 +1,12 @@
 import { defineConfig } from "vitepress";
 import { withMermaid } from "vitepress-plugin-mermaid";
+import path from "path";
 
 // https://vitepress.dev/reference/site-config
 export default withMermaid(
 	defineConfig({
 		title: "Obsidian DnD UI Toolkit",
-		description: "Modern UI elements for playing Dungeons and Dragons in Obsidian",
+		description: "Modern UI elements for tabletop RPGs in Obsidian",
 		base: "/obsidian-dnd-ui-toolkit/",
 		head: [["link", { rel: "icon", type: "image/svg+xml", href: "/obsidian-dnd-ui-toolkit/favicon.svg" }]],
 		themeConfig: {
@@ -33,22 +34,22 @@ export default withMermaid(
 						{ text: "Badges", link: "/components/badges" },
 						{ text: "Consumables", link: "/components/consumables" },
 						{ text: "Skill Cards", link: "/components/skill-cards" },
-						{ text: "Spell Components", link: "/components/spell-components" },
-						{ text: "Stats", link: "/components/stats" },
+						{ text: "Stat Cards", link: "/components/stat-cards" },
 					],
 				},
 				{
-					text: "Character Sheet",
+					text: "D&D 5e",
 					items: [
 						{ text: "Frontmatter", link: "/character-sheet/frontmatter" },
 						{ text: "Ability Scores", link: "/character-sheet/ability-scores" },
 						{ text: "Skills", link: "/character-sheet/skills" },
 						{ text: "Health Points", link: "/character-sheet/healthpoints" },
+						{ text: "Spell Components", link: "/character-sheet/spell-components" },
 						{ text: "Event Buttons", link: "/character-sheet/event-buttons" },
 					],
 				},
 				{
-					text: "Dungeon Master",
+					text: "Game Master",
 					items: [{ text: "Initiative Tracker", link: "/dungeon-master/initiative-tracker" }],
 				},
 				{
@@ -65,6 +66,10 @@ export default withMermaid(
 				},
 			],
 
+			footer: {
+				message: 'Icons by <a href="https://game-icons.net">game-icons.net</a> under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>. By Delapouite, Lorc, and Willdabeast.',
+			},
+
 			socialLinks: [{ icon: "github", link: "https://github.com/hay-kot/obsidian-dnd-ui-toolkit" }],
 		},
 		vite: {
@@ -74,6 +79,7 @@ export default withMermaid(
 			resolve: {
 				alias: {
 					dayjs: "dayjs/",
+					lib: path.resolve(__dirname, "../../lib"),
 				},
 			},
 		},

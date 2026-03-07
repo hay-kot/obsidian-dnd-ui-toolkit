@@ -1,18 +1,10 @@
 # Consumables
 
-The `consumable` component allows you to create generic trackers for different states of your character. This can be for anything like Spell Slots, Luck Points, or Channel Divinity.
+The `consumable` component creates generic trackers for character resources like Spell Slots, Luck Points, or Channel Divinity.
 
-![Rendered Example](../images/example-consumable.webp)
+<ConsumablesDemo />
 
-## Resetting Uses
-
-::: tip
-Consumables can be automatically reset when specific events are triggered. Use the `reset_on` property to specify which events should reset the consumable. You can reset completely (back to 0 used) or restore a specific amount of uses.
-
-See the [Event Systems](../concepts/event-systems.md) page for more information on utilizing events.
-:::
-
-## Basic Example
+## Example
 
 ````yaml
 ```consumable
@@ -37,18 +29,20 @@ items:
 
 ## Configuration
 
-| Property | Type  | Description                                      |
-| -------- | ----- | ------------------------------------------------ |
-| `items`  | Array | **Required** - List of consumable items to track |
+| Property | Type  | Default  | Description                              |
+| -------- | ----- | -------- | ---------------------------------------- |
+| `items`  | Array | Required | List of consumable items to track        |
 
 ### Item Object
 
-| Property    | Type         | Description                                        |
-| ----------- | ------------ | -------------------------------------------------- |
-| `label`     | String       | Display name for the consumable (optional)         |
-| `state_key` | String       | **Required** - Unique identifier for state storage |
-| `uses`      | Number       | **Required** - Maximum number of uses              |
-| `reset_on`  | String/Array/Object | Events that reset this consumable              |
+| Property    | Type                | Default  | Description                            |
+| ----------- | ------------------- | -------- | -------------------------------------- |
+| `label`     | String              | —        | Display name for the consumable        |
+| `state_key` | String              | Required | Unique identifier for state storage    |
+| `uses` †    | Number              | Required | Maximum number of uses                 |
+| `reset_on`  | String/Array/Object | —        | Events that reset this consumable      |
+
+† Supports [dynamic content](/concepts/dynamic-content) templates
 
 ### Reset Configuration
 
@@ -73,10 +67,3 @@ reset_on:
 ```
 
 When `amount` is specified, that many uses are restored (subtracted from current usage). When `amount` is omitted, the consumable resets completely to 0 used.
-
-## Common Use Cases
-
-- **Spell Slots**: Track spell slots by level
-- **Class Features**: Action Surge, Bardic Inspiration, etc.
-- **Magic Items**: Limited use items
-- **Custom Resources**: Any trackable resource your character has
