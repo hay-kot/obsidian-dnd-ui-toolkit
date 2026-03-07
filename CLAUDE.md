@@ -17,7 +17,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run docs:dev` - Start VitePress documentation server
 - `npm run docs:build` - Build documentation
 - `task build` - Build and optionally copy to plugin directory (if PLUGIN_DIR is set)
-- `task pr` - Prepare for PR (format, lint, type check, and test)
+- `task check` - Run all checks (format, lint, type check, and test)
 - `task release` - Release a new minor version (includes format, lint, type check, and test)
 
 ## Code Style
