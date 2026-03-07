@@ -61,7 +61,7 @@ export default withMermaid(
 					],
 				},
 				{
-					text: "Examples",
+					text: "Generators",
 					items: [{ text: "D&D Character Generator", link: "/examples/generator" }],
 				},
 			],
