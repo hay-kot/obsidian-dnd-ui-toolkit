@@ -11,6 +11,7 @@ import InitiativeDemo from "./demos/InitiativeDemo.vue";
 import SkillCardsDemo from "./demos/SkillCardsDemo.vue";
 import SpellComponentsDemo from "./demos/SpellComponentsDemo.vue";
 import StatCardsDemo from "./demos/StatCardsDemo.vue";
+import CharacterGenerator from "./demos/generator/CharacterGenerator.vue";
 
 export default {
   extends: DefaultTheme,
@@ -26,5 +27,6 @@ export default {
     app.component("SkillCardsDemo", SkillCardsDemo);
     app.component("SpellComponentsDemo", SpellComponentsDemo);
     app.component("StatCardsDemo", StatCardsDemo);
+    app.component("CharacterGenerator", CharacterGenerator);
   },
 };

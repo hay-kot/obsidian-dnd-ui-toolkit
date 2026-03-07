@@ -62,7 +62,10 @@ export default withMermaid(
 				},
 				{
 					text: "Examples",
-					items: [{ text: "Wizard Character", link: "/examples/wizard" }],
+					items: [
+						{ text: "Wizard Character", link: "/examples/wizard" },
+						{ text: "Character Generator", link: "/examples/generator" },
+					],
 				},
 			],
 
