@@ -1,25 +1,17 @@
 # Health Points
 
-Your Players HP can be tracked using the `healthpoints` widget. This widget requires a `state_key` be provided so that the plugin can save the character's state within the plugins state file.
+The `healthpoints` widget tracks your character's HP, temporary HP, hit dice, and death saving throws.
 
 ::: warning State Key Requirement
 Each `state_key` defined in **any** component needs to be unique as they are all stored within the same key value store internally.
 :::
 
-## Features
+<HealthCardDemo />
 
-- Customize 'Hit Points' label
-- Death save tracking (can be shown always or only at 0 HP)
-- Supports temporary HP
-- Supports **Reset Events** - See [Event System](../concepts/event-systems.md) for more details. By default it is configured for `long-rest`.
+## Example
 
-## Image
+### Basic
 
-![Rendered Example](../images/example-hp-widget.webp)
-
-## Examples
-
-### Basic Example
 ````yaml
 ```healthpoints
 state_key: din_health
@@ -30,7 +22,8 @@ hitdice:
 ```
 ````
 
-### Multiclass Example
+### Multiclass
+
 ````yaml
 ```healthpoints
 state_key: multiclass_health
@@ -44,6 +37,7 @@ hitdice:
 ````
 
 ### Always Show Death Saves
+
 By default, death saves only appear when HP reaches 0. Set `death_saves: always` to display them at any HP level.
 
 ````yaml
@@ -54,9 +48,7 @@ death_saves: always
 ```
 ````
 
-### Dynamic Health Example
-::: tip
-The `health` key supports dynamic content. This allows you to read your HP from frontmatter.
+### Dynamic Health
 
 ````yaml
 ```healthpoints
@@ -64,25 +56,35 @@ state_key: din_health
 health: '{{ frontmatter.hp }}'
 hitdice:
   dice: d6
-  value: 4
+  value: '{{ frontmatter.level }}'
 ```
 ````
-:::
 
 ## Configuration
 
-| Property      | Type         | Default      | Description                         |
-| ------------- | ------------ | ------------ | ----------------------------------- |
-| `state_key`   | String       | **Required** | Unique identifier for state storage |
-| `health`      | Number       | **Required** | Maximum health points               |
-| `label`       | String       | "Hit Points" | Custom label for the component      |
-| `hitdice`     | Object/Array | null         | Hit dice configuration (single object or array for multiclass) |
-| `death_saves` | Boolean/"always" | true     | Show death saves (`true` = at 0 HP only, `"always"` = at any HP, `false` = never) |
-| `reset_on`    | String/Array/Object | "long-rest"  | Events that reset health     |
+| Property      | Type             | Default      | Description                                                                        |
+| ------------- | ---------------- | ------------ | ---------------------------------------------------------------------------------- |
+| `state_key`   | String           | Required     | Unique identifier for state storage                                                |
+| `health` †    | Number           | Required     | Maximum health points                                                              |
+| `label`       | String           | "Hit Points" | Custom label for the component                                                     |
+| `hitdice`     | Object/Array     | —            | Hit dice configuration (single object or array for multiclass)                     |
+| `death_saves` | Boolean/"always" | true         | Show death saves (`true` = at 0 HP only, `"always"` = at any HP, `false` = never) |
+| `reset_on`    | String/Array/Object | "long-rest" | Events that reset health                                                          |
+
+† Supports [dynamic content](/concepts/dynamic-content) templates
+
+### Hit Dice Object
+
+| Property   | Type   | Default  | Description                          |
+| ---------- | ------ | -------- | ------------------------------------ |
+| `dice`     | String | Required | Dice type (e.g., "d6", "d8", "d10") |
+| `value` †  | Number | Required | Number of hit dice available         |
+
+† Supports [dynamic content](/concepts/dynamic-content) templates
 
 ### Reset Configuration
 
-The `reset_on` property supports the same formats as [consumables](../components/consumables.md#reset-configuration):
+The `reset_on` property supports the same formats as [consumables](/components/consumables#reset-configuration):
 
 **Simple String**: Complete reset on the specified event
 ```yaml
@@ -99,31 +101,3 @@ reset_on: ["short-rest", "long-rest"]
 reset_on:
   - event: long-rest  # Complete reset
 ```
-
-### Hit Dice Configuration
-
-The `hitdice` property supports both single class and multiclass configurations:
-
-#### Single Class Format
-```yaml
-hitdice:
-  dice: d6
-  value: 4
-```
-
-#### Multiclass Format
-For characters with multiple classes, you can specify multiple hit dice types:
-```yaml
-hitdice:
-  - dice: d10
-    value: 3
-  - dice: d6
-    value: 2
-```
-
-#### Hit Dice Object Properties
-
-| Property | Type   | Description                         |
-| -------- | ------ | ----------------------------------- |
-| `dice`   | String | Dice type (e.g., "d6", "d8", "d10") |
-| `value`  | Number | Number of hit dice available        |

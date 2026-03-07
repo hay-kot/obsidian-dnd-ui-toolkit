@@ -1,0 +1,26 @@
+<svg width="32" height="32" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="face" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0.35"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c084fc"/>
+      <stop offset="50%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#c084fc"/>
+    </linearGradient>
+  </defs>
+  <g>
+    <polygon points="100,12 38,55 162,55" fill="url(#face)" stroke="url(#edge)" stroke-width="2"/>
+    <polygon points="38,55 18,130 100,100" fill="url(#face)" stroke="url(#edge)" stroke-width="2"/>
+    <polygon points="162,55 182,130 100,100" fill="url(#face)" stroke="url(#edge)" stroke-width="2"/>
+    <polygon points="38,55 162,55 100,100" fill="url(#face)" stroke="url(#edge)" stroke-width="2"/>
+    <polygon points="18,130 100,100 60,175" fill="url(#face)" stroke="url(#edge)" stroke-width="2"/>
+    <polygon points="182,130 100,100 140,175" fill="url(#face)" stroke="url(#edge)" stroke-width="2"/>
+    <polygon points="60,175 140,175 100,100" fill="url(#face)" stroke="url(#edge)" stroke-width="2"/>
+    <polygon points="18,130 60,175 100,190" fill="url(#face)" stroke="url(#edge)" stroke-width="2"/>
+    <polygon points="182,130 140,175 100,190" fill="url(#face)" stroke="url(#edge)" stroke-width="2"/>
+    <polygon points="60,175 140,175 100,190" fill="url(#face)" stroke="url(#edge)" stroke-width="2"/>
+    <text x="100" y="108" text-anchor="middle" dominant-baseline="central" font-family="Georgia, serif" font-size="28" font-weight="bold" fill="#c084fc">20</text>
+  </g>
+</svg>

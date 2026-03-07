@@ -1,0 +1,97 @@
+@import "../../../lib/styles/index.css";
+
+/* Plugin component theme - forced dark container */
+.dnd-ui-demo {
+  --dnd-ui-color-bg-primary: #262a36;
+  --dnd-ui-color-bg-secondary: #323748;
+  --dnd-ui-color-bg-tertiary: #3a4055;
+  --dnd-ui-color-bg-hover: #363b4a;
+  --dnd-ui-color-bg-darker: #303440;
+  --dnd-ui-color-bg-group: #2d334a;
+  --dnd-ui-color-bg-proficient: #2d3343;
+
+  --dnd-ui-color-text-primary: #e0e0e0;
+  --dnd-ui-color-text-secondary: #a0a0d0;
+  --dnd-ui-color-text-sublabel: #a0c7d0;
+  --dnd-ui-color-text-bright: #ffffff;
+  --dnd-ui-color-text-muted: #b8b8d0;
+  --dnd-ui-color-text-group: #b8c4ff;
+
+  --dnd-ui-color-border-primary: #383e54;
+  --dnd-ui-color-border-active: #6d7cba;
+  --dnd-ui-color-border-focus: rgba(109, 124, 186, 0.5);
+
+  --dnd-ui-color-accent-teal: #64d8cb;
+  --dnd-ui-color-accent-red: #e57373;
+  --dnd-ui-color-accent-purple: #b39ddb;
+
+  background-color: #1e2130;
+  border: 1px solid #383e54;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+/* VitePress theme overrides */
+:root {
+  --vp-c-brand-1: #7a9bb5;
+  --vp-c-brand-2: #6a8aa6;
+  --vp-c-brand-3: #5a7a96;
+  --vp-c-brand-soft: rgba(139, 166, 196, 0.14);
+
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(
+    135deg,
+    #64d8cb 0%,
+    #b39ddb 50%,
+    #ce93d8 100%
+  );
+
+  --vp-home-hero-image-background-image: linear-gradient(
+    135deg,
+    rgba(100, 216, 203, 0.25) 0%,
+    rgba(179, 157, 219, 0.3) 100%
+  );
+  --vp-home-hero-image-filter: blur(56px);
+}
+
+.dark {
+  --vp-c-brand-1: #8bb4d8;
+  --vp-c-brand-2: #7a9bb5;
+  --vp-c-brand-3: #6a8aa6;
+  --vp-c-brand-soft: rgba(139, 180, 216, 0.14);
+
+  --vp-home-hero-image-background-image: linear-gradient(
+    135deg,
+    rgba(100, 216, 203, 0.3) 0%,
+    rgba(179, 157, 219, 0.35) 100%
+  );
+}
+
+/* Button overrides */
+.VPButton.brand {
+  background-color: var(--vp-c-brand-1) !important;
+  border-color: var(--vp-c-brand-1) !important;
+  color: #ffffff !important;
+}
+
+.VPButton.brand:hover {
+  background-color: var(--vp-c-brand-2) !important;
+  border-color: var(--vp-c-brand-2) !important;
+  color: #ffffff !important;
+}
+
+.dark .VPButton.alt {
+  color: #b8c4d0 !important;
+}
+
+.dark .VPButton.alt:hover {
+  color: #ffffff !important;
+}
+
+/* Hero image container */
+.VPHero .VPImage {
+  max-width: 320px;
+  max-height: 320px;
+}
+

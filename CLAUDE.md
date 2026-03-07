@@ -82,8 +82,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Pattern matching: `npm run test -- --grep "pattern"`
 - **Test Patterns:** Mock external dependencies (e.g., MockDataStore), use TypeScript generics for type safety
 
+## Documentation
+
+- **Location:** VitePress documentation in `/docs` with examples and component references
+- **Component Doc Template:** All component/feature docs follow this structure:
+  1. `# Component Name` — Short description of what it does and when to use it
+  2. `<Demo />` — Live Vue demo component, if available (always before YAML examples)
+  3. `## Example` — Primary YAML example (use `### Variant Name` sub-headings for multiple examples)
+  4. `## Configuration` — Properties table with columns: Property, Type, Default, Description
+     - Use `### Sub Object` sub-headings for nested object tables (e.g., Item Object, Bonus Object)
+     - Mark required fields with `Required` in the Default column
+     - Mark template-capable properties with `†` after the property name
+     - Include footnote below table: `† Supports [dynamic content](/concepts/dynamic-content) templates`
+  5. Additional sections (Features, Common Use Cases, etc.) come after Configuration
+- **Callouts:** Use `::: warning` / `::: tip` / `::: info` only for warnings and gotchas, not feature descriptions
+
 ## Development Workflow
 
 - **Plugin Development:** Set PLUGIN_DIR environment variable to auto-copy built files to Obsidian plugin directory
-- **Documentation:** VitePress documentation in `/docs` with examples and component references
 - **State File:** Plugin creates `.dnd-ui-toolkit-state.json` (configurable) for persistent component state

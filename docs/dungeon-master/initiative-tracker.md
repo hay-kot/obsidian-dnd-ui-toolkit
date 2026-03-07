@@ -1,18 +1,12 @@
 # Initiative Tracker
 
-The `initiative` component allows you to track combat encounters by managing initiative order, AC, and optionally HP for each combatant. The tracker automatically sorts combatants by their initiative rolls, and provides controls to move through the combat order.
+The `initiative` component tracks combat encounters by managing initiative order, AC, and optionally HP for each combatant. The tracker automatically sorts combatants by initiative rolls and provides controls to move through combat order.
 
-## Features
+<InitiativeDemo />
 
-- **Automatic Sorting**: Combatants are sorted by initiative rolls
-- **Turn Tracking**: Visual indicators for current turn
-- **Round Tracking**: Round of combat counter
-- **HP Management**: Track damage and healing for individuals or groups
-- **AC Display**: Quick reference for armor class
-- **Links**: Optional links to character sheets or stat blocks
-- **Consumables**: Track limited-use abilities that reset between rounds
+## Example
 
-## Basic Example
+### Basic
 
 For single creatures or grouped creatures that share a single HP pool:
 
@@ -34,7 +28,7 @@ items:
 ```
 ````
 
-## Monster Groups Example
+### Monster Groups
 
 For groups of monsters with individual HP tracking:
 
@@ -59,45 +53,9 @@ items:
 ```
 ````
 
-## Configuration
+### Consumables
 
-| Property      | Type   | Description                                        |
-| ------------- | ------ | -------------------------------------------------- |
-| `state_key`   | String | **Required** - Unique identifier for state storage |
-| `items`       | Array  | **Required** - List of combatants                  |
-| `consumables` | Array  | **Optional** - Tracked consumables                 |
-
-### Item Object
-
-| Property | Type          | Description                                    |
-| -------- | ------------- | ---------------------------------------------- |
-| `name`   | String        | **Required** - Name of the combatant           |
-| `ac`     | Number        | **Required** - Armor Class                     |
-| `hp`     | Number/Object | Hit points (single value or object for groups) |
-| `link`   | String        | Optional link to character sheet or notes      |
-
-### HP Options
-
-**Single HP Pool:**
-
-```yaml
-hp: 25
-```
-
-**Individual HP Tracking:**
-
-```yaml
-hp:
-  Creature 1: 12
-  Creature 2: 12
-  Creature 3: 8
-```
-
-### Consumables Object
-
-The initiative tracker supports tracking consumable abilities that reset between rounds, such as legendary actions, lair actions, or other limited-use abilities.
-
-#### Basic Consumables Example
+Track limited-use abilities that reset between rounds, such as legendary actions or lair actions.
 
 ````yaml
 ```initiative
@@ -124,21 +82,47 @@ consumables:
 ```
 ````
 
-#### Consumable Options
+## Configuration
 
-| Property         | Type    | Description                                        |
-| ---------------- | ------- | -------------------------------------------------- |
-| `label`          | String  | **Required** - Display name for the consumable     |
-| `state_key`      | String  | **Required** - Unique identifier for state storage |
-| `uses`           | Number  | **Required** - Maximum number of uses              |
-| `reset_on_round` | Boolean | Optional - Whether to reset when round advances    |
+| Property      | Type   | Default  | Description                        |
+| ------------- | ------ | -------- | ---------------------------------- |
+| `state_key`   | String | Required | Unique identifier for state storage |
+| `items`       | Array  | Required | List of combatants                 |
+| `consumables` | Array  | —        | Tracked consumables                |
 
-#### How Consumables Work
+### Item Object
 
-- **Checkboxes**: Each consumable displays as a series of checkboxes representing available uses
-- **Usage Tracking**: Check boxes to mark uses; the tracker maintains state between sessions
-- **Round Reset**: If `reset_on_round: true`, all uses reset when advancing to the next round
+| Property | Type          | Default  | Description                                    |
+| -------- | ------------- | -------- | ---------------------------------------------- |
+| `name`   | String        | Required | Name of the combatant                          |
+| `ac`     | Number        | Required | Armor Class                                    |
+| `hp`     | Number/Object | —        | Hit points (single value or object for groups) |
+| `link`   | String        | —        | Link to character sheet or notes               |
 
-::: info State Key Requirement
-Each `state_key` defined in each consumable only needs to be unique within the component itself. This is because it's stored as apart of the components state and not in the top level state file.
+### HP Options
+
+**Single HP Pool:**
+```yaml
+hp: 25
+```
+
+**Individual HP Tracking:**
+```yaml
+hp:
+  Creature 1: 12
+  Creature 2: 12
+  Creature 3: 8
+```
+
+### Consumable Object
+
+| Property         | Type    | Default  | Description                                     |
+| ---------------- | ------- | -------- | ----------------------------------------------- |
+| `label`          | String  | Required | Display name for the consumable                 |
+| `state_key`      | String  | Required | Unique identifier for state storage             |
+| `uses`           | Number  | Required | Maximum number of uses                          |
+| `reset_on_round` | Boolean | false    | Whether to reset when round advances            |
+
+::: info State Key Scope
+Consumable `state_key` values only need to be unique within the initiative component itself, not globally.
 :::

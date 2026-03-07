@@ -1,12 +1,6 @@
 # Event Buttons
 
-The `event-btns` component creates clickable buttons that trigger reset events for other components within the same file. This is perfect for managing rest mechanics in D&D, allowing you to reset spell slots, health, and other resources with a single click.
-
-## How It Works
-
-Event buttons dispatch file-scoped events that other components (like `consumable` and `healthpoints`) can listen to. Components with matching `reset_on` values will automatically reset their state when the corresponding button is clicked.
-
-See the [Event Systems](../concepts/event-systems.md) page for a deeper dive into events.
+The `event-btns` component creates clickable buttons that trigger reset events for other components within the same file. This is useful for managing rest mechanics, allowing you to reset spell slots, health, and other resources with a single click.
 
 ## Example
 
@@ -22,33 +16,23 @@ items:
 ```
 ````
 
-## Event Types
+## Configuration
 
-You can use any event type name that makes sense for your game:
+| Property | Type  | Default  | Description                            |
+| -------- | ----- | -------- | -------------------------------------- |
+| `items`  | Array | Required | List of event buttons to create        |
 
-- `short-rest` - For abilities that recharge on short rests
-- `long-rest` - For abilities that recharge on long rests
-- `level-up` - For resetting everything when leveling up
-- `new-day` - For daily abilities
-- `custom` - For any custom event you define
+### Item Object
+
+| Property | Type   | Default  | Description                        |
+| -------- | ------ | -------- | ---------------------------------- |
+| `name`   | String | Required | Display text for the button        |
+| `value`  | String | Required | Event name to trigger              |
 
 ::: tip File Scope
 Event buttons only affect components within the same markdown file, so you can have different rest states for different characters or encounters.
 :::
 
-## Configuration
-
-| Property | Type  | Description                                    |
-| -------- | ----- | ---------------------------------------------- |
-| `items`  | Array | **Required** - List of event buttons to create |
-
-### Item Object
-
-| Property | Type   | Description                                |
-| -------- | ------ | ------------------------------------------ |
-| `name`   | String | **Required** - Display text for the button |
-| `value`  | String | **Required** - Event name to trigger       |
-
 ::: tip Reset Amounts
-Event buttons dispatch the event name, and individual components determine how much to reset based on their own `reset_on` configuration. See [Consumables](../components/consumables.md#reset-configuration) for details on configuring partial resets.
+Event buttons dispatch the event name, and individual components determine how much to reset based on their own `reset_on` configuration. See [Consumables](/components/consumables#reset-configuration) for details on configuring partial resets.
 :::
