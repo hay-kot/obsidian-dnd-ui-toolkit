@@ -4,7 +4,7 @@ import globals from "globals";
 
 export default tsEslint.config(
 	{
-		ignores: ["/node_modules", "main.js", "docs/**", "dist/**"],
+		ignores: ["/node_modules", "main.js", "docs/**", "dist/**", "dev/**"],
 	},
 	eslint.configs.recommended,
 	tsEslint.configs.eslintRecommended,

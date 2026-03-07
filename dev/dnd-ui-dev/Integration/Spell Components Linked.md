@@ -1,9 +1,9 @@
 ---
-character_file: "Din Thornewood"
+character_file: "[[Din Thornewood]]"
 ---
 # Spell Components (Linked Character)
 
-Tests `spell-components` with `character_file` frontmatter — ability scores, proficiency bonus, and spellcasting ability are pulled from the linked character file.
+Tests `spell-components` with `chqjjjaracter_file` frontmatter — ability scores, proficiency bonus, and spellcasting ability are pulled from the linked character file.
 
 ## Attack Spell
 

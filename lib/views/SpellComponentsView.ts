@@ -113,6 +113,8 @@ export class SpellComponentsView extends BaseView {
   }
 
   private resolveFile(name: string, sourcePath: string): TFile | null {
-    return this.app.metadataCache.getFirstLinkpathDest(name, sourcePath);
+    // Strip wiki-link brackets if present (e.g., "[[Din Thornewood]]" -> "Din Thornewood")
+    const cleanName = name.replace(/^\[\[|\]\]$/g, "");
+    return this.app.metadataCache.getFirstLinkpathDest(cleanName, sourcePath);
   }
 }
