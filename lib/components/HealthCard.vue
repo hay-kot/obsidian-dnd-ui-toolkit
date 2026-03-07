@@ -17,6 +17,15 @@ const inputValue = ref("1");
 
 const maxHealth = computed(() => (typeof props.static.health === "number" ? props.static.health : 6));
 
+const hitDiceLabelWidth = computed(() => {
+  if (!props.static.hitdice || props.static.hitdice.length <= 1) return undefined;
+  const longest = props.static.hitdice.reduce(
+    (max, hd) => Math.max(max, `HIT DICE (${hd.dice})`.length),
+    0
+  );
+  return `${longest * 0.6}em`;
+});
+
 const healthPercentage = computed(() => Math.max(0, Math.min(100, (props.state.current / maxHealth.value) * 100)));
 
 function handleHeal() {
@@ -163,7 +172,7 @@ function getHitDiceUsed(hd: { dice: string; value: number }): number {
 
     <template v-if="props.static.hitdice && props.static.hitdice.length > 0">
       <div class="dnd-ui-health-divider" />
-      <div class="dnd-ui-hit-dice-container">
+      <div class="dnd-ui-hit-dice-container" :style="hitDiceLabelWidth ? { '--hit-dice-label-width': hitDiceLabelWidth } : undefined">
         <div class="dnd-ui-hit-dice-list">
           <div v-for="hd in props.static.hitdice" :key="hd.dice" class="dnd-ui-hit-dice-row">
             <p class="dnd-ui-hit-dice-label">HIT DICE ({{ hd.dice }})</p>
