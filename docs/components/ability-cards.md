@@ -22,21 +22,33 @@ This example shows Dagger Heart traits, but Ability Cards work with any TTRPG sy
 ```ability-cards
 items:
   - label: Agility
+    label_short: AGI
+    header_value: 14
     value: '+2'
     sublabel: Evasion 14
   - label: Strength
+    label_short: STR
+    header_value: 12
     value: '+1'
     sublabel: Threshold 5
   - label: Finesse
+    label_short: FIN
+    header_value: 16
     value: '+3'
     sublabel: Attack +5
   - label: Instinct
+    label_short: INS
+    header_value: 10
     value: '+0'
     sublabel: Reaction 12
   - label: Presence
+    label_short: PRE
+    header_value: 14
     value: '+2'
     sublabel: Influence 14
   - label: Knowledge
+    label_short: KNO
+    header_value: 12
     value: '+1'
     sublabel: Recall 13
 ```
@@ -50,8 +62,10 @@ items:
 
 ### Item Object
 
-| Property   | Type          | Default | Description                              |
-| ---------- | ------------- | ------- | ---------------------------------------- |
-| `label`    | String        | —       | The main label for the card              |
-| `value`    | String/Number | —       | The value to display                     |
-| `sublabel` | String        | —       | Optional additional text below the value |
+| Property       | Type          | Default | Description                                                    |
+| -------------- | ------------- | ------- | -------------------------------------------------------------- |
+| `label`        | String        | —       | The main label for the card                                    |
+| `label_short`  | String        | —       | Optional abbreviated label displayed in the card header        |
+| `header_value` | Number        | —       | Optional value displayed in the header next to the label       |
+| `value`        | String/Number | —       | The primary value to display (large, centered)                 |
+| `sublabel`     | String        | —       | Optional additional text below the value                       |

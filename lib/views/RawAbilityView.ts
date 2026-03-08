@@ -11,14 +11,15 @@ export class RawAbilityView extends BaseView {
     const parsed = parse(source);
     const items = (parsed?.items || []).map((item: any) => ({
       label: item.label || "",
-      total: 0,
+      labelShort: item.label_short || "",
+      total: item.header_value || 0,
       modifier: item.value || "",
       isProficient: false,
       savingThrow: item.sublabel || "",
     }));
 
     const child = new VueMarkdown(el);
-    child.mount(AbilityCards, { abilities: items });
+    child.mount(AbilityCards, { abilities: items, showSavingPrefix: false });
     ctx.addChild(child);
   }
 }

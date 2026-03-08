@@ -1,15 +1,20 @@
 <script setup lang="ts">
 interface AbilityCardItem {
   label: string;
+  labelShort?: string;
   total: number;
   modifier: string;
   isProficient: boolean;
   savingThrow: string;
 }
 
-defineProps<{
-  abilities: AbilityCardItem[];
-}>();
+withDefaults(
+  defineProps<{
+    abilities: AbilityCardItem[];
+    showSavingPrefix?: boolean;
+  }>(),
+  { showSavingPrefix: true }
+);
 </script>
 
 <template>
@@ -21,12 +26,12 @@ defineProps<{
         :class="['dnd-ui-ability-score-card', { 'dnd-ui-proficient': item.isProficient }]"
       >
         <div class="dnd-ui-ability-header">
-          <p class="dnd-ui-ability-name">{{ item.label }}</p>
-          <p class="dnd-ui-ability-value">{{ item.total }}</p>
+          <p class="dnd-ui-ability-name">{{ item.labelShort || item.label }}</p>
+          <p v-if="item.total" class="dnd-ui-ability-value">{{ item.total }}</p>
         </div>
         <p class="dnd-ui-ability-modifier">{{ item.modifier }}</p>
         <div class="dnd-ui-ability-modifier-saving">
-          <em>Saving {{ item.savingThrow }}</em>
+          <em>{{ showSavingPrefix ? `Saving ${item.savingThrow}` : item.savingThrow }}</em>
         </div>
       </div>
     </div>
