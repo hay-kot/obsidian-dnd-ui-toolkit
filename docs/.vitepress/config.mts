@@ -55,6 +55,7 @@ export default withMermaid(
 				{
 					text: "Concepts",
 					items: [
+						{ text: "Themes", link: "/concepts/themes" },
 						{ text: "State Storage", link: "/concepts/state-storage" },
 						{ text: "Event Systems", link: "/concepts/event-systems" },
 						{ text: "Dynamic Content", link: "/concepts/dynamic-content" },
