@@ -6,7 +6,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `npm run dev` - Start compilation in watch mode
 - `npm run build` - Build production version (with TypeScript checks)
-- `npm version patch|minor|major` - Bump version
 - `npm run format` - Format code with Prettier
 - `npm run format:check` - Check code formatting with Prettier
 - `npm run lint` - Lint code with ESLint
@@ -18,7 +17,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run docs:build` - Build documentation
 - `task build` - Build and optionally copy to plugin directory (if PLUGIN_DIR is set)
 - `task check` - Run all checks (format, lint, type check, and test)
-- `task release` - Release a new minor version (includes format, lint, type check, and test)
+- Releases are done via GitHub Actions: `gh workflow run release.yml -f bump=patch|minor|major`
 
 ## Code Style
 
