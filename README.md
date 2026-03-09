@@ -15,10 +15,10 @@ For complete documentation, examples, and guides, visit our documentation site:
 **[📚 https://hay-kot.github.io/obsidian-dnd-ui-toolkit/](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/)**
 
 The documentation includes:
-- [Quick Start Guide](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/quick-start.html) - Get up and running in minutes
-- [Component Reference](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/components/ability-scores.html) - Detailed docs for all components
-- [Concepts & Guides](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/concepts/state-storage.html) - Understanding state storage, events, and dynamic content
-- [Examples](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/examples/wizard.html) - Complete character sheet examples
+- [Quick Start Guide](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/getting-started/quick-start) - Get up and running in minutes
+- [Component Reference](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/character-sheet/ability-scores) - Detailed docs for all components
+- [Concepts & Guides](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/concepts/state-storage) - Understanding state storage, events, and dynamic content
+- [Examples](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/examples/wizard) - Complete character sheet examples
 
 ## Development
 
