@@ -1,11 +1,9 @@
 import { BaseView } from "./BaseView";
-import { VueMarkdown } from "./VueMarkdown";
 import SkillCards from "../components/SkillCards.vue";
-import { App, MarkdownPostProcessorContext } from "obsidian";
-import { parse } from "yaml";
+import { MarkdownPostProcessorContext } from "obsidian";
 import type { SkillItem } from "lib/types";
-import { hasTemplateVariables, processTemplate, createTemplateContext, TemplateContext } from "../utils/template";
-import { FileContext, useFileContext } from "./filecontext";
+import { hasTemplateVariables, processTemplate } from "../utils/template";
+import { TemplateAwareComponent } from "./TemplateAwareComponent";
 
 export class RawSkillsView extends BaseView {
   public codeblock = "skill-cards";
@@ -16,38 +14,18 @@ export class RawSkillsView extends BaseView {
   }
 }
 
-class RawSkillsComponent extends VueMarkdown {
-  ctx: FileContext;
-  source: string;
-  isTemplate = false;
-
-  constructor(el: HTMLElement, source: string, app: App, ctx: MarkdownPostProcessorContext) {
-    super(el);
-    this.source = source;
-    this.ctx = useFileContext(app, ctx);
-  }
-
-  async onload() {
-    this.setupListeners();
-    this.processAndRender();
-  }
-
-  private processAndRender() {
-    const parsed = parse(this.source);
+class RawSkillsComponent extends TemplateAwareComponent {
+  protected processAndRender() {
+    const parsed = this.parseSource();
     const rawItems = Array.isArray(parsed?.items) ? parsed.items : [];
 
-    const hasTemplates = rawItems.some(
-      (item: any) =>
-        hasTemplateVariables(String(item.label || "")) ||
-        hasTemplateVariables(String(item.ability || "")) ||
-        hasTemplateVariables(String(item.modifier ?? ""))
+    const templateContext = this.detectTemplates(
+      rawItems.flatMap((item: any) => [
+        String(item.label || ""),
+        String(item.ability || ""),
+        String(item.modifier ?? ""),
+      ])
     );
-
-    let templateContext: TemplateContext | null = null;
-    if (hasTemplates) {
-      templateContext = createTemplateContext(this.containerEl, this.ctx);
-      this.isTemplate = true;
-    }
 
     const items: SkillItem[] = rawItems.map((item: any) => {
       let label = String(item.label || "");
@@ -71,21 +49,5 @@ class RawSkillsComponent extends VueMarkdown {
     });
 
     this.mount(SkillCards, { items });
-  }
-
-  private setupListeners() {
-    this.addUnloadFn(
-      this.ctx.onFrontmatterChange(() => {
-        if (!this.isTemplate) return;
-        this.processAndRender();
-      })
-    );
-
-    this.addUnloadFn(
-      this.ctx.onAbilitiesChange(() => {
-        if (!this.isTemplate) return;
-        this.processAndRender();
-      })
-    );
   }
 }

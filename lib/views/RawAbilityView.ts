@@ -1,10 +1,8 @@
 import { BaseView } from "./BaseView";
-import { VueMarkdown } from "./VueMarkdown";
 import AbilityCards from "../components/AbilityCards.vue";
-import { App, MarkdownPostProcessorContext } from "obsidian";
-import { parse } from "yaml";
-import { hasTemplateVariables, processTemplate, createTemplateContext, TemplateContext } from "../utils/template";
-import { FileContext, useFileContext } from "./filecontext";
+import { MarkdownPostProcessorContext } from "obsidian";
+import { hasTemplateVariables, processTemplate } from "../utils/template";
+import { TemplateAwareComponent } from "./TemplateAwareComponent";
 
 export class RawAbilityView extends BaseView {
   public codeblock = "ability-cards";
@@ -15,40 +13,20 @@ export class RawAbilityView extends BaseView {
   }
 }
 
-class RawAbilityComponent extends VueMarkdown {
-  ctx: FileContext;
-  source: string;
-  isTemplate = false;
-
-  constructor(el: HTMLElement, source: string, app: App, ctx: MarkdownPostProcessorContext) {
-    super(el);
-    this.source = source;
-    this.ctx = useFileContext(app, ctx);
-  }
-
-  async onload() {
-    this.setupListeners();
-    this.processAndRender();
-  }
-
-  private processAndRender() {
-    const parsed = parse(this.source);
+class RawAbilityComponent extends TemplateAwareComponent {
+  protected processAndRender() {
+    const parsed = this.parseSource();
     const items = Array.isArray(parsed?.items) ? parsed.items : [];
 
-    const hasTemplates = items.some(
-      (item: any) =>
-        hasTemplateVariables(String(item.label || "")) ||
-        hasTemplateVariables(String(item.label_short || "")) ||
-        hasTemplateVariables(String(item.header_value || "")) ||
-        hasTemplateVariables(String(item.value || "")) ||
-        hasTemplateVariables(String(item.sublabel || ""))
+    const templateContext = this.detectTemplates(
+      items.flatMap((item: any) => [
+        String(item.label || ""),
+        String(item.label_short || ""),
+        String(item.header_value || ""),
+        String(item.value || ""),
+        String(item.sublabel || ""),
+      ])
     );
-
-    let templateContext: TemplateContext | null = null;
-    if (hasTemplates) {
-      templateContext = createTemplateContext(this.containerEl, this.ctx);
-      this.isTemplate = true;
-    }
 
     const abilities = items.map((item: any) => {
       let label = String(item.label || "");
@@ -76,21 +54,5 @@ class RawAbilityComponent extends VueMarkdown {
     });
 
     this.mount(AbilityCards, { abilities, showSavingPrefix: false });
-  }
-
-  private setupListeners() {
-    this.addUnloadFn(
-      this.ctx.onFrontmatterChange(() => {
-        if (!this.isTemplate) return;
-        this.processAndRender();
-      })
-    );
-
-    this.addUnloadFn(
-      this.ctx.onAbilitiesChange(() => {
-        if (!this.isTemplate) return;
-        this.processAndRender();
-      })
-    );
   }
 }
