@@ -1,6 +1,47 @@
+---
+agility: 14
+strength: 18
+finesse: 16
+resolve: 12
+intuition: 10
+presence: 8
+---
+
 # Ability Cards (Raw)
 
 Tests the `ability-cards` code block which renders raw card data without automatic modifier calculation. Unlike the `ability` block, this takes pre-computed values directly — useful for non-5e systems or custom stats.
+
+## Dynamic Content
+
+Ability cards with values driven by frontmatter. Change the frontmatter values above to verify cards update reactively.
+
+```ability-cards
+items:
+  - label: Agility
+    label_short: AGI
+    header_value: '{{ frontmatter.agility }}'
+    value: '+{{ floor (divide (subtract frontmatter.agility 10) 2) }}'
+  - label: Strength
+    label_short: STR
+    header_value: '{{ frontmatter.strength }}'
+    value: '+{{ floor (divide (subtract frontmatter.strength 10) 2) }}'
+  - label: Finesse
+    label_short: FIN
+    header_value: '{{ frontmatter.finesse }}'
+    value: '+{{ floor (divide (subtract frontmatter.finesse 10) 2) }}'
+  - label: Resolve
+    label_short: RES
+    header_value: '{{ frontmatter.resolve }}'
+    value: '+{{ floor (divide (subtract frontmatter.resolve 10) 2) }}'
+  - label: Intuition
+    label_short: INT
+    header_value: '{{ frontmatter.intuition }}'
+    value: '+{{ floor (divide (subtract frontmatter.intuition 10) 2) }}'
+  - label: Presence
+    label_short: PRE
+    header_value: '{{ frontmatter.presence }}'
+    value: '+{{ floor (divide (subtract frontmatter.presence 10) 2) }}'
+```
 
 ## Pathfinder 2e Attributes
 
