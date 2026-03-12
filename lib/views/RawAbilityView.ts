@@ -1,25 +1,96 @@
 import { BaseView } from "./BaseView";
 import { VueMarkdown } from "./VueMarkdown";
 import AbilityCards from "../components/AbilityCards.vue";
-import { MarkdownPostProcessorContext } from "obsidian";
+import { App, MarkdownPostProcessorContext } from "obsidian";
 import { parse } from "yaml";
+import { hasTemplateVariables, processTemplate, createTemplateContext, TemplateContext } from "../utils/template";
+import { FileContext, useFileContext } from "./filecontext";
 
 export class RawAbilityView extends BaseView {
   public codeblock = "ability-cards";
 
   public render(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): void {
-    const parsed = parse(source);
-    const items = (parsed?.items || []).map((item: any) => ({
-      label: item.label || "",
-      labelShort: item.label_short || "",
-      total: item.header_value || 0,
-      modifier: item.value || "",
-      isProficient: false,
-      savingThrow: item.sublabel || "",
-    }));
+    const cmp = new RawAbilityComponent(el, source, this.app, ctx);
+    ctx.addChild(cmp);
+  }
+}
 
-    const child = new VueMarkdown(el);
-    child.mount(AbilityCards, { abilities: items, showSavingPrefix: false });
-    ctx.addChild(child);
+class RawAbilityComponent extends VueMarkdown {
+  ctx: FileContext;
+  source: string;
+  isTemplate = false;
+
+  constructor(el: HTMLElement, source: string, app: App, ctx: MarkdownPostProcessorContext) {
+    super(el);
+    this.source = source;
+    this.ctx = useFileContext(app, ctx);
+  }
+
+  async onload() {
+    this.setupListeners();
+    this.processAndRender();
+  }
+
+  private processAndRender() {
+    const parsed = parse(this.source);
+    const items = Array.isArray(parsed?.items) ? parsed.items : [];
+
+    const hasTemplates = items.some(
+      (item: any) =>
+        hasTemplateVariables(String(item.label || "")) ||
+        hasTemplateVariables(String(item.label_short || "")) ||
+        hasTemplateVariables(String(item.header_value || "")) ||
+        hasTemplateVariables(String(item.value || "")) ||
+        hasTemplateVariables(String(item.sublabel || ""))
+    );
+
+    let templateContext: TemplateContext | null = null;
+    if (hasTemplates) {
+      templateContext = createTemplateContext(this.containerEl, this.ctx);
+      this.isTemplate = true;
+    }
+
+    const abilities = items.map((item: any) => {
+      let label = String(item.label || "");
+      let labelShort = String(item.label_short || "");
+      let headerValue = String(item.header_value || "0");
+      let value = String(item.value || "");
+      let sublabel = String(item.sublabel || "");
+
+      if (templateContext) {
+        if (hasTemplateVariables(label)) label = processTemplate(label, templateContext);
+        if (hasTemplateVariables(labelShort)) labelShort = processTemplate(labelShort, templateContext);
+        if (hasTemplateVariables(headerValue)) headerValue = processTemplate(headerValue, templateContext);
+        if (hasTemplateVariables(value)) value = processTemplate(value, templateContext);
+        if (hasTemplateVariables(sublabel)) sublabel = processTemplate(sublabel, templateContext);
+      }
+
+      return {
+        label,
+        labelShort,
+        total: Number(headerValue) || 0,
+        modifier: value,
+        isProficient: false,
+        savingThrow: sublabel,
+      };
+    });
+
+    this.mount(AbilityCards, { abilities, showSavingPrefix: false });
+  }
+
+  private setupListeners() {
+    this.addUnloadFn(
+      this.ctx.onFrontmatterChange(() => {
+        if (!this.isTemplate) return;
+        this.processAndRender();
+      })
+    );
+
+    this.addUnloadFn(
+      this.ctx.onAbilitiesChange(() => {
+        if (!this.isTemplate) return;
+        this.processAndRender();
+      })
+    );
   }
 }
