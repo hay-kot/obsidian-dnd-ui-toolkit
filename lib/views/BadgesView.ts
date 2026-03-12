@@ -1,12 +1,10 @@
 import { BaseView } from "./BaseView";
 import BadgesRow from "../components/BadgesRow.vue";
-import { App, MarkdownPostProcessorContext } from "obsidian";
+import { MarkdownPostProcessorContext } from "obsidian";
 import { BadgeItem, BadgesBlock } from "lib/types";
-import { parse } from "yaml";
-import { hasTemplateVariables, processTemplate, createTemplateContext, TemplateContext } from "../utils/template";
-import { FileContext, useFileContext } from "./filecontext";
-import { VueMarkdown } from "./VueMarkdown";
+import { hasTemplateVariables, processTemplate } from "../utils/template";
 import StatCards from "../components/StatCards.vue";
+import { TemplateAwareComponent } from "./TemplateAwareComponent";
 
 export class StatsView extends BaseView {
   public codeblock = "stats";
@@ -27,38 +25,17 @@ export class BadgesView extends BaseView {
   }
 }
 
-class StatsLikeComponent extends VueMarkdown {
+class StatsLikeComponent extends TemplateAwareComponent {
   layout: "badges" | "cards" = "badges";
-  ctx: FileContext;
-  source: string;
-  isTemplate: boolean;
 
-  constructor(el: HTMLElement, source: string, app: App, ctx: MarkdownPostProcessorContext) {
-    super(el);
-    this.source = source;
-    this.ctx = useFileContext(app, ctx);
-  }
-
-  async onload() {
-    this.setupListeners();
-    this.processAndRender();
-  }
-
-  private processAndRender() {
-    const parsed = parse(this.source);
+  protected processAndRender() {
+    const parsed = this.parseSource();
     const items = Array.isArray(parsed.items) ? parsed.items : [];
     const grid = parsed.grid || {};
 
-    const hasTemplates = items.some(
-      (item: Partial<BadgeItem>) =>
-        hasTemplateVariables(String(item.label || "")) || hasTemplateVariables(String(item.value || ""))
+    const templateContext = this.detectTemplates(
+      items.flatMap((item: Partial<BadgeItem>) => [String(item.label || ""), String(item.value || "")])
     );
-
-    let templateContext: TemplateContext | null = null;
-    if (hasTemplates) {
-      templateContext = createTemplateContext(this.containerEl, this.ctx);
-      this.isTemplate = true;
-    }
 
     const badgesBlock: BadgesBlock = {
       items: items.map((item: Partial<BadgeItem>) => {
@@ -67,15 +44,9 @@ class StatsLikeComponent extends VueMarkdown {
         let sublabel = String(item.sublabel || "");
 
         if (templateContext) {
-          if (hasTemplateVariables(label)) {
-            label = processTemplate(label, templateContext);
-          }
-          if (hasTemplateVariables(value)) {
-            value = processTemplate(value, templateContext);
-          }
-          if (hasTemplateVariables(sublabel)) {
-            sublabel = processTemplate(sublabel, templateContext);
-          }
+          if (hasTemplateVariables(label)) label = processTemplate(label, templateContext);
+          if (hasTemplateVariables(value)) value = processTemplate(value, templateContext);
+          if (hasTemplateVariables(sublabel)) sublabel = processTemplate(sublabel, templateContext);
         }
 
         return {
@@ -96,21 +67,5 @@ class StatsLikeComponent extends VueMarkdown {
     } else if (this.layout === "cards") {
       this.mount(StatCards, { items: badgesBlock.items, grid: badgesBlock.grid, dense: badgesBlock.dense });
     }
-  }
-
-  private setupListeners() {
-    this.addUnloadFn(
-      this.ctx.onFrontmatterChange((_) => {
-        if (!this.isTemplate) return;
-        this.processAndRender();
-      })
-    );
-
-    this.addUnloadFn(
-      this.ctx.onAbilitiesChange(() => {
-        if (!this.isTemplate) return;
-        this.processAndRender();
-      })
-    );
   }
 }
