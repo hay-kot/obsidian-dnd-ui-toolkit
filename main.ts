@@ -1,5 +1,5 @@
 import "lib/styles/index.css";
-import { App, Plugin, PluginSettingTab, Setting } from "obsidian";
+import { App, Platform, Plugin, PluginSettingTab, Setting } from "obsidian";
 import { AbilityScoreView } from "lib/views/AbilityScoreView";
 import { BaseView } from "lib/views/BaseView";
 import { SkillsView } from "lib/views/SkillsView";
@@ -38,13 +38,15 @@ export default class DndUIToolkitPlugin extends Plugin {
       apply(root);
     }
 
-    // Apply to all open windows
-    this.app.workspace.iterateAllLeaves((leaf) => {
-      const windowDoc = leaf.view.containerEl.ownerDocument;
-      if (windowDoc) {
-        apply(windowDoc.documentElement);
-      }
-    });
+    // Apply to all open windows (desktop only - multi-window not available on mobile)
+    if (Platform.isDesktop) {
+      this.app.workspace.iterateAllLeaves((leaf) => {
+        const windowDoc = leaf.view.containerEl.ownerDocument;
+        if (windowDoc) {
+          apply(windowDoc.documentElement);
+        }
+      });
+    }
   }
 
   async onload() {
@@ -53,13 +55,14 @@ export default class DndUIToolkitPlugin extends Plugin {
     // Apply color settings on load
     this.applyColorSettings();
 
-    // Listen for new windows and apply settings to them
-    this.registerEvent(
-      this.app.workspace.on("window-open", () => {
-        // Use setTimeout to ensure the window is fully initialized
-        setTimeout(() => this.applyColorSettings(), 100);
-      })
-    );
+    // Listen for new windows and apply settings to them (desktop only)
+    if (Platform.isDesktop) {
+      this.registerEvent(
+        this.app.workspace.on("window-open", () => {
+          setTimeout(() => this.applyColorSettings(), 100);
+        })
+      );
+    }
 
     // Initialize the JsonDataStore with the configured path
     this.initDataStore();

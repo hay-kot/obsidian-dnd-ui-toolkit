@@ -11,6 +11,9 @@ export default defineConfig(({ mode }) => ({
       settings: path.resolve(__dirname, "settings.ts"),
     },
   },
+  define: {
+    "process.env.NODE_ENV": JSON.stringify(mode),
+  },
   build: {
     outDir: ".",
     lib: {
