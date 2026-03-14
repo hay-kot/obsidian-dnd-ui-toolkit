@@ -1,0 +1,72 @@
+name: PR Pre-Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pre-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get PR info
+        id: pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="${GITHUB_REF_NAME}"
+          PR_NUMBER=$(gh pr view "$BRANCH" --json number -q '.number' 2>/dev/null || echo "")
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "::error::No open PR found for branch '$BRANCH'. Push this branch and open a PR first."
+            exit 1
+          fi
+
+          # Sanitize branch name for use in tag (replace / with -)
+          SAFE_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/-/g')
+          TAG="pr-${PR_NUMBER}-${SAFE_BRANCH}-${GITHUB_RUN_NUMBER}"
+
+          echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run checks
+        run: |
+          npm run format:check
+          npm run lint
+          npm run typecheck
+          npm run test
+
+      - name: Build plugin
+        run: npm run build
+
+      - name: Create pre-release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.pr.outputs.tag }}"
+          PR="${{ steps.pr.outputs.number }}"
+          BRANCH="${{ steps.pr.outputs.branch }}"
+
+          git tag "$TAG"
+          git push origin "$TAG"
+
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --prerelease \
+            --notes "Pre-release build from PR #${PR} (\`${BRANCH}\`).
+
+          Install by downloading the assets below into your vault's \`.obsidian/plugins/dnd-ui-toolkit/\` directory." \
+            main.js manifest.json styles.css
