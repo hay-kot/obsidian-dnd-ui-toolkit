@@ -60,6 +60,29 @@ hitdice:
 ```
 ````
 
+### Health + Focus + Investiture
+
+Use `resources` to add extra pools that behave like HP controls (current/max, bar, amount input, restore/lose buttons) but without temp buttons.
+
+````yaml
+```healthpoints
+state_key: din_health
+health: 24
+hitdice:
+  dice: d6
+  value: 3
+resources:
+  - key: focus
+    label: Focus
+    max: 10
+    current: 8
+  - key: investiture
+    label: Investiture
+    max: 12
+    current: 6
+```
+````
+
 ## Configuration
 
 | Property      | Type             | Default      | Description                                                                        |
@@ -68,6 +91,7 @@ hitdice:
 | `health` †    | Number           | Required     | Maximum health points                                                              |
 | `label`       | String           | "Hit Points" | Custom label for the component                                                     |
 | `hitdice`     | Object/Array     | —            | Hit dice configuration (single object or array for multiclass)                     |
+| `resources`   | Array            | —            | Optional extra resource pools (e.g., Focus/Investiture) with current/max and restore/lose controls |
 | `death_saves` | Boolean/"always" | true         | Show death saves (`true` = at 0 HP only, `"always"` = at any HP, `false` = never) |
 | `reset_on`    | String/Array/Object | "long-rest" | Events that reset health                                                          |
 
@@ -81,6 +105,15 @@ hitdice:
 | `value` †  | Number | Required | Number of hit dice available         |
 
 † Supports [dynamic content](/concepts/dynamic-content) templates
+
+### Resource Object
+
+| Property  | Type      | Default | Description |
+| --------- | --------- | ------- | ----------- |
+| `key`     | String    | Required | Unique id for the resource in state (e.g. `focus`) |
+| `label`   | String    | Required | Display label |
+| `max`     | Number    | Required | Maximum value shown in `current / max` |
+| `current` | Number    | `max`    | Initial current value; persisted by `state_key` thereafter |
 
 ### Reset Configuration
 

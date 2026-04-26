@@ -1,0 +1,225 @@
+/*
+ * Attribute Cards — multi-realm layout (e.g. physical / cognitive / spiritual) with
+ * a shield-shaped defense card and resource tracks below each realm.
+ */
+
+.dnd-ui-attribute-cards {
+  width: 100%;
+  color: var(--dnd-ui-color-text-primary);
+}
+
+.dnd-ui-attribute-heading {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
+  color: var(--dnd-ui-color-text-primary);
+  letter-spacing: 0.02em;
+}
+
+.dnd-ui-attribute-realms-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+  align-items: start;
+}
+
+.dnd-ui-attribute-realm {
+  min-width: 0;
+}
+
+.dnd-ui-attribute-realm-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--dnd-ui-color-text-muted);
+  margin: 0 0 0.5rem 0;
+  padding: 0 0.1rem;
+}
+
+.dnd-ui-attribute-realm-row {
+  display: grid;
+  grid-template-columns: 1fr minmax(4.2rem, 4.8rem) 1fr;
+  align-items: stretch;
+  gap: 0.35rem;
+  width: 100%;
+}
+
+.dnd-ui-attribute-realm-side {
+  display: flex;
+  min-width: 0;
+  justify-content: center;
+}
+
+.dnd-ui-attribute-realm-left {
+  justify-content: flex-end;
+}
+
+.dnd-ui-attribute-realm-right {
+  justify-content: flex-start;
+}
+
+.dnd-ui-attribute-realm-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.dnd-ui-attribute-rect-card {
+  width: 100%;
+  max-width: 7rem;
+}
+
+.dnd-ui-attribute-rect-card .dnd-ui-ability-name {
+  font-size: 0.65rem;
+  text-align: center;
+}
+
+.dnd-ui-attribute-rect-card .dnd-ui-ability-header {
+  justify-content: center;
+  text-align: center;
+  padding-left: 0.35rem;
+  padding-right: 0.35rem;
+}
+
+.dnd-ui-attribute-sublabel {
+  font-size: 0.65rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  text-align: center;
+  width: 100%;
+}
+
+.dnd-ui-attribute-metric {
+  text-decoration: none;
+}
+
+/* Heater-shield shape (center defense) */
+.dnd-ui-attribute-shield {
+  width: 100%;
+  max-width: 4.8rem;
+  min-height: 6.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dnd-ui-attribute-shield-clip {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 5.2rem;
+  /* Shield outline: two nested clips for border effect */
+  filter: drop-shadow(0 1px 0 var(--dnd-ui-color-border-primary));
+}
+
+.dnd-ui-attribute-shield-frame {
+  /* Outer frame: border color */
+  --dnd-shield-clip: polygon(50% 0%, 100% 6%, 100% 64%, 50% 100%, 0% 64%, 0% 6%);
+  background: linear-gradient(
+    135deg,
+    var(--dnd-ui-color-border-primary),
+    var(--dnd-ui-color-text-muted)
+  );
+  padding: 2px;
+  clip-path: var(--dnd-shield-clip);
+  -webkit-clip-path: var(--dnd-shield-clip);
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  width: 100%;
+  max-width: 4.4rem;
+  min-height: 5.2rem;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.dnd-ui-attribute-shield-card {
+  --dnd-shield-clip: polygon(50% 0%, 100% 6%, 100% 64%, 50% 100%, 0% 64%, 0% 6%);
+  width: 100% !important;
+  max-width: none !important;
+  height: 100%;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+  clip-path: var(--dnd-shield-clip);
+  -webkit-clip-path: var(--dnd-shield-clip);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  background-color: var(--dnd-ui-color-bg-primary);
+}
+
+.dnd-ui-attribute-shield-header .dnd-ui-ability-name {
+  font-size: 0.5rem;
+  line-height: 1.1;
+  word-break: break-word;
+  hyphens: auto;
+  max-width: 3.2rem;
+}
+
+.dnd-ui-attribute-shield-metric {
+  font-size: 0.95rem;
+  line-height: 1.1;
+  padding: 0.15rem 0.2rem;
+  flex: 0 0 auto;
+}
+
+.dnd-ui-attribute-shield .dnd-ui-ability-header {
+  padding: 0.28rem 0.15rem 0.08rem 0.15rem;
+  flex: 0 0 auto;
+  justify-content: center;
+  text-align: center;
+}
+
+.dnd-ui-attribute-shield .dnd-ui-ability-modifier-saving,
+.dnd-ui-attribute-shield .dnd-ui-attribute-sublabel {
+  padding-bottom: 0.35rem;
+  padding-top: 0;
+  margin-top: 0;
+  font-size: 0.58rem;
+}
+
+.dnd-ui-attribute-resource-row {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 0.6rem;
+  width: 100%;
+}
+
+.dnd-ui-attribute-resource-card {
+  min-width: 0;
+  max-width: none;
+  padding: 0.3rem 0.3rem;
+}
+
+.dnd-ui-attribute-resource-value {
+  font-size: 0.9rem;
+}
+
+.dnd-ui-attribute-resource-card .dnd-ui-generic-card-label {
+  font-size: 0.62rem;
+}
+
+/* Narrow: stack primary, defense, secondary */
+@media (max-width: 480px) {
+  .dnd-ui-attribute-realms-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .dnd-ui-attribute-realm-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .dnd-ui-attribute-realm-left,
+  .dnd-ui-attribute-realm-right {
+    justify-content: center;
+  }
+}

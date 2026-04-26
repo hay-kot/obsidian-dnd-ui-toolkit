@@ -1,0 +1,77 @@
+.dnd-ui-character-sections {
+    display: grid;
+    width: 100%;
+    gap: 0.6rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    grid-template-areas:
+        "conditions expertises"
+        "weapons talents";
+    align-items: start;
+}
+
+.dnd-ui-character-sections-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0.35rem;
+    padding: 0.7rem;
+    border-radius: 0.4rem;
+    border: 1px solid var(--dnd-ui-color-border-primary);
+    background-color: var(--dnd-ui-color-bg-primary);
+    min-height: 6rem;
+}
+
+.dnd-ui-character-sections-conditions {
+    grid-area: conditions;
+}
+
+.dnd-ui-character-sections-expertises {
+    grid-area: expertises;
+}
+
+.dnd-ui-character-sections-weapons {
+    grid-area: weapons;
+}
+
+.dnd-ui-character-sections-talents {
+    grid-area: talents;
+}
+
+.dnd-ui-character-sections-list {
+    margin: 0;
+    padding-left: 1rem;
+    color: var(--dnd-ui-color-text-primary);
+    display: grid;
+    gap: 0.2rem;
+}
+
+.dnd-ui-character-sections-list li {
+    line-height: 1.25;
+}
+
+.dnd-ui-character-sections-weapon-name {
+    font-weight: 600;
+    color: var(--dnd-ui-color-text-bright);
+}
+
+.dnd-ui-character-sections-weapon-meta {
+    color: var(--dnd-ui-color-text-secondary);
+    margin-left: 0.3rem;
+}
+
+.dnd-ui-character-sections-empty {
+    color: var(--dnd-ui-color-text-muted);
+    font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+    .dnd-ui-character-sections {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "conditions"
+            "expertises"
+            "weapons"
+            "talents";
+    }
+}

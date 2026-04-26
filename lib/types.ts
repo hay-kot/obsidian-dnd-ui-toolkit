@@ -39,6 +39,71 @@ export type StatsBlock = {
   dense?: boolean;
 };
 
+export type SectionListBlock = {
+  label?: string;
+  items?: string[];
+};
+
+export type WeaponSectionItem = {
+  name: string;
+  dice?: string;
+  damage?: string;
+};
+
+export type WeaponSectionBlock = {
+  label?: string;
+  items?: WeaponSectionItem[];
+};
+
+export type CharacterSectionsBlock = {
+  conditions_injuries?: SectionListBlock;
+  expertises?: SectionListBlock;
+  weapons?: WeaponSectionBlock;
+  talents?: SectionListBlock;
+};
+
+export type PurposeGoalsBlock = {
+  state_key: string;
+  purpose?: string;
+  obstacle?: string;
+  goals?: string[];
+};
+
+/** Single cell in attribute-cards (attribute, defense, or resource track). */
+export type AttributeValueStateRef = {
+  state_key: string;
+  path: string;
+  fallback?: string | number;
+};
+
+export type AttributeCardCell = {
+  label: string;
+  label_short?: string;
+  header_value?: string | number;
+  value: string | number;
+  /** Optional dynamic value pulled from persisted state by state_key + path. */
+  value_state?: AttributeValueStateRef;
+  sublabel?: string;
+};
+
+/**
+ * One realm column in attribute-cards: two attributes with defense between,
+ * plus a row of resource tracks below.
+ */
+export type AttributeRealm = {
+  label: string;
+  primary: AttributeCardCell;
+  defense: AttributeCardCell;
+  secondary: AttributeCardCell;
+  resources: AttributeCardCell[];
+};
+
+export type AttributeCardsBlock = {
+  /** Optional page title (e.g. "Attributes"). */
+  heading?: string;
+  realms: AttributeRealm[];
+};
+
 export type SkillsBlock = {
   proficiencies: string[];
   expertise: string[];
@@ -58,11 +123,26 @@ export type RawHitDice = {
   value: number | string; // Allow string for template support (e.g., "{{frontmatter.level}}")
 };
 
+export type RawHealthResource = {
+  key: string;
+  label: string;
+  max: number | string;
+  current?: number | string;
+};
+
+export type HealthResource = {
+  key: string;
+  label: string;
+  max: number;
+  current: number;
+};
+
 export type HealthBlock = {
   label: string;
   state_key: string;
   health: number | string; // Allow string for template support
   hitdice?: RawHitDice | RawHitDice[]; // Support both single and multiple hit dice
+  resources?: RawHealthResource[];
   death_saves?: boolean | "always";
   reset_on?: string | string[]; // Event type(s) that trigger a reset, defaults to 'long-rest'
 };
@@ -91,10 +171,11 @@ export type UnresolvedHealthBlock = Omit<HealthBlock, "reset_on" | "hitdice"> & 
 };
 
 // After template resolution — all values are numbers
-export type ParsedHealthBlock = Omit<HealthBlock, "reset_on" | "hitdice" | "health"> & {
+export type ParsedHealthBlock = Omit<HealthBlock, "reset_on" | "hitdice" | "health" | "resources"> & {
   health: number | string;
   reset_on?: ResetConfig[];
   hitdice?: HitDice[];
+  resources?: HealthResource[];
 };
 
 export type BadgeItem = {
@@ -147,9 +228,19 @@ export type SkillItem = {
   isProficient?: boolean;
   isExpert?: boolean;
   isHalfProficient?: boolean;
+  /** Display rank 0–5 (filled circles). Omitted: derived from legacy proficiency. */
+  rank?: number;
+  /** Optional realm key used by skill-cards grouping (e.g. physical/cognitive/spiritual). */
+  realm?: string;
   ability: string;
   label: string;
   modifier: number;
+};
+
+export type SkillRealmConfig = {
+  id: string;
+  label?: string;
+  skills?: string[];
 };
 
 export type Ability = {

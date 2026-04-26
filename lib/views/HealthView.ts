@@ -28,13 +28,54 @@ export class HealthView extends BaseView {
   }
 }
 
-class HealthMarkdown extends VueMarkdown {
+function toTemplateString(input: unknown): string | null {
+  if (typeof input === "string") {
+    return input;
+  }
+  if (input && typeof input === "object" && !Array.isArray(input)) {
+    const entries = Object.entries(input as Record<string, unknown>);
+    if (entries.length === 1 && entries[0][1] == null) {
+      const key = entries[0][0].trim();
+      const inner = key.replace(/^\{\s*/, "").replace(/\s*\}$/, "");
+      return `{{ ${inner} }}`;
+    }
+  }
+  return null;
+}
+
+function resolveTemplateNumber(
+  value: unknown,
+  fallback: number,
+  templateContext: ReturnType<typeof createTemplateContext>,
+  warnLabel: string
+): number {
+  let candidate: unknown = value;
+  const maybeTemplate = toTemplateString(candidate);
+  if (maybeTemplate && hasTemplateVariables(maybeTemplate)) {
+    candidate = processTemplate(maybeTemplate, templateContext);
+  }
+
+  if (typeof candidate === "number" && !Number.isNaN(candidate)) {
+    return Math.max(0, Math.floor(candidate));
+  }
+  if (typeof candidate === "string") {
+    const parsed = parseInt(candidate, 10);
+    if (!Number.isNaN(parsed)) {
+      return Math.max(0, parsed);
+    }
+  }
+
+  console.warn(`${warnLabel} "${String(candidate)}" is not a valid number, using ${fallback}`);
+  return fallback;
+}
+
+/** Embedded health block (HP + resources + hit dice). Kept for reuse in Character hero layout. */
+export class HealthMarkdown extends VueMarkdown {
   private source: string;
   private kv: KeyValueStore;
   private filePath: string;
   private fileContext: FileContext;
   private currentHealthBlock: ParsedHealthBlock | null = null;
-  private originalHealthValue: number | string;
   private originalHitdiceValues: Map<string, number | string> = new Map();
   private propsRef = ref<Record<string, unknown>>({});
   private mounted = false;
@@ -54,7 +95,6 @@ class HealthMarkdown extends VueMarkdown {
     this.fileContext = useFileContext(baseView.app, ctx);
 
     const parsed = HealthService.parseHealthBlock(this.source);
-    this.originalHealthValue = parsed.health;
     if (parsed.hitdice) {
       for (const hd of parsed.hitdice) {
         this.originalHitdiceValues.set(hd.dice, hd.value);
@@ -112,11 +152,12 @@ class HealthMarkdown extends VueMarkdown {
 
   private processTemplates(healthBlock: UnresolvedHealthBlock): ParsedHealthBlock {
     let health: number | string = healthBlock.health;
+    const templateContext = createTemplateContext(this.containerEl, this.fileContext);
 
     // Process health template
-    if (typeof health === "string" && hasTemplateVariables(health)) {
-      const templateContext = createTemplateContext(this.containerEl, this.fileContext);
-      const processedHealth = processTemplate(health, templateContext);
+    const maybeHealthTemplate = toTemplateString(health);
+    if (maybeHealthTemplate && hasTemplateVariables(maybeHealthTemplate)) {
+      const processedHealth = processTemplate(maybeHealthTemplate, templateContext);
       const healthValue = parseInt(processedHealth, 10);
 
       if (!isNaN(healthValue)) {
@@ -134,7 +175,25 @@ class HealthMarkdown extends VueMarkdown {
       hitdice = healthBlock.hitdice.map((hd) => this.resolveHitDice(hd));
     }
 
-    return { ...healthBlock, health, hitdice };
+    const resolvedResources = (healthBlock.resources || []).map((resource) => {
+      const resolvedMax = resolveTemplateNumber(
+        resource.max,
+        0,
+        templateContext,
+        `Template processed resource max for ${resource.key}`
+      );
+      const resolvedCurrent = resolveTemplateNumber(
+        resource.current,
+        resolvedMax,
+        templateContext,
+        `Template processed resource current for ${resource.key}`
+      );
+      return { ...resource, max: resolvedMax, current: resolvedCurrent };
+    });
+
+    const resources = HealthService.resolveHealthResources(resolvedResources);
+
+    return { ...healthBlock, health, hitdice, resources };
   }
 
   private resolveHitDice(hd: RawHitDice): HitDice {
@@ -165,15 +224,7 @@ class HealthMarkdown extends VueMarkdown {
   }
 
   private hasTemplateValues(): boolean {
-    if (typeof this.originalHealthValue === "string" && hasTemplateVariables(this.originalHealthValue)) {
-      return true;
-    }
-    for (const v of this.originalHitdiceValues.values()) {
-      if (typeof v === "string" && hasTemplateVariables(v)) {
-        return true;
-      }
-    }
-    return false;
+    return hasTemplateVariables(this.source);
   }
 
   private setupFrontmatterChangeListener() {
@@ -201,44 +252,8 @@ class HealthMarkdown extends VueMarkdown {
   }
 
   private async handleFrontmatterChange() {
-    if (!this.currentHealthBlock) return;
-
     try {
-      // Reconstruct unresolved block with original template values
-      const unresolvedHitdice: RawHitDice[] | undefined = this.currentHealthBlock.hitdice?.map((hd) => ({
-        dice: hd.dice,
-        value: this.originalHitdiceValues.get(hd.dice) ?? hd.value,
-      }));
-
-      const updatedHealthBlock = this.processTemplates({
-        ...this.currentHealthBlock,
-        health: this.originalHealthValue,
-        hitdice: unresolvedHitdice,
-      });
-
-      const oldHealth = typeof this.currentHealthBlock.health === "number" ? this.currentHealthBlock.health : 6;
-      const newHealth = typeof updatedHealthBlock.health === "number" ? updatedHealthBlock.health : 6;
-
-      const hitdiceChanged =
-        JSON.stringify(this.currentHealthBlock.hitdice) !== JSON.stringify(updatedHealthBlock.hitdice);
-
-      if (oldHealth !== newHealth || hitdiceChanged) {
-        console.debug(`Health block changed, re-rendering`);
-
-        this.currentHealthBlock = updatedHealthBlock;
-
-        const stateKey = updatedHealthBlock.state_key;
-        if (stateKey) {
-          try {
-            const currentState = await this.kv.get<HealthState>(stateKey);
-            if (currentState) {
-              this.renderComponent(updatedHealthBlock, currentState);
-            }
-          } catch (error) {
-            console.error("Error loading state during frontmatter update:", error);
-          }
-        }
-      }
+      await this.processAndRender();
     } catch (error) {
       console.error("Error handling frontmatter change:", error);
     }
@@ -291,6 +306,7 @@ class HealthMarkdown extends VueMarkdown {
         hitdiceUsed: defaultState.hitdiceUsed,
         deathSaveSuccesses: 0,
         deathSaveFailures: 0,
+        resources: defaultState.resources,
       };
 
       await this.kv.set(stateKey, resetState);

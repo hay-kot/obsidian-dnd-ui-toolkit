@@ -1,5 +1,5 @@
 import * as Utils from "lib/utils/utils";
-import { HealthBlock, ParsedHealthBlock, UnresolvedHealthBlock } from "lib/types";
+import { HealthBlock, ParsedHealthBlock, RawHealthResource, UnresolvedHealthBlock } from "lib/types";
 import { parse } from "yaml";
 import { normalizeResetConfig } from "lib/domains/events";
 
@@ -9,6 +9,7 @@ export interface HealthState {
   hitdiceUsed: number | Record<string, number>; // Support both legacy number and new per-dice-type tracking
   deathSaveSuccesses: number;
   deathSaveFailures: number;
+  resources?: Record<string, number>;
 }
 
 // Type guards for better type safety
@@ -78,17 +79,26 @@ export function getDefaultHealthState(block: ParsedHealthBlock): HealthState {
     }
   }
 
+  const resources: Record<string, number> = {};
+  for (const resource of block.resources || []) {
+    resources[resource.key] = Math.max(0, Math.min(resource.current, resource.max));
+  }
+
   return {
     current: healthValue,
     temporary: 0,
     hitdiceUsed,
     deathSaveSuccesses: 0,
     deathSaveFailures: 0,
+    resources: Object.keys(resources).length ? resources : undefined,
   };
 }
 
 // Helper function to migrate old state format to new format when needed
 export function migrateHealthState(state: HealthState, block: ParsedHealthBlock): HealthState {
+  let nextState: HealthState = state;
+  let changed = false;
+
   // If we have multiple hit dice types but state is still using a number
   if (block.hitdice && block.hitdice.length > 1 && typeof state.hitdiceUsed === "number") {
     const newHitdiceUsed: Record<string, number> = {};
@@ -107,22 +117,62 @@ export function migrateHealthState(state: HealthState, block: ParsedHealthBlock)
       if (remainingUsed <= 0) break;
     }
 
-    return {
-      ...state,
+    nextState = {
+      ...nextState,
       hitdiceUsed: newHitdiceUsed,
     };
+    changed = true;
   }
 
   // If we have a single hit die type but state is using a record (downgrade scenario)
-  if (block.hitdice && block.hitdice.length === 1 && typeof state.hitdiceUsed === "object") {
+  if (block.hitdice && block.hitdice.length === 1 && typeof nextState.hitdiceUsed === "object") {
     const dice = block.hitdice[0].dice;
-    const used = state.hitdiceUsed[dice] || 0;
+    const used = nextState.hitdiceUsed[dice] || 0;
 
-    return {
-      ...state,
+    nextState = {
+      ...nextState,
       hitdiceUsed: used,
     };
+    changed = true;
   }
 
-  return state;
+  if (block.resources && block.resources.length > 0) {
+    const existing = nextState.resources || {};
+    const migrated: Record<string, number> = {};
+    for (const resource of block.resources) {
+      const fallback = Math.max(0, Math.min(resource.current, resource.max));
+      const existingValue = typeof existing[resource.key] === "number" ? existing[resource.key] : fallback;
+      migrated[resource.key] = Math.max(0, Math.min(existingValue, resource.max));
+    }
+    const sameResources = JSON.stringify(nextState.resources || {}) === JSON.stringify(migrated);
+    if (!sameResources) {
+      nextState = { ...nextState, resources: migrated };
+      changed = true;
+    }
+  }
+
+  return changed ? nextState : state;
+}
+
+export function normalizeResourceValue(value: number | string | undefined, fallback: number): number {
+  if (typeof value === "number" && !Number.isNaN(value)) return Math.max(0, Math.floor(value));
+  if (typeof value === "string") {
+    const parsed = parseInt(value, 10);
+    if (!Number.isNaN(parsed)) return Math.max(0, parsed);
+  }
+  return fallback;
+}
+
+export function resolveHealthResources(resources: RawHealthResource[] | undefined): ParsedHealthBlock["resources"] {
+  if (!resources || !resources.length) return undefined;
+  return resources
+    .map((resource) => {
+      const key = String(resource.key || "").trim();
+      if (!key) return null;
+      const label = String(resource.label || key);
+      const max = normalizeResourceValue(resource.max, 0);
+      const current = normalizeResourceValue(resource.current, max);
+      return { key, label, max, current };
+    })
+    .filter((x): x is NonNullable<typeof x> => x !== null);
 }

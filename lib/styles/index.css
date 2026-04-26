@@ -3,6 +3,10 @@
 /* Components */
 @import "./components/skill-card.css";
 @import "./components/ability-cards.css";
+@import "./components/attribute-cards.css";
+@import "./components/character-hero.css";
+@import "./components/character-sections.css";
+@import "./components/purpose-goals.css";
 @import "./components/health-card.css";
 @import "./components/badge.css";
 @import "./components/consumables.css";

@@ -10,6 +10,10 @@ import { InitiativeView } from "lib/views/InitiativeView";
 import { SpellComponentsView } from "lib/views/SpellComponentsView";
 import { EventButtonsView } from "lib/views/EventButtonsView";
 import { RawAbilityView } from "lib/views/RawAbilityView";
+import { AttributeCardsView } from "lib/views/AttributeCardsView";
+import { CharacterHeroView } from "lib/views/CharacterHeroView";
+import { CharacterSectionsView } from "lib/views/CharacterSectionsView";
+import { PurposeGoalsView } from "lib/views/PurposeGoalsView";
 import { RawSkillsView } from "lib/views/RawSkillsView";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { JsonDataStore } from "./lib/services/kv/local-file-store";
@@ -90,6 +94,10 @@ export default class DndUIToolkitPlugin extends Plugin {
       new SpellComponentsView(app),
       new EventButtonsView(app),
       new RawAbilityView(app),
+      new AttributeCardsView(app, kv),
+      new CharacterHeroView(app, kv),
+      new CharacterSectionsView(app),
+      new PurposeGoalsView(app, kv),
       new RawSkillsView(app),
 
       // Dynamic/Stateful

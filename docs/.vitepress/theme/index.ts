@@ -2,6 +2,7 @@ import DefaultTheme from "vitepress/theme";
 import "./custom.css";
 import CustomLayout from "./CustomLayout.vue";
 import AbilityCardsDemo from "./demos/AbilityCardsDemo.vue";
+import AttributeCardsDemo from "./demos/AttributeCardsDemo.vue";
 import BadgesDemo from "./demos/BadgesDemo.vue";
 import ConsumablesDemo from "./demos/ConsumablesDemo.vue";
 import DaggerHeartAbilityDemo from "./demos/DaggerHeartAbilityDemo.vue";
@@ -18,6 +19,7 @@ export default {
   Layout: CustomLayout,
   enhanceApp({ app }) {
     app.component("AbilityCardsDemo", AbilityCardsDemo);
+    app.component("AttributeCardsDemo", AttributeCardsDemo);
     app.component("BadgesDemo", BadgesDemo);
     app.component("ConsumablesDemo", ConsumablesDemo);
     app.component("DaggerHeartAbilityDemo", DaggerHeartAbilityDemo);

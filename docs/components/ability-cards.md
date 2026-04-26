@@ -2,6 +2,10 @@
 
 Ability Cards are a headless, system-agnostic card component for displaying ability-style data. Each card shows a label, a value, and an optional sublabel. No frontmatter integration or modifier calculation is performed — you supply the exact values to display.
 
+::: tip Grouped attributes (e.g. physical / cognitive / spiritual)
+For a **multi-realm** layout with a **shield-shaped defense** between two attribute cards and optional resource rows below, use [Attribute Cards](/components/attribute-cards) with the `attribute-cards` code block. The flat `ability-cards` layout remains for simple grids.
+:::
+
 ::: info System-Agnostic Components
 System-agnostic component support is limited but will continue to improve in future releases. Join the [discussion on GitHub](https://github.com/hay-kot/obsidian-dnd-ui-toolkit/discussions/56) to share feedback and ideas.
 :::

@@ -26,6 +26,64 @@ function makeProps(overrides?: { static?: Partial<ParsedHealthBlock>; state?: Pa
 }
 
 describe("HealthCard", () => {
+  it("renders additional resources with current/max", () => {
+    const wrapper = mount(HealthCard, {
+      props: makeProps({
+        static: {
+          resources: [
+            { key: "focus", label: "Focus", max: 10, current: 8 },
+            { key: "investiture", label: "Investiture", max: 12, current: 4 },
+          ],
+        },
+        state: {
+          resources: { focus: 6, investiture: 3 },
+        },
+      }),
+    });
+
+    expect(wrapper.text()).toContain("Focus");
+    expect(wrapper.text()).toContain("6");
+    expect(wrapper.text()).toContain("/ 10");
+    expect(wrapper.text()).toContain("Investiture");
+    expect(wrapper.text()).toContain("3");
+    expect(wrapper.text()).toContain("/ 12");
+  });
+
+  it("restores and loses a resource without temp buttons", async () => {
+    const wrapper = mount(HealthCard, {
+      props: makeProps({
+        static: {
+          resources: [{ key: "focus", label: "Focus", max: 10, current: 8 }],
+        },
+        state: {
+          resources: { focus: 5 },
+        },
+      }),
+    });
+
+    const restoreButton = wrapper
+      .findAll("button.dnd-ui-health-heal")
+      .find((b) => b.text().trim() === "Restore");
+    const loseButton = wrapper
+      .findAll("button.dnd-ui-health-damage")
+      .find((b) => b.text().trim() === "Lose");
+
+    expect(restoreButton).toBeDefined();
+    expect(loseButton).toBeDefined();
+
+    await restoreButton!.trigger("click");
+    const restore = wrapper.emitted("update:state");
+    expect(restore).toHaveLength(1);
+    expect((restore![0][0] as HealthState).resources?.focus).toBe(6);
+
+    await loseButton!.trigger("click");
+    const all = wrapper.emitted("update:state");
+    expect(all).toHaveLength(2);
+    expect((all![1][0] as HealthState).resources?.focus).toBe(4);
+
+    expect(wrapper.findAll(".dnd-ui-health-temp")).toHaveLength(1);
+  });
+
   it("renders current and max health", () => {
     const wrapper = mount(HealthCard, { props: makeProps() });
 

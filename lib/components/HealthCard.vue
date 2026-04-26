@@ -14,6 +14,7 @@ const emit = defineEmits<{
 }>();
 
 const inputValue = ref("1");
+const resourceInputs = ref<Record<string, string>>({});
 
 const maxHealth = computed(() => (typeof props.static.health === "number" ? props.static.health : 6));
 
@@ -24,6 +25,54 @@ const hitDiceLabelWidth = computed(() => {
 });
 
 const healthPercentage = computed(() => Math.max(0, Math.min(100, (props.state.current / maxHealth.value) * 100)));
+const resources = computed(() => props.static.resources || []);
+
+function getResourceCurrent(key: string, fallback: number): number {
+  return props.state.resources?.[key] ?? fallback;
+}
+
+function resourcePercentage(key: string, max: number): number {
+  if (max <= 0) return 0;
+  const current = getResourceCurrent(key, max);
+  return Math.max(0, Math.min(100, (current / max) * 100));
+}
+
+function getResourceInputValue(key: string): string {
+  return resourceInputs.value[key] ?? "1";
+}
+
+function setResourceInputValue(key: string, value: string) {
+  resourceInputs.value = {
+    ...resourceInputs.value,
+    [key]: value,
+  };
+}
+
+function handleResourceChange(key: string, max: number, delta: number) {
+  const input = parseInt(getResourceInputValue(key), 10) || 0;
+  if (input <= 0) return;
+
+  const current = getResourceCurrent(key, max);
+  const next = Math.max(0, Math.min(max, current + delta * input));
+
+  emit("update:state", {
+    ...props.state,
+    resources: {
+      ...(props.state.resources || {}),
+      [key]: next,
+    },
+  });
+
+  setResourceInputValue(key, "1");
+}
+
+function handleResourceRestore(key: string, max: number) {
+  handleResourceChange(key, max, 1);
+}
+
+function handleResourceLose(key: string, max: number) {
+  handleResourceChange(key, max, -1);
+}
 
 function handleHeal() {
   const value = parseInt(inputValue.value) || 0;
@@ -166,6 +215,50 @@ function getHitDiceUsed(hd: { dice: string; value: number }): number {
       <button type="button" class="dnd-ui-health-button dnd-ui-health-damage" @click="handleDamage">Damage</button>
       <button type="button" class="dnd-ui-health-button dnd-ui-health-temp" @click="handleTempHP">Temp HP</button>
     </div>
+
+    <template v-if="resources.length">
+      <div class="dnd-ui-health-divider" />
+      <div class="dnd-ui-health-resource-row">
+        <div v-for="resource in resources" :key="resource.key" class="dnd-ui-health-resource">
+          <div class="dnd-ui-health-card-header">
+            <div class="dnd-ui-generic-card-label">{{ resource.label }}</div>
+            <div class="dnd-ui-health-value">
+              {{ getResourceCurrent(resource.key, resource.current) }}
+              <span class="dnd-ui-health-max">/ {{ resource.max }}</span>
+            </div>
+          </div>
+          <div class="dnd-ui-health-progress-container">
+            <div class="dnd-ui-health-progress-bar" :style="{ width: `${resourcePercentage(resource.key, resource.max)}%` }" />
+          </div>
+          <div class="dnd-ui-health-controls dnd-ui-health-resource-controls">
+            <input
+              type="number"
+              class="dnd-ui-health-input dnd-ui-health-resource-input"
+              :value="getResourceInputValue(resource.key)"
+              placeholder="0"
+              :aria-label="`${resource.label} amount`"
+              @input="setResourceInputValue(resource.key, ($event.target as HTMLInputElement).value)"
+            />
+            <button
+              type="button"
+              class="dnd-ui-health-button dnd-ui-health-heal"
+              :aria-label="`Restore ${resource.label}`"
+              @click="handleResourceRestore(resource.key, resource.max)"
+            >
+              Restore
+            </button>
+            <button
+              type="button"
+              class="dnd-ui-health-button dnd-ui-health-damage"
+              :aria-label="`Lose ${resource.label}`"
+              @click="handleResourceLose(resource.key, resource.max)"
+            >
+              Lose
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
 
     <template v-if="props.static.hitdice && props.static.hitdice.length > 0">
       <div class="dnd-ui-health-divider" />

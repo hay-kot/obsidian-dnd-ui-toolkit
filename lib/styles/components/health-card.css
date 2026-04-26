@@ -111,6 +111,46 @@
     margin: 0.5rem 0;
 }
 
+.dnd-ui-health-resource-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+    gap: 0.65rem 0.75rem;
+    width: 100%;
+    align-items: start;
+}
+
+.dnd-ui-health-resource {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--dnd-ui-std-gap);
+}
+
+.dnd-ui-health-resource-controls {
+    flex-wrap: nowrap;
+    gap: 0.35rem;
+}
+
+.dnd-ui-health-resource-input {
+    width: 2.75rem !important;
+    min-width: 2.75rem;
+    padding: 0.2rem 0.15rem !important;
+    font-size: 0.8rem;
+}
+
+.dnd-ui-health-resource-controls .dnd-ui-health-button {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0.25rem 0.3rem;
+    font-size: 0.72rem;
+}
+
+@media (max-width: 420px) {
+    .dnd-ui-health-resource-row {
+        grid-template-columns: 1fr;
+    }
+}
+
 .dnd-ui-hit-dice-container {
     width: 100%;
     margin-top: 0.3rem;

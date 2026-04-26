@@ -31,7 +31,9 @@ export default withMermaid(
 					text: "General Components",
 					items: [
 						{ text: "Ability Cards", link: "/components/ability-cards" },
+						{ text: "Attribute Cards", link: "/components/attribute-cards" },
 						{ text: "Badges", link: "/components/badges" },
+						{ text: "Character hero", link: "/components/character-hero" },
 						{ text: "Consumables", link: "/components/consumables" },
 						{ text: "Skill Cards", link: "/components/skill-cards" },
 						{ text: "Stat Cards", link: "/components/stat-cards" },

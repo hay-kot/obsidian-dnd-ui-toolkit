@@ -267,6 +267,56 @@ hitdice:
     });
   });
 
+  describe("resource template resolution", () => {
+    it("resolves templates in resource max/current values", async () => {
+      processTemplateMock.mockImplementation((text: string) => {
+        if (text.includes("max_focus")) return "10";
+        if (text.includes("current_focus")) return "7";
+        return text;
+      });
+
+      const yaml = `state_key: hp_resource_templates
+health: 20
+resources:
+  - key: focus
+    label: Focus
+    max: "{{ frontmatter.max_focus }}"
+    current: "{{ frontmatter.current_focus }}"`;
+
+      await renderAndGetChild(yaml);
+
+      expect(processTemplateMock).toHaveBeenCalledWith("{{ frontmatter.max_focus }}", expect.any(Object));
+      expect(processTemplateMock).toHaveBeenCalledWith("{{ frontmatter.current_focus }}", expect.any(Object));
+
+      const state = await kv.get("hp_resource_templates");
+      expect(state).toMatchObject({ resources: { focus: 7 } });
+    });
+
+    it("handles unquoted template syntax in resource max/current values", async () => {
+      processTemplateMock.mockImplementation((text: string) => {
+        if (text.includes("max_focus")) return "12";
+        if (text.includes("current_focus")) return "9";
+        return text;
+      });
+
+      const yaml = `state_key: hp_resource_templates_unquoted
+health: 20
+resources:
+  - key: focus
+    label: Focus
+    max: {{ frontmatter.max_focus }}
+    current: {{ frontmatter.current_focus }}`;
+
+      await renderAndGetChild(yaml);
+
+      expect(processTemplateMock).toHaveBeenCalledWith("{{ frontmatter.max_focus }}", expect.any(Object));
+      expect(processTemplateMock).toHaveBeenCalledWith("{{ frontmatter.current_focus }}", expect.any(Object));
+
+      const state = await kv.get("hp_resource_templates_unquoted");
+      expect(state).toMatchObject({ resources: { focus: 9 } });
+    });
+  });
+
   describe("state persistence", () => {
     it("should use saved state when it exists", async () => {
       await kv.set("existing_hp", {

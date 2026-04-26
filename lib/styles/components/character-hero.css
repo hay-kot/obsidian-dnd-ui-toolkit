@@ -1,0 +1,58 @@
+/* Character hero: heading, full-width badges, then portrait | health */
+.dnd-ui-character-hero {
+  width: 100%;
+  margin: 0.5rem 0 1rem 0;
+  color: var(--dnd-ui-color-text-primary);
+}
+
+.dnd-ui-character-hero-heading {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: var(--dnd-ui-color-text-primary);
+}
+
+.dnd-ui-character-hero-badges {
+  width: 100%;
+  min-width: 0;
+  margin: 0 0 0.65rem 0;
+}
+
+.dnd-ui-character-hero-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+  align-items: start;
+}
+
+.dnd-ui-character-hero-portrait {
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.dnd-ui-character-hero-portrait img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.35rem;
+  object-fit: contain;
+}
+
+.dnd-ui-character-hero-missing {
+  font-size: 0.8rem;
+  color: var(--dnd-ui-color-text-muted);
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.dnd-ui-character-hero-health {
+  min-width: 0;
+  width: 100%;
+}
+
+@media (max-width: 720px) {
+  .dnd-ui-character-hero-body {
+    grid-template-columns: 1fr;
+  }
+}
