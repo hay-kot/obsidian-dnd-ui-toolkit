@@ -16,6 +16,11 @@ export abstract class TemplateAwareComponent extends VueMarkdown {
   protected fileContext: FileContext;
   protected source: string;
   protected isTemplate = false;
+  /**
+   * Set to false in components that themselves publish `abilities:changed`,
+   * so they don't subscribe to their own event and recurse on re-render.
+   */
+  protected listenToAbilitiesChange = true;
 
   constructor(el: HTMLElement, source: string, app: App, ctx: MarkdownPostProcessorContext) {
     super(el);
@@ -56,11 +61,13 @@ export abstract class TemplateAwareComponent extends VueMarkdown {
       })
     );
 
-    this.addUnloadFn(
-      this.fileContext.onAbilitiesChange(() => {
-        if (!this.isTemplate) return;
-        this.processAndRender();
-      })
-    );
+    if (this.listenToAbilitiesChange) {
+      this.addUnloadFn(
+        this.fileContext.onAbilitiesChange(() => {
+          if (!this.isTemplate) return;
+          this.processAndRender();
+        })
+      );
+    }
   }
 }

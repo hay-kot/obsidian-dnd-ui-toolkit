@@ -56,7 +56,7 @@ class SkillsComponent extends TemplateAwareComponent {
       const isExpert = skillsBlock.expertise.some((x) => x.toLowerCase() === skill.label.toLowerCase());
 
       const skillAbility = abilityBlock.abilities[skill.ability as keyof AbilityBlock["abilities"]];
-      if (!skillAbility) {
+      if (skillAbility === undefined) {
         throw new Error(`Skill ${skill.ability} not found in Skills list`);
       }
 

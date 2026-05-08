@@ -15,6 +15,8 @@ export class AbilityScoreView extends BaseView {
 }
 
 class AbilityScoreComponent extends TemplateAwareComponent {
+  protected listenToAbilitiesChange = false;
+
   protected processAndRender() {
     const raw = AbilityService.parseAbilityBlock(this.source);
     this.setupTemplates([this.source]);

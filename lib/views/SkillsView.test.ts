@@ -240,4 +240,37 @@ describe("SkillsView", () => {
 
     parseAbilityBlockSpy.mockRestore();
   });
+
+  it("renders skills when an ability score resolves to 0 (template fallback)", async () => {
+    const parseAbilityBlockSpy = vi.spyOn(AbilityService, "parseAbilityBlockFromDocument");
+    // Simulates resolveAbilityBlock falling back to 0 for an unresolvable template:
+    // a strict !skillAbility check would treat 0 as missing and throw.
+    parseAbilityBlockSpy.mockReturnValue({
+      abilities: {
+        strength: 0,
+        dexterity: 14,
+        constitution: 12,
+        intelligence: 10,
+        wisdom: 8,
+        charisma: 16,
+      },
+      bonuses: [],
+      proficiencies: [],
+    });
+
+    const skillsYaml = `proficiencies:
+  - athletics`;
+
+    skillsView.render(skillsYaml, mockElement, mockContext);
+    await addedChild.onload();
+
+    expect(addedChild.mount).toHaveBeenCalled();
+    const props = addedChild.mount.mock.calls[0][1];
+    const athletics = props.items.find((i: any) => i.label.toLowerCase() === "athletics");
+    expect(athletics).toBeDefined();
+    // Strength 0 → modifier -5; +3 proficiency → -2.
+    expect(athletics.modifier).toBe(-2);
+
+    parseAbilityBlockSpy.mockRestore();
+  });
 });
