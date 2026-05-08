@@ -54,6 +54,25 @@ export function processTemplate(text: string, context: TemplateContext): string 
   }
 }
 
+/**
+ * Coerces a (possibly template-processed) string into a number for numeric component
+ * fields. Falls back to 0 when the value is not numeric. If the original source
+ * contained template variables, a typo or compile failure can leave the result empty
+ * or non-numeric — in that case we emit a console.warn so the failure leaves a
+ * breadcrumb instead of silently rendering as 0.
+ */
+export function coerceNumericTemplate(processed: string, source: string): number {
+  const trimmed = processed.trim();
+  const n = Number(trimmed);
+  if (trimmed !== "" && Number.isFinite(n)) return n;
+  if (hasTemplateVariables(source)) {
+    console.warn(
+      `[dnd-ui-toolkit] Template did not resolve to a number: ${JSON.stringify(processed)} (from ${JSON.stringify(source)})`
+    );
+  }
+  return 0;
+}
+
 export function createTemplateContext(el: HTMLElement, fileContext: FileContext): TemplateContext {
   const frontmatter = fileContext.frontmatter();
 
