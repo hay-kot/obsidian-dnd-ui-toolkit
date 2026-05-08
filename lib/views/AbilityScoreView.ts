@@ -1,18 +1,25 @@
 import { BaseView } from "./BaseView";
-import { VueMarkdown } from "./VueMarkdown";
+import { TemplateAwareComponent } from "./TemplateAwareComponent";
 import AbilityCards from "../components/AbilityCards.vue";
 import { MarkdownPostProcessorContext } from "obsidian";
 import * as AbilityService from "lib/domains/abilities";
-import { useFileContext } from "./filecontext";
 import { msgbus } from "lib/services/event-bus";
 
 export class AbilityScoreView extends BaseView {
   public codeblock = "ability";
 
   public render(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): void {
-    const abilityBlock = AbilityService.parseAbilityBlock(source);
-    const fc = useFileContext(this.app, ctx);
-    const frontmatter = fc.frontmatter();
+    const cmp = new AbilityScoreComponent(el, source, this.app, ctx);
+    ctx.addChild(cmp);
+  }
+}
+
+class AbilityScoreComponent extends TemplateAwareComponent {
+  protected processAndRender() {
+    const raw = AbilityService.parseAbilityBlock(this.source);
+    this.setupTemplates([this.source]);
+    const frontmatter = this.fileContext.frontmatter();
+    const abilityBlock = AbilityService.resolveAbilityBlock(raw, frontmatter);
 
     const abilities = (Object.entries(abilityBlock.abilities) as [string, number][]).map(([key, value]) => {
       const isProficient = abilityBlock.proficiencies.includes(key);
@@ -41,10 +48,8 @@ export class AbilityScoreView extends BaseView {
       };
     });
 
-    msgbus.publish(ctx.sourcePath, "abilities:changed", undefined);
+    msgbus.publish(this.fileContext.filepath, "abilities:changed", undefined);
 
-    const child = new VueMarkdown(el);
-    child.mount(AbilityCards, { abilities });
-    ctx.addChild(child);
+    this.mount(AbilityCards, { abilities });
   }
 }

@@ -1,20 +1,35 @@
 import { BaseView } from "./BaseView";
-import { VueMarkdown } from "./VueMarkdown";
+import { TemplateAwareComponent } from "./TemplateAwareComponent";
 import SkillCards from "../components/SkillCards.vue";
 import { MarkdownPostProcessorContext } from "obsidian";
 import * as AbilityService from "lib/domains/abilities";
 import * as SkillsService from "lib/domains/skills";
 import { AbilityBlock, AbilityScores, SkillItem } from "lib/types";
-import { useFileContext } from "./filecontext";
+import { extractFirstCodeBlock } from "../utils/codeblock-extractor";
 
 export class SkillsView extends BaseView {
   public codeblock = "skills";
 
   public render(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): void {
-    let abilityBlock: AbilityBlock;
+    const cmp = new SkillsComponent(el, source, this.app, ctx);
+    ctx.addChild(cmp);
+  }
+}
 
+class SkillsComponent extends TemplateAwareComponent {
+  protected processAndRender() {
+    const skillsBlock = SkillsService.parseSkillsBlock(this.source);
+
+    const sectionInfo = this.fileContext.md().getSectionInfo(this.containerEl);
+    const documentText = sectionInfo?.text || "";
+    const abilityBlockSrc = extractFirstCodeBlock(documentText, "ability") ?? "";
+
+    this.setupTemplates([this.source, abilityBlockSrc]);
+
+    const frontmatter = this.fileContext.frontmatter();
+    let abilityBlock: AbilityBlock;
     try {
-      abilityBlock = AbilityService.parseAbilityBlockFromDocument(el, ctx);
+      abilityBlock = AbilityService.parseAbilityBlockFromDocument(this.containerEl, this.fileContext.md(), frontmatter);
     } catch {
       console.debug("No ability block found for skills view, using default values");
       abilityBlock = {
@@ -31,9 +46,6 @@ export class SkillsView extends BaseView {
       };
     }
 
-    const skillsBlock = SkillsService.parseSkillsBlock(source);
-    const fc = useFileContext(this.app, ctx);
-    const frontmatter = fc.frontmatter();
     const items: SkillItem[] = [];
 
     for (const skill of SkillsService.Skills) {
@@ -76,8 +88,6 @@ export class SkillsView extends BaseView {
       });
     }
 
-    const child = new VueMarkdown(el);
-    child.mount(SkillCards, { items });
-    ctx.addChild(child);
+    this.mount(SkillCards, { items });
   }
 }
