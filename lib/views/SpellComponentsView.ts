@@ -86,9 +86,10 @@ export class SpellComponentsView extends BaseView {
     try {
       let abilityBlock;
       if (abilityBlockContent) {
-        abilityBlock = AbilityService.parseAbilityBlock(abilityBlockContent);
+        const raw = AbilityService.parseAbilityBlock(abilityBlockContent);
+        abilityBlock = AbilityService.resolveAbilityBlock(raw, frontmatter);
       } else {
-        abilityBlock = AbilityService.parseAbilityBlockFromDocument(el, ctx);
+        abilityBlock = AbilityService.parseAbilityBlockFromDocument(el, ctx, frontmatter);
       }
 
       const baseScore = abilityBlock.abilities[abilityName as keyof AbilityScores];

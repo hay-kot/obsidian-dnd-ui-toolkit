@@ -94,7 +94,7 @@ export function createTemplateContext(el: HTMLElement, fileContext: FileContext)
 
   try {
     // Try to parse abilities from the document
-    const abilityBlock = parseAbilityBlockFromDocument(el, fileContext.md());
+    const abilityBlock = parseAbilityBlockFromDocument(el, fileContext.md(), frontmatter);
 
     // Calculate total scores including bonuses that modify the score
     abilities = {

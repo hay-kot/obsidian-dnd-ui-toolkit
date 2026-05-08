@@ -2,13 +2,15 @@ import { describe, it, expect, vi } from "vitest";
 import {
   parseAbilityBlock,
   parseAbilityBlockFromDocument,
+  resolveAbilityBlock,
   calculateModifier,
   formatModifier,
   getModifiersForAbility,
   getTotalScore,
   getSavingThrowBonus,
+  RawAbilityBlock,
 } from "./abilities";
-import { GenericBonus } from "../types";
+import { Frontmatter, GenericBonus } from "../types";
 
 describe("abilities", () => {
   describe("parseAbilityBlock", () => {
@@ -299,6 +301,113 @@ abilities:
       } as any;
 
       expect(() => parseAbilityBlockFromDocument(mockElement, mockContext)).toThrow("No ability code blocks found");
+    });
+  });
+
+  describe("resolveAbilityBlock", () => {
+    function rawBlock(abilities: Partial<RawAbilityBlock["abilities"]>): RawAbilityBlock {
+      return {
+        abilities: {
+          strength: 0,
+          dexterity: 0,
+          constitution: 0,
+          intelligence: 0,
+          wisdom: 0,
+          charisma: 0,
+          ...abilities,
+        },
+        bonuses: [],
+        proficiencies: [],
+      };
+    }
+
+    it("passes numeric values through unchanged", () => {
+      const raw = rawBlock({
+        strength: 14,
+        dexterity: 12,
+        constitution: 13,
+        intelligence: 10,
+        wisdom: 16,
+        charisma: 8,
+      });
+
+      const result = resolveAbilityBlock(raw, null);
+
+      expect(result.abilities).toEqual({
+        strength: 14,
+        dexterity: 12,
+        constitution: 13,
+        intelligence: 10,
+        wisdom: 16,
+        charisma: 8,
+      });
+    });
+
+    it("resolves frontmatter templates to numbers", () => {
+      const raw = rawBlock({ strength: "{{frontmatter.str}}" });
+      const fm: Frontmatter = { proficiency_bonus: 2, str: 16 };
+
+      const result = resolveAbilityBlock(raw, fm);
+
+      expect(result.abilities.strength).toBe(16);
+    });
+
+    it("falls back to 0 and warns when a template references a missing frontmatter key", () => {
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+      const raw = rawBlock({ strength: "{{frontmatter.str}}" });
+      const fm: Frontmatter = { proficiency_bonus: 2 };
+
+      const result = resolveAbilityBlock(raw, fm);
+
+      expect(result.abilities.strength).toBe(0);
+      expect(warnSpy).toHaveBeenCalledTimes(1);
+      expect(warnSpy.mock.calls[0][0]).toContain("strength");
+
+      warnSpy.mockRestore();
+    });
+
+    it("handles a mix of templated and non-templated abilities", () => {
+      const raw = rawBlock({
+        strength: "{{frontmatter.str}}",
+        dexterity: 12,
+        constitution: "{{frontmatter.con}}",
+        intelligence: 10,
+        wisdom: 14,
+        charisma: 8,
+      });
+      const fm: Frontmatter = { proficiency_bonus: 2, str: 18, con: 15 };
+
+      const result = resolveAbilityBlock(raw, fm);
+
+      expect(result.abilities).toEqual({
+        strength: 18,
+        dexterity: 12,
+        constitution: 15,
+        intelligence: 10,
+        wisdom: 14,
+        charisma: 8,
+      });
+    });
+
+    it("preserves bonuses and proficiencies on the resolved block", () => {
+      const raw: RawAbilityBlock = {
+        abilities: {
+          strength: 14,
+          dexterity: 0,
+          constitution: 0,
+          intelligence: 0,
+          wisdom: 0,
+          charisma: 0,
+        },
+        bonuses: [{ name: "Racial", target: "strength", value: 2 }],
+        proficiencies: ["strength"],
+      };
+
+      const result = resolveAbilityBlock(raw, null);
+
+      expect(result.bonuses).toEqual([{ name: "Racial", target: "strength", value: 2 }]);
+      expect(result.proficiencies).toEqual(["strength"]);
     });
   });
 
