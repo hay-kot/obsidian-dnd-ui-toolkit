@@ -24,8 +24,8 @@ export abstract class TemplateAwareComponent extends VueMarkdown {
   }
 
   async onload() {
-    this.setupListeners();
     this.processAndRender();
+    this.setupListeners();
   }
 
   protected abstract processAndRender(): void;
@@ -35,11 +35,13 @@ export abstract class TemplateAwareComponent extends VueMarkdown {
   }
 
   /**
-   * Checks an array of string values for template variables. If any are found,
-   * creates and returns a TemplateContext and marks this component as template-aware.
+   * Inspects an array of source strings for template variables. If any are found,
+   * marks this component as template-aware (so frontmatter/ability change events
+   * trigger re-renders) and returns a TemplateContext for use by the subclass.
+   * Returns null when no templates are present, signaling a static-only render.
    */
-  protected detectTemplates(values: string[]): TemplateContext | null {
-    const hasTemplates = values.some((v) => hasTemplateVariables(v));
+  protected setupTemplates(sources: string[]): TemplateContext | null {
+    const hasTemplates = sources.some((v) => hasTemplateVariables(v));
     if (!hasTemplates) return null;
 
     this.isTemplate = true;

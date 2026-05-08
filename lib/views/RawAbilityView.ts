@@ -1,7 +1,7 @@
 import { BaseView } from "./BaseView";
 import AbilityCards from "../components/AbilityCards.vue";
 import { MarkdownPostProcessorContext } from "obsidian";
-import { hasTemplateVariables, processTemplate } from "../utils/template";
+import { coerceNumericTemplate, processTemplate } from "../utils/template";
 import { TemplateAwareComponent } from "./TemplateAwareComponent";
 
 export class RawAbilityView extends BaseView {
@@ -18,35 +18,27 @@ class RawAbilityComponent extends TemplateAwareComponent {
     const parsed = this.parseSource();
     const items = Array.isArray(parsed?.items) ? parsed.items : [];
 
-    const templateContext = this.detectTemplates(
-      items.flatMap((item: any) => [
-        String(item.label || ""),
-        String(item.label_short || ""),
-        String(item.header_value || ""),
-        String(item.value || ""),
-        String(item.sublabel || ""),
-      ])
-    );
+    const sources = items.map((item: any) => ({
+      label: String(item.label ?? ""),
+      labelShort: String(item.label_short ?? ""),
+      headerValue: String(item.header_value ?? ""),
+      value: String(item.value ?? ""),
+      sublabel: String(item.sublabel ?? ""),
+    }));
 
-    const abilities = items.map((item: any) => {
-      let label = String(item.label || "");
-      let labelShort = String(item.label_short || "");
-      let headerValue = String(item.header_value || "0");
-      let value = String(item.value || "");
-      let sublabel = String(item.sublabel || "");
+    const templateContext = this.setupTemplates(sources.flatMap((s: { [k: string]: string }) => Object.values(s)));
 
-      if (templateContext) {
-        if (hasTemplateVariables(label)) label = processTemplate(label, templateContext);
-        if (hasTemplateVariables(labelShort)) labelShort = processTemplate(labelShort, templateContext);
-        if (hasTemplateVariables(headerValue)) headerValue = processTemplate(headerValue, templateContext);
-        if (hasTemplateVariables(value)) value = processTemplate(value, templateContext);
-        if (hasTemplateVariables(sublabel)) sublabel = processTemplate(sublabel, templateContext);
-      }
+    const abilities = sources.map((s: { [k: string]: string }) => {
+      const label = templateContext ? processTemplate(s.label, templateContext) : s.label;
+      const labelShort = templateContext ? processTemplate(s.labelShort, templateContext) : s.labelShort;
+      const headerValue = templateContext ? processTemplate(s.headerValue, templateContext) : s.headerValue;
+      const value = templateContext ? processTemplate(s.value, templateContext) : s.value;
+      const sublabel = templateContext ? processTemplate(s.sublabel, templateContext) : s.sublabel;
 
       return {
         label,
         labelShort,
-        total: Number(headerValue) || 0,
+        total: coerceNumericTemplate(headerValue, s.headerValue),
         modifier: value,
         isProficient: false,
         savingThrow: sublabel,

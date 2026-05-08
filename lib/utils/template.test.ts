@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from "vitest";
-import { hasTemplateVariables, processTemplate, createTemplateContext } from "./template";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { coerceNumericTemplate, hasTemplateVariables, processTemplate, createTemplateContext } from "./template";
 import { calculateModifier } from "lib/domains/abilities";
 import type { TemplateContext } from "./template";
 
@@ -59,6 +59,57 @@ describe("template", () => {
 
     it("should return original text when no template variables", () => {
       expect(processTemplate("No templates here", mockContext)).toBe("No templates here");
+    });
+  });
+
+  describe("coerceNumericTemplate", () => {
+    let warnSpy: ReturnType<typeof vi.spyOn>;
+
+    beforeEach(() => {
+      warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      warnSpy.mockRestore();
+    });
+
+    it("returns the parsed number for valid numeric input", () => {
+      expect(coerceNumericTemplate("5", "5")).toBe(5);
+      expect(coerceNumericTemplate("-3", "-3")).toBe(-3);
+      expect(coerceNumericTemplate("0", "0")).toBe(0);
+      expect(coerceNumericTemplate(" 12 ", " 12 ")).toBe(12);
+      expect(warnSpy).not.toHaveBeenCalled();
+    });
+
+    it("returns 0 silently for non-numeric raw input (no template)", () => {
+      expect(coerceNumericTemplate("abc", "abc")).toBe(0);
+      expect(coerceNumericTemplate("", "")).toBe(0);
+      expect(warnSpy).not.toHaveBeenCalled();
+    });
+
+    it("warns when a templated source resolves to a non-numeric value", () => {
+      expect(coerceNumericTemplate("abc", "{{ frontmatter.foo }}")).toBe(0);
+      expect(warnSpy).toHaveBeenCalledOnce();
+      expect(warnSpy.mock.calls[0][0]).toContain("did not resolve to a number");
+      expect(warnSpy.mock.calls[0][0]).toContain("{{ frontmatter.foo }}");
+    });
+
+    it("warns when a templated source resolves to an empty string (missing property)", () => {
+      expect(coerceNumericTemplate("", "{{ frontmatter.missing }}")).toBe(0);
+      expect(warnSpy).toHaveBeenCalledOnce();
+    });
+
+    it("warns when a malformed template falls back to the raw source string", () => {
+      // processTemplate returns the original text when Handlebars compile fails,
+      // so the processed value here still contains the template delimiters.
+      const malformed = "{{#if}}foo{{/if}}";
+      expect(coerceNumericTemplate(malformed, malformed)).toBe(0);
+      expect(warnSpy).toHaveBeenCalledOnce();
+    });
+
+    it("does not warn when the templated source resolves to a number", () => {
+      expect(coerceNumericTemplate("7", "{{ frontmatter.bonus }}")).toBe(7);
+      expect(warnSpy).not.toHaveBeenCalled();
     });
   });
 

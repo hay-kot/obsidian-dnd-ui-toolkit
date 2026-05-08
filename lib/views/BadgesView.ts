@@ -2,7 +2,7 @@ import { BaseView } from "./BaseView";
 import BadgesRow from "../components/BadgesRow.vue";
 import { MarkdownPostProcessorContext } from "obsidian";
 import { BadgeItem, BadgesBlock } from "lib/types";
-import { hasTemplateVariables, processTemplate } from "../utils/template";
+import { processTemplate } from "../utils/template";
 import StatCards from "../components/StatCards.vue";
 import { TemplateAwareComponent } from "./TemplateAwareComponent";
 
@@ -33,20 +33,24 @@ class StatsLikeComponent extends TemplateAwareComponent {
     const items = Array.isArray(parsed.items) ? parsed.items : [];
     const grid = parsed.grid || {};
 
-    const templateContext = this.detectTemplates(
-      items.flatMap((item: Partial<BadgeItem>) => [String(item.label || ""), String(item.value || "")])
+    const templateContext = this.setupTemplates(
+      items.flatMap((item: Partial<BadgeItem>) => [
+        String(item.label ?? ""),
+        String(item.value ?? ""),
+        String(item.sublabel ?? ""),
+      ])
     );
 
     const badgesBlock: BadgesBlock = {
       items: items.map((item: Partial<BadgeItem>) => {
-        let label = String(item.label || "");
-        let value = String(item.value || "");
-        let sublabel = String(item.sublabel || "");
+        let label = String(item.label ?? "");
+        let value = String(item.value ?? "");
+        let sublabel = String(item.sublabel ?? "");
 
         if (templateContext) {
-          if (hasTemplateVariables(label)) label = processTemplate(label, templateContext);
-          if (hasTemplateVariables(value)) value = processTemplate(value, templateContext);
-          if (hasTemplateVariables(sublabel)) sublabel = processTemplate(sublabel, templateContext);
+          label = processTemplate(label, templateContext);
+          value = processTemplate(value, templateContext);
+          sublabel = processTemplate(sublabel, templateContext);
         }
 
         return {

@@ -2,7 +2,7 @@ import { BaseView } from "./BaseView";
 import SkillCards from "../components/SkillCards.vue";
 import { MarkdownPostProcessorContext } from "obsidian";
 import type { SkillItem } from "lib/types";
-import { hasTemplateVariables, processTemplate } from "../utils/template";
+import { coerceNumericTemplate, processTemplate } from "../utils/template";
 import { TemplateAwareComponent } from "./TemplateAwareComponent";
 
 export class RawSkillsView extends BaseView {
@@ -19,34 +19,33 @@ class RawSkillsComponent extends TemplateAwareComponent {
     const parsed = this.parseSource();
     const rawItems = Array.isArray(parsed?.items) ? parsed.items : [];
 
-    const templateContext = this.detectTemplates(
-      rawItems.flatMap((item: any) => [
-        String(item.label || ""),
-        String(item.ability || ""),
-        String(item.modifier ?? ""),
-      ])
+    const sources = rawItems.map((item: any) => ({
+      label: String(item.label ?? ""),
+      ability: String(item.ability ?? ""),
+      modifier: String(item.modifier ?? ""),
+      proficiency: item.proficiency,
+    }));
+
+    const templateContext = this.setupTemplates(
+      sources.flatMap((s: { label: string; ability: string; modifier: string }) => [s.label, s.ability, s.modifier])
     );
 
-    const items: SkillItem[] = rawItems.map((item: any) => {
-      let label = String(item.label || "");
-      let ability = String(item.ability || "");
-      let modifierStr = String(item.modifier ?? "0");
+    const items: SkillItem[] = sources.map(
+      (s: { label: string; ability: string; modifier: string; proficiency: string }) => {
+        const label = templateContext ? processTemplate(s.label, templateContext) : s.label;
+        const ability = templateContext ? processTemplate(s.ability, templateContext) : s.ability;
+        const modifierStr = templateContext ? processTemplate(s.modifier, templateContext) : s.modifier;
 
-      if (templateContext) {
-        if (hasTemplateVariables(label)) label = processTemplate(label, templateContext);
-        if (hasTemplateVariables(ability)) ability = processTemplate(ability, templateContext);
-        if (hasTemplateVariables(modifierStr)) modifierStr = processTemplate(modifierStr, templateContext);
+        return {
+          label,
+          ability,
+          modifier: coerceNumericTemplate(modifierStr, s.modifier),
+          isProficient: s.proficiency === "proficient",
+          isExpert: s.proficiency === "expert",
+          isHalfProficient: s.proficiency === "half",
+        };
       }
-
-      return {
-        label,
-        ability,
-        modifier: Number(modifierStr) || 0,
-        isProficient: item.proficiency === "proficient",
-        isExpert: item.proficiency === "expert",
-        isHalfProficient: item.proficiency === "half",
-      };
-    });
+    );
 
     this.mount(SkillCards, { items });
   }
