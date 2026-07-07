@@ -11,6 +11,8 @@ function getSkillCardClasses(item: SkillItem): string[] {
   if (item.isExpert) classes.push("dnd-ui-expert");
   else if (item.isProficient) classes.push("dnd-ui-proficient");
   else if (item.isHalfProficient) classes.push("dnd-ui-half-proficient");
+  if (item.hasAdvantage) classes.push("dnd-ui-advantage");
+  else if (item.hasDisadvantage) classes.push("dnd-ui-disadvantage");
   return classes;
 }
 </script>

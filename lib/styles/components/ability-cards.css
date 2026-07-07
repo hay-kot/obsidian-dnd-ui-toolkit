@@ -71,3 +71,11 @@
     margin-top: var(--dnd-ui-std-gap);
     padding-bottom: var(--dnd-ui-ability-card-padding);
 }
+
+.dnd-ui-ability-modifier-saving.dnd-ui-advantage {
+    color: var(--dnd-ui-color-accent-teal);
+}
+
+.dnd-ui-ability-modifier-saving.dnd-ui-disadvantage {
+    color: var(--dnd-ui-color-accent-red);
+}

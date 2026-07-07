@@ -30,11 +30,15 @@ proficiencies:
 
 ## Configuration
 
-| Property        | Type   | Default  | Description                                                                             |
-| --------------- | ------ | -------- | --------------------------------------------------------------------------------------- |
-| `abilities`     | Object | Required | Ability score values (strength, dexterity, constitution, intelligence, wisdom, charisma) |
-| `bonuses`       | Array  | —        | List of bonuses to apply to ability scores or saving throws                             |
-| `proficiencies` | Array  | —        | List of abilities you are proficient in for saving throws                               |
+| Property         | Type   | Default  | Description                                                                               |
+| ---------------- | ------ | -------- | ---------------------------------------------------------------------------------------- |
+| `abilities`      | Object | Required | Ability score values (strength, dexterity, constitution, intelligence, wisdom, charisma) |
+| `bonuses`        | Array  | —        | List of bonuses to apply to ability scores or saving throws                              |
+| `proficiencies`  | Array  | —        | List of abilities you are proficient in for saving throws                                |
+| `advantage` †    | Object | —        | Map of abilities to booleans; a `true` value colors that saving throw green              |
+| `disadvantage` † | Object | —        | Map of abilities to booleans; a `true` value colors that saving throw red                |
+
+† Supports [dynamic content](/concepts/dynamic-content) templates
 
 ### Bonus Object
 
@@ -44,3 +48,29 @@ proficiencies:
 | `target`   | String | Required       | Which ability the bonus applies to                  |
 | `value`    | Number | Required       | The bonus value to add                              |
 | `modifies` | String | "saving_throw" | Either `"score"` or `"saving_throw"` |
+
+## Advantage & Disadvantage
+
+Highlight saving throws that currently have advantage or disadvantage. Keys accept the full ability name (`strength`) or its abbreviation (`str`). A `true` value colors the save green (advantage) or red (disadvantage); if a save is both, or neither, it is left uncolored.
+
+````yaml
+```ability
+abilities:
+  strength: 15
+  dexterity: 14
+  constitution: 13
+  intelligence: 12
+  wisdom: 10
+  charisma: 8
+
+advantage:
+  strength: true
+  # Bind the value to frontmatter so a Meta Bind toggle can flip it live
+  dexterity: "{{frontmatter.dexAdvantage}}"
+
+disadvantage:
+  wisdom: "{{frontmatter.wisDisadvantage}}"
+```
+````
+
+Because the templated values read from frontmatter, a [Meta Bind](https://cwyther.gitbook.io/obsidian-meta-bind-plugin) toggle bound to `dexAdvantage` (etc.) updates the coloring the moment it changes.
