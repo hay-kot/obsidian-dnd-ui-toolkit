@@ -178,12 +178,12 @@
 }
 
 /* Death Save Checkbox Styles */
-.dnd-ui-death-save-failure[aria-pressed="true"] {
-    background-color: var(--dnd-ui-color-accent-red) !important;
+.dnd-ui-checkbox-button.dnd-ui-death-save-failure[aria-pressed="true"] {
+    --dnd-ui-checkbox-fill: var(--dnd-ui-color-accent-red);
     border-color: var(--dnd-ui-color-accent-red) !important;
 }
 
-.dnd-ui-death-save-success[aria-pressed="true"] {
-    background-color: var(--dnd-ui-color-accent-teal) !important;
+.dnd-ui-checkbox-button.dnd-ui-death-save-success[aria-pressed="true"] {
+    --dnd-ui-checkbox-fill: var(--dnd-ui-color-accent-teal);
     border-color: var(--dnd-ui-color-accent-teal) !important;
 }
