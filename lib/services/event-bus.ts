@@ -50,9 +50,7 @@ class EventBus<T extends keyof Topics> {
 
   publish<K extends T>(scope: string, topic: K, payload: Topics[K]): void {
     const scopedKey = this.keybuilder(scope, topic);
-    console.debug(`Publishing event: ${scopedKey}`, payload);
     const callbacks: Callbacks<K>[] | undefined = this.subscribers[scopedKey];
-    console.debug("Subscribers for scope", scopedKey, callbacks);
     if (callbacks) {
       for (const callback of callbacks) {
         callback(payload);

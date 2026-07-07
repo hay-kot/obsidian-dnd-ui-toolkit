@@ -20,6 +20,36 @@ The documentation includes:
 - [Concepts & Guides](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/concepts/state-storage) - Understanding state storage, events, and dynamic content
 - [Examples](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/examples/wizard) - Complete character sheet examples
 
+## Quick Example
+
+Components are defined with YAML code blocks in any note. For example, a health tracker with hit dice:
+
+````markdown
+```healthpoints
+state_key: my-character-hp
+health: 25
+hitdice:
+  dice: d8
+  value: 3
+```
+````
+
+An ability score block that other components (skills, spell components, templates) read from:
+
+````markdown
+```ability
+abilities:
+  strength: 10
+  dexterity: 15
+  constitution: 14
+  intelligence: 12
+  wisdom: 13
+  charisma: 8
+```
+````
+
+Interactive state (HP, spell slots, consumables) persists across sessions in a JSON state file in your vault. See the [Quick Start Guide](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/getting-started/quick-start) for the full component list.
+
 ## Development
 
 ### Prerequisites

@@ -11,7 +11,7 @@ export function parseEventButtonsBlock(yamlString: string): EventButtonsBlock {
   }
 
   const defItem: EventButtonItem = {
-    name: "Unnamed Button",
+    name: "Unnamed button",
     value: "custom",
   };
 

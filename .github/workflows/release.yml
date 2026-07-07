@@ -72,17 +72,17 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add manifest.json package.json versions.json package-lock.json
           git commit -m "chore: bump version to $VERSION"
-          git tag -a "v$VERSION" -m "Release v$VERSION"
+          git tag -a "$VERSION" -m "Release $VERSION"
           git push origin HEAD
-          git push origin "v$VERSION"
+          git push origin "$VERSION"
 
       - name: Create GitHub release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION="${{ steps.bump.outputs.version }}"
-          gh release create "v$VERSION" \
-            --title="v$VERSION" \
+          gh release create "$VERSION" \
+            --title="$VERSION" \
             --generate-notes \
             main.js manifest.json styles.css
 

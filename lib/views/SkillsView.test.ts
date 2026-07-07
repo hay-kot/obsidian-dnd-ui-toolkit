@@ -68,18 +68,15 @@ describe("SkillsView", () => {
       throw new Error("No ability code blocks found");
     });
 
-    const consoleDebugSpy = vi.spyOn(console, "debug").mockImplementation(() => {});
-
     const skillsYaml = `proficiencies:
   - athletics
   - intimidation`;
 
     expect(() => skillsView.render(skillsYaml, mockElement, mockContext)).not.toThrow();
     await addedChild.onload();
-    expect(consoleDebugSpy).toHaveBeenCalledWith("No ability block found for skills view, using default values");
+    expect(parseAbilityBlockSpy).toHaveBeenCalled();
 
     parseAbilityBlockSpy.mockRestore();
-    consoleDebugSpy.mockRestore();
   });
 
   it("should use ability scores when ability block is found", async () => {

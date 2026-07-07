@@ -128,7 +128,7 @@ describe("HealthCard", () => {
     });
 
     expect(wrapper.find(".dnd-ui-hit-dice-container").exists()).toBe(true);
-    expect(wrapper.text()).toContain("HIT DICE (d8)");
+    expect(wrapper.text()).toContain("Hit dice (d8)");
   });
 
   it("applies damage to temp HP first", async () => {

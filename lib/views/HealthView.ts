@@ -180,7 +180,6 @@ class HealthMarkdown extends VueMarkdown {
     this.addUnloadFn(
       this.fileContext.onFrontmatterChange(() => {
         if (this.hasTemplateValues()) {
-          console.debug(`Frontmatter changed for ${this.filePath}, re-processing health templates`);
           this.handleFrontmatterChange();
         }
       })
@@ -193,7 +192,6 @@ class HealthMarkdown extends VueMarkdown {
     this.addUnloadFn(
       msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
         if (shouldResetOnEvent(resetOn, resetEvent.eventType)) {
-          console.debug(`Resetting health ${healthBlock.state_key} due to ${resetEvent.eventType} event`);
           this.handleResetEvent(healthBlock);
         }
       })
@@ -223,8 +221,6 @@ class HealthMarkdown extends VueMarkdown {
         JSON.stringify(this.currentHealthBlock.hitdice) !== JSON.stringify(updatedHealthBlock.hitdice);
 
       if (oldHealth !== newHealth || hitdiceChanged) {
-        console.debug(`Health block changed, re-rendering`);
-
         this.currentHealthBlock = updatedHealthBlock;
 
         const stateKey = updatedHealthBlock.state_key;
