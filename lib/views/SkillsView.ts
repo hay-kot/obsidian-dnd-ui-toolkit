@@ -31,7 +31,7 @@ class SkillsComponent extends TemplateAwareComponent {
     try {
       abilityBlock = AbilityService.parseAbilityBlockFromDocument(this.containerEl, this.fileContext.md(), frontmatter);
     } catch {
-      console.debug("No ability block found for skills view, using default values");
+      // No ability block found; fall back to defaults
       abilityBlock = {
         abilities: {
           strength: 10,

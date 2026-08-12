@@ -53,29 +53,18 @@ describe("JsonDataStore", () => {
       expect(mockVault.adapter.read).toHaveBeenCalledWith(testFilePath);
     });
 
-    it("should return empty object when JSON parsing fails", async () => {
+    it("should throw when JSON parsing fails so state is never overwritten", async () => {
       mockVault._files.set(testFilePath, "invalid json");
-      const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      const result = await dataStore.loadData();
-
-      expect(result).toEqual({});
-      expect(consoleSpy).toHaveBeenCalledWith("Error loading data:", expect.any(Error));
-
-      consoleSpy.mockRestore();
+      await expect(dataStore.loadData()).rejects.toThrow();
+      expect(mockVault._files.get(testFilePath)).toBe("invalid json");
     });
 
-    it("should handle file read errors gracefully", async () => {
+    it("should propagate file read errors", async () => {
       mockVault.adapter.read.mockRejectedValue(new Error("Read error"));
       mockVault._files.set(testFilePath, "test");
-      const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      const result = await dataStore.loadData();
-
-      expect(result).toEqual({});
-      expect(consoleSpy).toHaveBeenCalledWith("Error loading data:", expect.any(Error));
-
-      consoleSpy.mockRestore();
+      await expect(dataStore.loadData()).rejects.toThrow("Read error");
     });
   });
 
@@ -99,12 +88,8 @@ describe("JsonDataStore", () => {
     it("should throw error when write fails", async () => {
       const writeError = new Error("Write failed");
       mockVault.adapter.write.mockRejectedValue(writeError);
-      const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       await expect(dataStore.saveData({})).rejects.toThrow("Write failed");
-      expect(consoleSpy).toHaveBeenCalledWith("Error saving data:", writeError);
-
-      consoleSpy.mockRestore();
     });
   });
 

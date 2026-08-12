@@ -109,7 +109,7 @@ export class SpellComponentsView extends BaseView {
         data.attack_bonus = profBonus + modifier;
       }
     } catch {
-      console.debug("No ability block found for spell components, skipping DC/attack calculation");
+      // No ability block found; skip DC/attack calculation
     }
   }
 

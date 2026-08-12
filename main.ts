@@ -22,31 +22,44 @@ export default class DndUIToolkitPlugin extends Plugin {
   settings: DndUIToolkitSettings;
   dataStore: JsonDataStore;
 
-  applyColorSettings(): void {
-    const apply = (root: HTMLElement) => {
-      Object.entries(this.settings).forEach(([key, value]) => {
-        if (key.startsWith("color")) {
-          const cssVarName = `--dnd-ui-${key.replace(/([A-Z])/g, "-$1").toLowerCase()}`;
-          root.style.setProperty(cssVarName, value as string);
-        }
-      });
-    };
+  private colorCssVars(): [string, string][] {
+    return Object.entries(this.settings)
+      .filter(([key]) => key.startsWith("color"))
+      .map(([key, value]) => [`--dnd-ui-${key.replace(/([A-Z])/g, "-$1").toLowerCase()}`, value as string]);
+  }
 
-    // Apply to main document
-    const root = document.documentElement;
-    if (root) {
-      apply(root);
+  private applyColorVars(root: HTMLElement): void {
+    for (const [name, value] of this.colorCssVars()) {
+      root.style.setProperty(name, value);
     }
+  }
 
-    // Apply to all open windows (desktop only - multi-window not available on mobile)
+  private removeColorVars(root: HTMLElement): void {
+    for (const [name] of this.colorCssVars()) {
+      root.style.removeProperty(name);
+    }
+  }
+
+  private eachStyleRoot(fn: (root: HTMLElement) => void): void {
+    fn(document.documentElement);
+
+    // Include popout windows (desktop only - multi-window not available on mobile)
     if (Platform.isDesktop) {
       this.app.workspace.iterateAllLeaves((leaf) => {
         const windowDoc = leaf.view.containerEl.ownerDocument;
         if (windowDoc) {
-          apply(windowDoc.documentElement);
+          fn(windowDoc.documentElement);
         }
       });
     }
+  }
+
+  applyColorSettings(): void {
+    this.eachStyleRoot((root) => this.applyColorVars(root));
+  }
+
+  removeColorSettings(): void {
+    this.eachStyleRoot((root) => this.removeColorVars(root));
   }
 
   async onload() {
@@ -58,8 +71,8 @@ export default class DndUIToolkitPlugin extends Plugin {
     // Listen for new windows and apply settings to them (desktop only)
     if (Platform.isDesktop) {
       this.registerEvent(
-        this.app.workspace.on("window-open", () => {
-          setTimeout(() => this.applyColorSettings(), 100);
+        this.app.workspace.on("window-open", (win) => {
+          this.applyColorVars(win.doc.documentElement);
         })
       );
     }
@@ -80,7 +93,6 @@ export default class DndUIToolkitPlugin extends Plugin {
     const kv = new KeyValueStore(this.dataStore);
     const { app } = this;
 
-    // In your plugin's onload method
     const views: BaseView[] = [
       // Static
       new StatsView(app),
@@ -117,7 +129,9 @@ export default class DndUIToolkitPlugin extends Plugin {
     this.dataStore = new JsonDataStore(this.app.vault, this.settings.statePath);
   }
 
-  onunload() {}
+  onunload() {
+    this.removeColorSettings();
+  }
 
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
@@ -142,13 +156,10 @@ class DndSettingsTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    containerEl.createEl("h2", { text: "DnD UI Toolkit Settings" });
-
-    // State File Path Setting
     new Setting(containerEl)
-      .setName("State File Path")
+      .setName("State file path")
       .setDesc(
-        "Relative path (from vault root) where the state file will be stored. The statefile contains all the stateful data for components that are interactive and need to be saved. This is a JSON file."
+        "Relative path (from vault root) where the state file is stored. Interactive components save their state to this JSON file."
       )
       .addText((text) =>
         text
@@ -160,11 +171,11 @@ class DndSettingsTab extends PluginSettingTab {
           })
       );
 
-    containerEl.createEl("h3", { text: "Styles" });
+    new Setting(containerEl).setName("Styles").setHeading();
 
     // Theme selector
     new Setting(containerEl)
-      .setName("Theme Preset")
+      .setName("Theme preset")
       .setDesc("Choose a predefined color theme. Selecting a theme will update all color values.")
       .addDropdown((dropdown) => {
         Object.entries(THEMES).forEach(([key, theme]) => {
@@ -183,30 +194,30 @@ class DndSettingsTab extends PluginSettingTab {
       });
 
     // Add color inputs for each color variable
-    this.addColorSetting(containerEl, "Background Primary", "colorBgPrimary");
-    this.addColorSetting(containerEl, "Background Secondary", "colorBgSecondary");
-    this.addColorSetting(containerEl, "Background Tertiary", "colorBgTertiary");
-    this.addColorSetting(containerEl, "Background Hover", "colorBgHover");
-    this.addColorSetting(containerEl, "Background Darker", "colorBgDarker");
-    this.addColorSetting(containerEl, "Background Group", "colorBgGroup");
-    this.addColorSetting(containerEl, "Background Proficient", "colorBgProficient");
+    this.addColorSetting(containerEl, "Background primary", "colorBgPrimary");
+    this.addColorSetting(containerEl, "Background secondary", "colorBgSecondary");
+    this.addColorSetting(containerEl, "Background tertiary", "colorBgTertiary");
+    this.addColorSetting(containerEl, "Background hover", "colorBgHover");
+    this.addColorSetting(containerEl, "Background darker", "colorBgDarker");
+    this.addColorSetting(containerEl, "Background group", "colorBgGroup");
+    this.addColorSetting(containerEl, "Background proficient", "colorBgProficient");
 
-    this.addColorSetting(containerEl, "Text Primary", "colorTextPrimary");
-    this.addColorSetting(containerEl, "Text Secondary", "colorTextSecondary");
-    this.addColorSetting(containerEl, "Text Sublabel", "colorTextSublabel");
-    this.addColorSetting(containerEl, "Text Bright", "colorTextBright");
-    this.addColorSetting(containerEl, "Text Muted", "colorTextMuted");
-    this.addColorSetting(containerEl, "Text Group", "colorTextGroup");
+    this.addColorSetting(containerEl, "Text primary", "colorTextPrimary");
+    this.addColorSetting(containerEl, "Text secondary", "colorTextSecondary");
+    this.addColorSetting(containerEl, "Text sublabel", "colorTextSublabel");
+    this.addColorSetting(containerEl, "Text bright", "colorTextBright");
+    this.addColorSetting(containerEl, "Text muted", "colorTextMuted");
+    this.addColorSetting(containerEl, "Text group", "colorTextGroup");
 
-    this.addColorSetting(containerEl, "Border Primary", "colorBorderPrimary");
-    this.addColorSetting(containerEl, "Border Active", "colorBorderActive");
-    this.addColorSetting(containerEl, "Border Focus", "colorBorderFocus");
+    this.addColorSetting(containerEl, "Border primary", "colorBorderPrimary");
+    this.addColorSetting(containerEl, "Border active", "colorBorderActive");
+    this.addColorSetting(containerEl, "Border focus", "colorBorderFocus");
 
-    this.addColorSetting(containerEl, "Accent Teal", "colorAccentTeal");
-    this.addColorSetting(containerEl, "Accent Red", "colorAccentRed");
-    this.addColorSetting(containerEl, "Accent Purple", "colorAccentPurple");
+    this.addColorSetting(containerEl, "Accent teal", "colorAccentTeal");
+    this.addColorSetting(containerEl, "Accent red", "colorAccentRed");
+    this.addColorSetting(containerEl, "Accent purple", "colorAccentPurple");
 
-    new Setting(containerEl).setName("Reset Styles").addButton((b) => {
+    new Setting(containerEl).setName("Reset styles").addButton((b) => {
       b.setButtonText("Reset").onClick(async () => {
         this.plugin.settings.selectedTheme = "default";
         const defaultTheme = THEMES.default;
