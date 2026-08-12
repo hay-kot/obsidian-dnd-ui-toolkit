@@ -41,12 +41,18 @@ class AbilityScoreComponent extends TemplateAwareComponent {
 
       const abbreviation = label.substring(0, 3).toUpperCase();
 
+      const abilityKey = key as keyof typeof abilityBlock.abilities;
+      const advantage = abilityBlock.advantage?.[abilityKey] ?? false;
+      const disadvantage = abilityBlock.disadvantage?.[abilityKey] ?? false;
+
       return {
         label: abbreviation,
         total: totalScore,
         modifier: AbilityService.formatModifier(AbilityService.calculateModifier(totalScore)),
         isProficient,
         savingThrow: AbilityService.formatModifier(savingThrowValue),
+        hasAdvantage: advantage && !disadvantage,
+        hasDisadvantage: disadvantage && !advantage,
       };
     });
 

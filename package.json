@@ -1,7 +1,7 @@
 {
-  "name": "obsidian-sample-plugin",
+  "name": "dnd-ui-toolkit",
   "version": "0.23.0",
-  "description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+  "description": "Build interactive character sheets for Dungeons and Dragons with health trackers, ability scores, skills, and spell slots.",
   "main": "main.js",
   "scripts": {
     "dev": "vite build --watch --mode development",
@@ -18,7 +18,7 @@
     "docs:preview": "vitepress preview docs"
   },
   "keywords": [],
-  "author": "",
+  "author": "hay-kot",
   "license": "MIT",
   "devDependencies": {
     "@mermaid-js/mermaid-mindmap": "^9.3.0",
@@ -28,6 +28,7 @@
     "@vitejs/plugin-vue": "^6.0.4",
     "@vue/test-utils": "^2.4.6",
     "builtin-modules": "^5.0.0",
+    "eslint-plugin-obsidianmd": "^0.3.0",
     "happy-dom": "^20.7.0",
     "mermaid": "^10.9.0",
     "obsidian": "latest",

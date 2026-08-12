@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import AdvantageIndicator from "./AdvantageIndicator.vue";
+
 interface AbilityCardItem {
   label: string;
   labelShort?: string;
@@ -6,6 +8,8 @@ interface AbilityCardItem {
   modifier: string;
   isProficient: boolean;
   savingThrow: string;
+  hasAdvantage?: boolean;
+  hasDisadvantage?: boolean;
 }
 
 withDefaults(
@@ -32,6 +36,10 @@ withDefaults(
         <p class="dnd-ui-ability-modifier">{{ item.modifier }}</p>
         <div class="dnd-ui-ability-modifier-saving">
           <em>{{ showSavingPrefix ? `Saving ${item.savingThrow}` : item.savingThrow }}</em>
+          <AdvantageIndicator
+            :kind="item.hasAdvantage ? 'advantage' : item.hasDisadvantage ? 'disadvantage' : null"
+            :tooltip="`${item.hasAdvantage ? 'Advantage' : 'Disadvantage'} on ${item.labelShort || item.label} saving throws`"
+          />
         </div>
       </div>
     </div>

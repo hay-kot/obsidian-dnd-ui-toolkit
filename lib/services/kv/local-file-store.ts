@@ -1,4 +1,4 @@
-import { Vault } from "obsidian";
+import { normalizePath, Vault } from "obsidian";
 
 export interface DataStore {
   loadData(): Promise<any>;
@@ -16,31 +16,27 @@ export class JsonDataStore implements DataStore {
    */
   constructor(vault: Vault, filePath: string) {
     this.vault = vault;
-    this.filePath = filePath;
+    this.filePath = normalizePath(filePath);
   }
 
   /**
-   * Loads data from the JSON file
-   * @returns Promise resolving to the parsed data
+   * Loads data from the JSON file, creating it if it doesn't exist.
+   * Read and parse errors propagate to the caller so a transient failure
+   * never gets persisted back as an empty state file.
+   *
+   * The adapter API is used instead of the Vault API because the default
+   * state file path is a dotfile, which the vault index does not track.
    */
   async loadData(): Promise<any> {
-    try {
-      // Check if the file exists
-      const exists = await this.vault.adapter.exists(this.filePath);
+    const exists = await this.vault.adapter.exists(this.filePath);
 
-      if (!exists) {
-        await this.vault.adapter.write(this.filePath, JSON.stringify({}, null, 2));
-        return {};
-      }
-
-      // Read the existing file
-      const data = await this.vault.adapter.read(this.filePath);
-      return JSON.parse(data);
-    } catch (error) {
-      console.error("Error loading data:", error);
-      // Return empty object as fallback
+    if (!exists) {
+      await this.vault.adapter.write(this.filePath, JSON.stringify({}, null, 2));
       return {};
     }
+
+    const data = await this.vault.adapter.read(this.filePath);
+    return JSON.parse(data);
   }
 
   /**
@@ -48,12 +44,6 @@ export class JsonDataStore implements DataStore {
    * @param data The data to save
    */
   async saveData(data: any): Promise<void> {
-    try {
-      // Write the data to the file
-      await this.vault.adapter.write(this.filePath, JSON.stringify(data, null, 2));
-    } catch (error) {
-      console.error("Error saving data:", error);
-      throw error;
-    }
+    await this.vault.adapter.write(this.filePath, JSON.stringify(data, null, 2));
   }
 }

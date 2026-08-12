@@ -1,6 +1,7 @@
 import eslint from "@eslint/js";
 import tsEslint from "typescript-eslint";
 import globals from "globals";
+import obsidianmd from "eslint-plugin-obsidianmd";
 
 export default tsEslint.config(
 	{
@@ -9,6 +10,55 @@ export default tsEslint.config(
 	eslint.configs.recommended,
 	tsEslint.configs.eslintRecommended,
 	tsEslint.configs.recommended,
+	{
+		// Obsidian plugin-review rules (the same checks the community
+		// plugin directory's automated review runs), scoped to shipped code.
+		files: ["main.ts", "settings.ts", "lib/**/*.ts"],
+		ignores: ["**/*.test.ts"],
+		plugins: {
+			obsidianmd,
+		},
+		languageOptions: {
+			parser: tsEslint.parser,
+			parserOptions: {
+				projectService: true,
+				tsconfigRootDir: import.meta.dirname,
+			},
+		},
+		rules: {
+			"obsidianmd/commands/no-command-in-command-id": "error",
+			"obsidianmd/commands/no-command-in-command-name": "error",
+			"obsidianmd/commands/no-default-hotkeys": "error",
+			"obsidianmd/commands/no-plugin-id-in-command-id": "error",
+			"obsidianmd/commands/no-plugin-name-in-command-name": "error",
+			"obsidianmd/settings-tab/no-manual-html-headings": "error",
+			"obsidianmd/settings-tab/no-problematic-settings-headings": "error",
+			"obsidianmd/vault/iterate": "error",
+			"obsidianmd/detach-leaves": "error",
+			"obsidianmd/editor-drop-paste": "error",
+			"obsidianmd/hardcoded-config-path": "error",
+			"obsidianmd/no-forbidden-elements": "error",
+			"obsidianmd/no-global-this": "error",
+			"obsidianmd/no-plugin-as-component": "error",
+			"obsidianmd/no-sample-code": "error",
+			"obsidianmd/no-tfile-tfolder-cast": "error",
+			"obsidianmd/no-static-styles-assignment": "error",
+			"obsidianmd/object-assign": "error",
+			"obsidianmd/platform": "error",
+			"obsidianmd/prefer-get-language": "error",
+			"obsidianmd/prefer-abstract-input-suggest": "error",
+			"obsidianmd/prefer-window-timers": "error",
+			"obsidianmd/regex-lookbehind": "error",
+			"obsidianmd/sample-names": "error",
+			"obsidianmd/validate-manifest": "error",
+			"obsidianmd/validate-license": "error",
+			"obsidianmd/ui/sentence-case": ["error", { enforceCamelCaseLower: true }],
+			"obsidianmd/no-view-references-in-plugin": "error",
+			"obsidianmd/no-unsupported-api": "error",
+			"obsidianmd/prefer-file-manager-trash-file": "warn",
+			"obsidianmd/prefer-instanceof": "error",
+		},
+	},
 	{
 		plugins: {
 			"@typescript-eslint": tsEslint.plugin,

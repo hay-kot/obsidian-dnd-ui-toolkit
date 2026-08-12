@@ -175,7 +175,7 @@ function getHitDiceUsed(hd: { dice: string; value: number }): number {
       >
         <div class="dnd-ui-hit-dice-list">
           <div v-for="hd in props.static.hitdice" :key="hd.dice" class="dnd-ui-hit-dice-row">
-            <p class="dnd-ui-hit-dice-label">HIT DICE ({{ hd.dice }})</p>
+            <p class="dnd-ui-hit-dice-label">Hit dice ({{ hd.dice }})</p>
             <div class="dnd-ui-hit-dice-boxes">
               <Checkbox
                 v-for="i in hd.value"

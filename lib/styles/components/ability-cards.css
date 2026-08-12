@@ -70,4 +70,9 @@
     color: var(--dnd-ui-color-text-sublabel);
     margin-top: var(--dnd-ui-std-gap);
     padding-bottom: var(--dnd-ui-ability-card-padding);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    --dnd-ui-adv-indicator-size: 0.85rem;
 }

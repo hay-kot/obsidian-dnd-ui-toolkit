@@ -101,7 +101,6 @@ class ConsumableMarkdown extends VueMarkdown {
           this.addUnloadFn(
             msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
               if (shouldResetOnEvent(consumableBlock.reset_on, resetEvent.eventType)) {
-                console.debug(`Resetting consumable ${stateKey} due to ${resetEvent.eventType} event`);
                 const resetAmount = getResetAmount(consumableBlock.reset_on, resetEvent.eventType) || resetEvent.amount;
                 this.handleResetEvent(consumableBlock, resetAmount);
               }
@@ -155,7 +154,6 @@ class ConsumableMarkdown extends VueMarkdown {
 
     this.addUnloadFn(
       this.fileContext.onFrontmatterChange(() => {
-        console.debug(`Frontmatter changed for ${this.filePath}, re-processing consumable templates`);
         this.handleFrontmatterChange();
       })
     );
@@ -176,7 +174,6 @@ class ConsumableMarkdown extends VueMarkdown {
       const newUses = !isNaN(parsedUses) && parsedUses > 0 ? parsedUses : 1;
 
       if (newUses !== consumable.uses) {
-        console.debug(`Consumable ${consumable.state_key} uses changed from ${consumable.uses} to ${newUses}`);
         changed = true;
         return { ...consumable, uses: newUses };
       }

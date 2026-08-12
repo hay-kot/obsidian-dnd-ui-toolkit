@@ -15,25 +15,14 @@ export abstract class BaseView {
     this.app = app;
   }
 
-  // Changed return type from string to HTMLElement or void
-  public abstract render(
-    source: string,
-    el: HTMLElement,
-    ctx: MarkdownPostProcessorContext
-  ): HTMLElement | string | void;
+  public abstract render(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): HTMLElement | void;
 
   public register(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
     const div = el.createEl("div");
     try {
       const result = this.render(source, el, ctx);
-
-      // Handle different return types from render
       if (result instanceof HTMLElement) {
         div.appendChild(result);
-      } else if (typeof result === "string") {
-        div.innerHTML = result;
-      } else {
-        console.debug("No result to render");
       }
     } catch (e) {
       console.error("Error rendering code block", e);

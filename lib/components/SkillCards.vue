@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SkillItem } from "../types";
 import { formatModifier } from "../domains/dnd/modifiers";
+import AdvantageIndicator from "./AdvantageIndicator.vue";
 
 defineProps<{
   items: SkillItem[];
@@ -25,6 +26,10 @@ function getSkillCardClasses(item: SkillItem): string[] {
         <p class="dnd-ui-skill-name">{{ item.label }}</p>
       </div>
       <div class="dnd-ui-skills-values-container">
+        <AdvantageIndicator
+          :kind="item.hasAdvantage ? 'advantage' : item.hasDisadvantage ? 'disadvantage' : null"
+          :tooltip="`${item.hasAdvantage ? 'Advantage' : 'Disadvantage'} on ${item.label} checks`"
+        />
         <p class="dnd-ui-skill-value">{{ formatModifier(item.modifier) }}</p>
       </div>
     </div>

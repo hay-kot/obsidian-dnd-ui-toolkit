@@ -3,7 +3,7 @@ import { MarkdownPostProcessorContext } from "obsidian";
 import * as Utils from "lib/utils/utils";
 import { parse } from "yaml";
 import { extractFirstCodeBlock } from "../utils/codeblock-extractor";
-import { processTemplate } from "../utils/template";
+import { coerceBooleanTemplate, processTemplate, TemplateContext } from "../utils/template";
 
 export { calculateModifier, formatModifier } from "./dnd/modifiers";
 
@@ -20,6 +20,25 @@ export type RawAbilityBlock = {
   abilities: RawAbilityScores;
   bonuses: GenericBonus[];
   proficiencies: string[];
+  advantage?: Record<string, string | boolean>;
+  disadvantage?: Record<string, string | boolean>;
+};
+
+// Maps both full ability names and their 3-letter abbreviations to the canonical
+// AbilityScores key, so advantage/disadvantage entries can be written either way.
+const ABILITY_ALIASES: Record<string, keyof AbilityScores> = {
+  str: "strength",
+  strength: "strength",
+  dex: "dexterity",
+  dexterity: "dexterity",
+  con: "constitution",
+  constitution: "constitution",
+  int: "intelligence",
+  intelligence: "intelligence",
+  wis: "wisdom",
+  wisdom: "wisdom",
+  cha: "charisma",
+  charisma: "charisma",
 };
 
 const ABILITY_KEYS: (keyof RawAbilityScores)[] = [
@@ -72,10 +91,33 @@ export function parseAbilityBlock(yamlString: string): RawAbilityBlock {
     },
     bonuses: [],
     proficiencies: [],
+    advantage: {},
+    disadvantage: {},
   };
 
   const parsed = parse(yamlString);
   return Utils.mergeWithDefaults(parsed, def);
+}
+
+/**
+ * Resolves an advantage/disadvantage map (keyed by full ability name or 3-letter
+ * abbreviation, with boolean or template-string values) into a map keyed by the
+ * canonical AbilityScores name. Only truthy entries are retained.
+ */
+function resolveAdvantageMap(
+  map: Record<string, string | boolean> | undefined,
+  context: TemplateContext
+): Partial<Record<keyof AbilityScores, boolean>> {
+  const resolved: Partial<Record<keyof AbilityScores, boolean>> = {};
+  if (!map) return resolved;
+
+  for (const [rawKey, value] of Object.entries(map)) {
+    const ability = ABILITY_ALIASES[rawKey.toLowerCase()];
+    if (!ability) continue;
+    if (coerceBooleanTemplate(value, context)) resolved[ability] = true;
+  }
+
+  return resolved;
 }
 
 /**
@@ -125,6 +167,8 @@ export function resolveAbilityBlock(raw: RawAbilityBlock, frontmatter: Frontmatt
     abilities: resolved,
     bonuses: raw.bonuses,
     proficiencies: raw.proficiencies,
+    advantage: resolveAdvantageMap(raw.advantage, templateContext),
+    disadvantage: resolveAdvantageMap(raw.disadvantage, templateContext),
   };
 }
 

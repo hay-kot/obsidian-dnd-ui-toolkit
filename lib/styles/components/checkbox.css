@@ -7,13 +7,27 @@
     border-radius: 0.2rem;
     cursor: pointer;
     background-color: var(--dnd-ui-color-bg-secondary);
-    transition: background-color 0.1s ease;
     padding: 0;
     margin: 0;
 }
 
+/* The checked fill lives on a pseudo-element because community themes override
+ * button backgrounds with high-specificity rules (e.g. LYT Mode's
+ * `.theme-dark .workspace button { background: ... }`), which would hide a fill
+ * applied to the button itself. Color is routed through --dnd-ui-checkbox-fill
+ * so variants (death saves) can recolor the fill. */
+.dnd-ui-checkbox-button::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background-color: var(--dnd-ui-checkbox-fill, transparent);
+    transition: background-color 0.1s ease;
+}
+
 .dnd-ui-checkbox-button[aria-pressed="true"] {
-    background-color: var(--dnd-ui-color-border-active);
+    --dnd-ui-checkbox-fill: var(--dnd-ui-color-border-active);
 }
 
 .dnd-ui-checkbox-button:focus {

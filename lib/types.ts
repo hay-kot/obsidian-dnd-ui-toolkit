@@ -13,6 +13,8 @@ export type AbilityBlock = {
   abilities: AbilityScores;
   bonuses: GenericBonus[];
   proficiencies: string[];
+  advantage?: Partial<Record<keyof AbilityScores, boolean>>;
+  disadvantage?: Partial<Record<keyof AbilityScores, boolean>>;
 };
 
 // An GenericBonus is an additional property for the ability block
@@ -44,6 +46,8 @@ export type SkillsBlock = {
   expertise: string[];
   half_proficiencies: string[];
   bonuses: SkillsBlockBonus[];
+  advantage?: Record<string, string | boolean>;
+  disadvantage?: Record<string, string | boolean>;
 };
 
 export type SkillsBlockBonus = GenericBonus;
@@ -147,6 +151,8 @@ export type SkillItem = {
   isProficient?: boolean;
   isExpert?: boolean;
   isHalfProficient?: boolean;
+  hasAdvantage?: boolean;
+  hasDisadvantage?: boolean;
   ability: string;
   label: string;
   modifier: number;
