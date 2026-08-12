@@ -103,6 +103,53 @@ hitdice:
   value: "{{frontmatter.level}}"
 ```
 
+## Temporary Max Health
+
+Bonus max HP from an effect like Aid. The bar splits at 45; heal to fill the purple section, then set
+`temp_max_health` back to 0 to confirm current HP is capped at 45 again.
+
+```healthpoints
+state_key: test_health_temp_max
+health: 45
+temp_max_health: 5
+hitdice:
+  dice: d10
+  value: 5
+```
+
+## Partial Hit Dice Recovery
+
+Half of the character's hit dice come back on a long rest (level 7 -> 3 dice). Check some boxes, then use the
+long rest button below.
+
+```healthpoints
+state_key: test_health_partial_hd
+health: 45
+hitdice:
+  dice: d10
+  value: "{{frontmatter.level}}"
+  reset_on:
+    - event: long-rest
+      amount: "{{floor (divide frontmatter.level 2)}}"
+```
+
+## Per-Dice Recovery Events
+
+Multiclass where d10s come back one at a time on a short rest and the d8s follow the block-level long rest.
+
+```healthpoints
+state_key: test_health_per_dice
+health: 58
+hitdice:
+  - dice: d10
+    value: 5
+    reset_on:
+      - event: short-rest
+        amount: 1
+  - dice: d8
+    value: 3
+```
+
 ## Event Buttons for Reset
 
 Use these buttons to test rest-based HP reset.

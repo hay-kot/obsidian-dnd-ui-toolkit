@@ -5,7 +5,7 @@ import * as HealthService from "lib/domains/healthpoints";
 import HealthCard from "lib/components/HealthCard.vue";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { HealthState } from "lib/domains/healthpoints";
-import { ParsedHealthBlock, UnresolvedHealthBlock, HitDice, RawHitDice } from "lib/types";
+import { ParsedHealthBlock, UnresolvedHealthBlock, HitDice, RawHitDice, RawResetConfig, ResetConfig } from "lib/types";
 import { msgbus } from "lib/services/event-bus";
 import { hasTemplateVariables, processTemplate, createTemplateContext } from "lib/utils/template";
 import { useFileContext, FileContext } from "./filecontext";
@@ -29,13 +29,11 @@ export class HealthView extends BaseView {
 }
 
 class HealthMarkdown extends VueMarkdown {
-  private source: string;
   private kv: KeyValueStore;
   private filePath: string;
   private fileContext: FileContext;
+  private unresolvedBlock: UnresolvedHealthBlock;
   private currentHealthBlock: ParsedHealthBlock | null = null;
-  private originalHealthValue: number | string;
-  private originalHitdiceValues: Map<string, number | string> = new Map();
   private propsRef = ref<Record<string, unknown>>({});
   private mounted = false;
 
@@ -48,18 +46,10 @@ class HealthMarkdown extends VueMarkdown {
     baseView: BaseView
   ) {
     super(el);
-    this.source = source;
     this.kv = kv;
     this.filePath = filePath;
     this.fileContext = useFileContext(baseView.app, ctx);
-
-    const parsed = HealthService.parseHealthBlock(this.source);
-    this.originalHealthValue = parsed.health;
-    if (parsed.hitdice) {
-      for (const hd of parsed.hitdice) {
-        this.originalHitdiceValues.set(hd.dice, hd.value);
-      }
-    }
+    this.unresolvedBlock = HealthService.parseHealthBlock(source);
   }
 
   async onload() {
@@ -68,9 +58,7 @@ class HealthMarkdown extends VueMarkdown {
   }
 
   private async processAndRender() {
-    const unresolvedBlock = HealthService.parseHealthBlock(this.source);
-
-    const healthBlock = this.processTemplates(unresolvedBlock);
+    const healthBlock = this.processTemplates(this.unresolvedBlock);
     this.currentHealthBlock = healthBlock;
 
     const stateKey = healthBlock.state_key;
@@ -85,7 +73,7 @@ class HealthMarkdown extends VueMarkdown {
       let healthState = savedState || defaultState;
 
       if (savedState) {
-        healthState = HealthService.migrateHealthState(savedState, healthBlock);
+        healthState = this.reconcileState(savedState, healthBlock);
         if (healthState !== savedState) {
           try {
             await this.kv.set(stateKey, healthState);
@@ -101,98 +89,133 @@ class HealthMarkdown extends VueMarkdown {
         }
       }
 
-      this.setupEventSubscription(healthBlock);
+      this.setupEventSubscription();
       this.renderComponent(healthBlock, healthState);
     } catch (error) {
       console.error("Error loading health state:", error);
-      this.setupEventSubscription(healthBlock);
+      this.setupEventSubscription();
       this.renderComponent(healthBlock, defaultState);
     }
   }
 
-  private processTemplates(healthBlock: UnresolvedHealthBlock): ParsedHealthBlock {
-    let health: number | string = healthBlock.health;
-
-    // Process health template
-    if (typeof health === "string" && hasTemplateVariables(health)) {
-      const templateContext = createTemplateContext(this.containerEl, this.fileContext);
-      const processedHealth = processTemplate(health, templateContext);
-      const healthValue = parseInt(processedHealth, 10);
-
-      if (!isNaN(healthValue)) {
-        health = healthValue;
-      } else {
-        console.warn(
-          `Template processed health value "${processedHealth}" is not a valid number, using original value`
-        );
-      }
-    }
-
-    // Process hitdice value templates
-    let hitdice: HitDice[] | undefined;
-    if (healthBlock.hitdice) {
-      hitdice = healthBlock.hitdice.map((hd) => this.resolveHitDice(hd));
-    }
-
-    return { ...healthBlock, health, hitdice };
+  private reconcileState(state: HealthState, healthBlock: ParsedHealthBlock): HealthState {
+    return HealthService.clampHealthState(HealthService.migrateHealthState(state, healthBlock), healthBlock);
   }
 
-  private resolveHitDice(hd: RawHitDice): HitDice {
-    const originalValue = this.originalHitdiceValues.get(hd.dice);
-    const valueToProcess = originalValue !== undefined ? originalValue : hd.value;
+  private processTemplates(healthBlock: UnresolvedHealthBlock): ParsedHealthBlock {
+    let templateContext: ReturnType<typeof createTemplateContext> | null = null;
 
-    if (typeof valueToProcess === "string" && hasTemplateVariables(valueToProcess)) {
-      const templateContext = createTemplateContext(this.containerEl, this.fileContext);
-      const processed = processTemplate(valueToProcess, templateContext);
-      const parsed = parseInt(processed, 10);
+    // Resolves templates and plain numeric strings, returning undefined when the result isn't a number
+    const resolveNumber = (value: number | string): number | undefined => {
+      if (typeof value === "number") return value;
 
-      if (!isNaN(parsed) && parsed > 0) {
-        return { ...hd, value: parsed };
+      let text = value;
+      if (hasTemplateVariables(value)) {
+        templateContext ??= createTemplateContext(this.containerEl, this.fileContext);
+        text = processTemplate(value, templateContext);
+      }
+
+      const parsed = parseInt(text, 10);
+      return isNaN(parsed) ? undefined : parsed;
+    };
+
+    let health: number | string = healthBlock.health;
+    if (typeof health === "string") {
+      const resolved = resolveNumber(health);
+      if (resolved !== undefined) {
+        health = resolved;
       } else {
-        console.warn(
-          `Template processed hitdice value "${processed}" for ${hd.dice} is not a valid positive number, using 1`
-        );
-        return { ...hd, value: 1 };
+        console.warn(`Health value "${health}" did not resolve to a valid number, using original value`);
       }
     }
 
-    if (typeof valueToProcess === "string") {
-      const parsed = parseInt(valueToProcess, 10);
-      return { dice: hd.dice, value: isNaN(parsed) ? 1 : parsed };
+    let tempMaxHealth: number | undefined;
+    if (healthBlock.temp_max_health !== undefined) {
+      tempMaxHealth = resolveNumber(healthBlock.temp_max_health);
+      if (tempMaxHealth === undefined) {
+        console.warn(`Temp max health value "${healthBlock.temp_max_health}" is not a valid number, using 0`);
+        tempMaxHealth = 0;
+      }
     }
 
-    return { dice: hd.dice, value: valueToProcess };
+    const hitdice = healthBlock.hitdice?.map((hd) => this.resolveHitDice(hd, resolveNumber));
+
+    return {
+      ...healthBlock,
+      health,
+      temp_max_health: tempMaxHealth,
+      hitdice,
+      reset_on: this.resolveResetConfigs(healthBlock.reset_on, "health", resolveNumber),
+    };
+  }
+
+  private resolveHitDice(hd: RawHitDice, resolveNumber: (value: number | string) => number | undefined): HitDice {
+    const value = resolveNumber(hd.value);
+    if (value === undefined || value <= 0) {
+      console.warn(`Hitdice value "${hd.value}" for ${hd.dice} is not a valid positive number, using 1`);
+    }
+
+    return {
+      dice: hd.dice,
+      value: value !== undefined && value > 0 ? value : 1,
+      reset_on: this.resolveResetConfigs(hd.reset_on, hd.dice, resolveNumber),
+    };
+  }
+
+  private resolveResetConfigs(
+    configs: RawResetConfig[] | string | string[] | undefined,
+    label: string,
+    resolveNumber: (value: number | string) => number | undefined
+  ): ResetConfig[] | undefined {
+    if (!Array.isArray(configs)) return undefined;
+
+    return (configs as RawResetConfig[]).map((config) => {
+      if (config.amount === undefined) return { event: config.event };
+
+      const amount = resolveNumber(config.amount);
+      if (amount === undefined) {
+        console.warn(
+          `Reset amount "${config.amount}" for ${label} on ${config.event} is not a valid number, falling back to a full reset`
+        );
+      }
+
+      return { event: config.event, amount: amount === undefined ? undefined : Math.max(0, amount) };
+    });
   }
 
   private hasTemplateValues(): boolean {
-    if (typeof this.originalHealthValue === "string" && hasTemplateVariables(this.originalHealthValue)) {
+    const isTemplate = (value: number | string | undefined) => typeof value === "string" && hasTemplateVariables(value);
+
+    if (isTemplate(this.unresolvedBlock.health) || isTemplate(this.unresolvedBlock.temp_max_health)) {
       return true;
     }
-    for (const v of this.originalHitdiceValues.values()) {
-      if (typeof v === "string" && hasTemplateVariables(v)) {
-        return true;
-      }
-    }
-    return false;
-  }
 
-  private setupFrontmatterChangeListener() {
-    this.addUnloadFn(
-      this.fileContext.onFrontmatterChange(() => {
-        if (this.hasTemplateValues()) {
-          this.handleFrontmatterChange();
-        }
-      })
+    return (this.unresolvedBlock.hitdice ?? []).some(
+      (hd) =>
+        isTemplate(hd.value) ||
+        (Array.isArray(hd.reset_on) && (hd.reset_on as RawResetConfig[]).some((config) => isTemplate(config.amount)))
     );
   }
 
-  private setupEventSubscription(healthBlock: ParsedHealthBlock) {
-    const resetOn = healthBlock.reset_on || [{ event: "long-rest" }];
+  private setupFrontmatterChangeListener() {
+    if (!this.hasTemplateValues()) return;
 
+    this.addUnloadFn(this.fileContext.onFrontmatterChange(() => this.handleFrontmatterChange()));
+  }
+
+  private setupEventSubscription() {
     this.addUnloadFn(
       msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
-        if (shouldResetOnEvent(resetOn, resetEvent.eventType)) {
-          this.handleResetEvent(healthBlock);
+        const healthBlock = this.currentHealthBlock;
+        if (!healthBlock) return;
+
+        const resetOn = healthBlock.reset_on || [{ event: "long-rest" }];
+        const affectsHitDice = (healthBlock.hitdice ?? []).some((hd) =>
+          shouldResetOnEvent(hd.reset_on, resetEvent.eventType)
+        );
+
+        if (shouldResetOnEvent(resetOn, resetEvent.eventType) || affectsHitDice) {
+          this.handleResetEvent(healthBlock, resetEvent.eventType);
         }
       })
     );
@@ -202,38 +225,28 @@ class HealthMarkdown extends VueMarkdown {
     if (!this.currentHealthBlock) return;
 
     try {
-      // Reconstruct unresolved block with original template values
-      const unresolvedHitdice: RawHitDice[] | undefined = this.currentHealthBlock.hitdice?.map((hd) => ({
-        dice: hd.dice,
-        value: this.originalHitdiceValues.get(hd.dice) ?? hd.value,
-      }));
+      const updatedHealthBlock = this.processTemplates(this.unresolvedBlock);
 
-      const updatedHealthBlock = this.processTemplates({
-        ...this.currentHealthBlock,
-        health: this.originalHealthValue,
-        hitdice: unresolvedHitdice,
-      });
+      if (JSON.stringify(this.currentHealthBlock) === JSON.stringify(updatedHealthBlock)) return;
 
-      const oldHealth = typeof this.currentHealthBlock.health === "number" ? this.currentHealthBlock.health : 6;
-      const newHealth = typeof updatedHealthBlock.health === "number" ? updatedHealthBlock.health : 6;
+      this.currentHealthBlock = updatedHealthBlock;
 
-      const hitdiceChanged =
-        JSON.stringify(this.currentHealthBlock.hitdice) !== JSON.stringify(updatedHealthBlock.hitdice);
+      const stateKey = updatedHealthBlock.state_key;
+      if (!stateKey) return;
 
-      if (oldHealth !== newHealth || hitdiceChanged) {
-        this.currentHealthBlock = updatedHealthBlock;
+      try {
+        const currentState = await this.kv.get<HealthState>(stateKey);
+        if (!currentState) return;
 
-        const stateKey = updatedHealthBlock.state_key;
-        if (stateKey) {
-          try {
-            const currentState = await this.kv.get<HealthState>(stateKey);
-            if (currentState) {
-              this.renderComponent(updatedHealthBlock, currentState);
-            }
-          } catch (error) {
-            console.error("Error loading state during frontmatter update:", error);
-          }
+        // A shrinking max — an expired temp max health effect, say — has to pull current health down with it
+        const reconciled = this.reconcileState(currentState, updatedHealthBlock);
+        if (reconciled !== currentState) {
+          await this.kv.set(stateKey, reconciled);
         }
+
+        this.renderComponent(updatedHealthBlock, reconciled);
+      } catch (error) {
+        console.error("Error loading state during frontmatter update:", error);
       }
     } catch (error) {
       console.error("Error handling frontmatter change:", error);
@@ -273,21 +286,14 @@ class HealthMarkdown extends VueMarkdown {
     }
   }
 
-  private async handleResetEvent(healthBlock: ParsedHealthBlock) {
+  private async handleResetEvent(healthBlock: ParsedHealthBlock, eventType: string) {
     const stateKey = healthBlock.state_key;
     if (!stateKey) return;
 
     try {
-      const maxHealth = typeof healthBlock.health === "number" ? healthBlock.health : 6;
-      const defaultState = HealthService.getDefaultHealthState(healthBlock);
-
-      const resetState: HealthState = {
-        current: maxHealth,
-        temporary: 0,
-        hitdiceUsed: defaultState.hitdiceUsed,
-        deathSaveSuccesses: 0,
-        deathSaveFailures: 0,
-      };
+      const currentState =
+        (await this.kv.get<HealthState>(stateKey)) ?? HealthService.getDefaultHealthState(healthBlock);
+      const resetState = HealthService.computeResetState(currentState, healthBlock, eventType);
 
       await this.kv.set(stateKey, resetState);
       this.renderComponent(healthBlock, resetState);

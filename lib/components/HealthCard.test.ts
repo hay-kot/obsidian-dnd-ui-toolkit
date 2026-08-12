@@ -131,6 +131,64 @@ describe("HealthCard", () => {
     expect(wrapper.text()).toContain("Hit dice (d8)");
   });
 
+  it("includes temp max health in the maximum", () => {
+    const wrapper = mount(HealthCard, {
+      props: makeProps({ static: { temp_max_health: 5 } }),
+    });
+
+    expect(wrapper.text()).toContain("/ 25");
+    expect(wrapper.text()).toContain("incl. +5 max");
+  });
+
+  it("does not show the temp max health label when it is 0", () => {
+    const wrapper = mount(HealthCard, { props: makeProps() });
+
+    expect(wrapper.text()).not.toContain("max");
+    expect(wrapper.find(".dnd-ui-health-progress-bonus-track").exists()).toBe(false);
+  });
+
+  it("heals into temp max health", async () => {
+    const wrapper = mount(HealthCard, {
+      props: makeProps({ static: { temp_max_health: 5 }, state: { current: 20 } }),
+    });
+
+    await wrapper.find(".dnd-ui-health-heal").trigger("click");
+
+    const emitted = wrapper.emitted("update:state");
+    expect((emitted![0][0] as HealthState).current).toBe(21);
+  });
+
+  it("does not heal past base plus temp max health", async () => {
+    const wrapper = mount(HealthCard, {
+      props: makeProps({ static: { temp_max_health: 5 }, state: { current: 25 } }),
+    });
+
+    await wrapper.find(".dnd-ui-health-heal").trigger("click");
+
+    const emitted = wrapper.emitted("update:state");
+    expect((emitted![0][0] as HealthState).current).toBe(25);
+  });
+
+  it("splits the progress bar between base health and temp max health", () => {
+    const wrapper = mount(HealthCard, {
+      props: makeProps({ static: { temp_max_health: 5 }, state: { current: 22 } }),
+    });
+
+    // 20 base + 5 bonus = 25 total; 20 filled base, 2 filled bonus
+    expect(wrapper.find(".dnd-ui-health-progress-bar").attributes("style")).toContain("width: 80%");
+    expect(wrapper.find(".dnd-ui-health-progress-bar-bonus").attributes("style")).toContain("width: 8%");
+    expect(wrapper.find(".dnd-ui-health-progress-bonus-track").attributes("style")).toContain("width: 20%");
+  });
+
+  it("does not render a bonus fill while current health is within base health", () => {
+    const wrapper = mount(HealthCard, {
+      props: makeProps({ static: { temp_max_health: 5 }, state: { current: 20 } }),
+    });
+
+    expect(wrapper.find(".dnd-ui-health-progress-bar-bonus").exists()).toBe(false);
+    expect(wrapper.find(".dnd-ui-health-progress-bonus-track").exists()).toBe(true);
+  });
+
   it("applies damage to temp HP first", async () => {
     const wrapper = mount(HealthCard, {
       props: makeProps({ state: { current: 10, temporary: 3 } }),
