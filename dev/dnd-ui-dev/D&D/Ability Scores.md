@@ -1,6 +1,9 @@
 ---
 proficiency_bonus: 3
 level: 7
+dexAdvantage: true
+wisDisadvantage: true
+conAdvantage: false
 ---
 
 # Ability Scores
@@ -85,4 +88,78 @@ bonuses:
     target: strength
     value: 4
     modifies: score
+```
+
+## Advantage and Disadvantage
+
+Saving throw advantage colors the save green, disadvantage red. Keys accept full
+ability names or 3-letter abbreviations. Expect: STR and DEX green, CON and INT
+red, WIS uncolored (flagged both), CHA uncolored (flagged neither).
+
+```ability
+abilities:
+  strength: 15
+  dexterity: 14
+  constitution: 13
+  intelligence: 12
+  wisdom: 10
+  charisma: 8
+
+proficiencies:
+  - strength
+  - wisdom
+
+advantage:
+  strength: true
+  dex: true
+  wisdom: true
+
+disadvantage:
+  constitution: true
+  int: true
+  wis: true
+```
+
+## Reactive Advantage
+
+Advantage bound to frontmatter. Edit `dexAdvantage`, `wisDisadvantage`, or
+`conAdvantage` in this file's frontmatter — the coloring should update without a
+reload. Initial state: DEX green, WIS red, CON uncolored.
+
+```ability
+abilities:
+  strength: 12
+  dexterity: 16
+  constitution: 14
+  intelligence: 10
+  wisdom: 13
+  charisma: 8
+
+proficiencies:
+  - dexterity
+
+advantage:
+  dexterity: "{{frontmatter.dexAdvantage}}"
+  constitution: "{{frontmatter.conAdvantage}}"
+
+disadvantage:
+  wisdom: "{{frontmatter.wisDisadvantage}}"
+```
+
+## No Advantage Keys
+
+Regression check: a block with no advantage/disadvantage keys must render every
+save uncolored.
+
+```ability
+abilities:
+  strength: 12
+  dexterity: 12
+  constitution: 12
+  intelligence: 12
+  wisdom: 12
+  charisma: 12
+
+proficiencies:
+  - strength
 ```
