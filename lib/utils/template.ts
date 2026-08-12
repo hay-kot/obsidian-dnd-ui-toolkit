@@ -13,7 +13,7 @@ export interface TemplateContext {
 
 function init() {
   // Register helper functions for math operations
-  Handlebars.registerHelper("add", (...args: any[]) => {
+  Handlebars.registerHelper("add", (...args: unknown[]) => {
     // Last argument is handlebars options object, filter it out
     const numbers = args
       .slice(0, -1)
@@ -83,7 +83,9 @@ export function coerceNumericTemplate(processed: string, source: string): number
  */
 export function coerceBooleanTemplate(value: unknown, context?: TemplateContext | null): boolean {
   if (typeof value === "boolean") return value;
-  if (value == null) return false;
+  // Anything that isn't a scalar can't spell "true" once stringified, so it
+  // takes the same path null and undefined do.
+  if (typeof value !== "string" && typeof value !== "number") return false;
   const str = String(value);
   const processed = context && hasTemplateVariables(str) ? processTemplate(str, context) : str;
   return processed.trim().toLowerCase() === "true";

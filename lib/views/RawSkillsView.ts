@@ -14,38 +14,42 @@ export class RawSkillsView extends BaseView {
   }
 }
 
+// YAML scalars, not yet coerced — a user may write any of these as a number.
+type RawSkillCardItem = {
+  label?: string | number;
+  ability?: string | number;
+  modifier?: string | number;
+  proficiency?: string;
+};
+
 class RawSkillsComponent extends TemplateAwareComponent {
   protected processAndRender() {
-    const parsed = this.parseSource();
-    const rawItems = Array.isArray(parsed?.items) ? parsed.items : [];
+    const parsed = this.parseSource<{ items: RawSkillCardItem[] }>();
+    const rawItems = Array.isArray(parsed.items) ? parsed.items : [];
 
-    const sources = rawItems.map((item: any) => ({
+    const sources = rawItems.map((item) => ({
       label: String(item.label ?? ""),
       ability: String(item.ability ?? ""),
       modifier: String(item.modifier ?? ""),
       proficiency: item.proficiency,
     }));
 
-    const templateContext = this.setupTemplates(
-      sources.flatMap((s: { label: string; ability: string; modifier: string }) => [s.label, s.ability, s.modifier])
-    );
+    const templateContext = this.setupTemplates(sources.flatMap((s) => [s.label, s.ability, s.modifier]));
 
-    const items: SkillItem[] = sources.map(
-      (s: { label: string; ability: string; modifier: string; proficiency: string }) => {
-        const label = templateContext ? processTemplate(s.label, templateContext) : s.label;
-        const ability = templateContext ? processTemplate(s.ability, templateContext) : s.ability;
-        const modifierStr = templateContext ? processTemplate(s.modifier, templateContext) : s.modifier;
+    const items: SkillItem[] = sources.map((s) => {
+      const label = templateContext ? processTemplate(s.label, templateContext) : s.label;
+      const ability = templateContext ? processTemplate(s.ability, templateContext) : s.ability;
+      const modifierStr = templateContext ? processTemplate(s.modifier, templateContext) : s.modifier;
 
-        return {
-          label,
-          ability,
-          modifier: coerceNumericTemplate(modifierStr, s.modifier),
-          isProficient: s.proficiency === "proficient",
-          isExpert: s.proficiency === "expert",
-          isHalfProficient: s.proficiency === "half",
-        };
-      }
-    );
+      return {
+        label,
+        ability,
+        modifier: coerceNumericTemplate(modifierStr, s.modifier),
+        isProficient: s.proficiency === "proficient",
+        isExpert: s.proficiency === "expert",
+        isHalfProficient: s.proficiency === "half",
+      };
+    });
 
     this.mount(SkillCards, { items });
   }

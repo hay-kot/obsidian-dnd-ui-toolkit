@@ -134,7 +134,8 @@ export default class DndUIToolkitPlugin extends Plugin {
   }
 
   async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    const saved = (await this.loadData()) as Partial<DndUIToolkitSettings> | null;
+    this.settings = { ...DEFAULT_SETTINGS, ...saved };
   }
 
   async saveSettings() {
@@ -232,7 +233,7 @@ class DndSettingsTab extends PluginSettingTab {
   // Helper method to add color picker setting
   private addColorSetting(containerEl: HTMLElement, name: string, settingKey: keyof DndUIToolkitSettings): void {
     new Setting(containerEl).setName(name).addColorPicker((colorPicker) =>
-      colorPicker.setValue(this.plugin.settings[settingKey] as string).onChange(async (value) => {
+      colorPicker.setValue(this.plugin.settings[settingKey]).onChange(async (value) => {
         this.plugin.settings[settingKey] = value;
         await this.plugin.saveSettings();
         this.plugin.applyColorSettings();

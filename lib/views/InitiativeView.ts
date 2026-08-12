@@ -29,6 +29,11 @@ class InitiativeMarkdown extends VueMarkdown {
   private kv: KeyValueStore;
   private propsRef = ref<Record<string, unknown>>({});
   private mounted = false;
+  /**
+   * Resolves once the load kicked off by onload() has settled. Obsidian
+   * discards onload()'s return value, so this is the only handle on that work.
+   */
+  ready: Promise<void> = Promise.resolve();
 
   constructor(el: HTMLElement, source: string, kv: KeyValueStore) {
     super(el);
@@ -36,7 +41,16 @@ class InitiativeMarkdown extends VueMarkdown {
     this.kv = kv;
   }
 
-  async onload() {
+  onload() {
+    // Component.onload() is typed void, so the async work is kicked off here
+    // rather than declared on onload — otherwise a rejection (the missing
+    // state_key throw below included) surfaces as an unhandled rejection.
+    this.ready = this.initialize().catch((error: unknown) => {
+      console.error("Error loading initiative block:", error);
+    });
+  }
+
+  private async initialize() {
     const initiativeBlock = InitiativeService.parseInitiativeBlock(this.source);
 
     const stateKey = initiativeBlock.state_key;
@@ -75,7 +89,7 @@ class InitiativeMarkdown extends VueMarkdown {
       static: block,
       state: state,
       "onUpdate:state": (newState: InitiativeState) => {
-        this.handleStateChange(block, newState);
+        void this.handleStateChange(block, newState);
         this.renderComponent(block, newState);
       },
     };

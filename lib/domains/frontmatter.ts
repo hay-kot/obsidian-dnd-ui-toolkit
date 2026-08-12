@@ -2,7 +2,7 @@ import { Frontmatter } from "lib/types";
 import { levelToProficiencyBonus } from "./dnd/proficiency";
 
 export interface UnparsedFrontmatter {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /*
@@ -19,22 +19,13 @@ const FrontMatterKeys: Record<keyof Frontmatter, string[]> = {
  * Determines if the frontmatter contains a proficiency bonus or any of it's
  * aliased values
  * */
-export function isProficiencyBonusInFrontmatter(fm: any): boolean {
-  if (!fm || typeof fm !== "object") {
+export function isProficiencyBonusInFrontmatter(fm: unknown): boolean {
+  if (typeof fm !== "object" || fm === null) {
     return false;
   }
 
-  const proficiencyBonusKeys = FrontMatterKeys.proficiency_bonus;
-  for (const key of proficiencyBonusKeys) {
-    if (fm[key] !== undefined && fm[key] !== null) {
-      return true;
-    }
-    const lowered = key.toLowerCase();
-    if (fm[lowered] !== undefined && fm[lowered] !== null) {
-      return true;
-    }
-  }
-  return false;
+  const record = fm as Record<string, unknown>;
+  return FrontMatterKeys.proficiency_bonus.some((key) => record[key] != null || record[key.toLowerCase()] != null);
 }
 
 export { levelToProficiencyBonus } from "./dnd/proficiency";
@@ -44,35 +35,22 @@ export function anyIntoFrontMatter(fm: UnparsedFrontmatter): Frontmatter {
     proficiency_bonus: 2,
   };
 
-  // Handle known keys with specific mappings
-  for (const key in FrontMatterKeys) {
-    const keys = FrontMatterKeys[key];
-    for (const k of keys) {
-      if (fm[k] !== undefined) {
-        // Try to parse numbers
-        if (typeof fm[k] === "string" && !isNaN(Number(fm[k]))) {
-          frontmatter[key as keyof Frontmatter] = Number(fm[k]);
-        } else {
-          frontmatter[key as keyof Frontmatter] = fm[k];
-        }
-        break;
-      }
-      const lowered = k.toLowerCase();
-      if (fm[lowered] !== undefined) {
-        // Try to parse numbers
-        if (typeof fm[lowered] === "string" && !isNaN(Number(fm[lowered]))) {
-          frontmatter[key as keyof Frontmatter] = Number(fm[lowered]);
-        } else {
-          frontmatter[key as keyof Frontmatter] = fm[lowered];
-        }
-        break;
-      }
-    }
+  // Handle known keys with specific mappings. Each alias is tried in its
+  // authored casing first, then lowercased, and the first hit wins.
+  for (const key of Object.keys(FrontMatterKeys) as (keyof Frontmatter)[]) {
+    const aliases = FrontMatterKeys[key].flatMap((alias) => [alias, alias.toLowerCase()]);
+    const match = aliases.find((alias) => fm[alias] !== undefined);
+    if (match === undefined) continue;
+
+    // Quoted YAML scalars arrive as strings, but level and proficiency bonus
+    // are used arithmetically downstream, so coerce whatever parses.
+    const value = fm[match];
+    frontmatter[key] = typeof value === "string" && !isNaN(Number(value)) ? Number(value) : value;
   }
 
   // Auto-calculate proficiency bonus from level if proficiency bonus is not explicitly set
   if (!isProficiencyBonusInFrontmatter(fm) && frontmatter.level !== undefined) {
-    frontmatter.proficiency_bonus = levelToProficiencyBonus(frontmatter.level as number);
+    frontmatter.proficiency_bonus = levelToProficiencyBonus(frontmatter.level);
   }
 
   // Add all other frontmatter properties as-is

@@ -1,5 +1,5 @@
 import { App, MarkdownPostProcessorContext } from "obsidian";
-import { parse } from "yaml";
+import { parseYamlObject } from "../utils/yaml";
 import { VueMarkdown } from "./VueMarkdown";
 import { FileContext, useFileContext } from "./filecontext";
 import { hasTemplateVariables, createTemplateContext, TemplateContext } from "../utils/template";
@@ -28,15 +28,15 @@ export abstract class TemplateAwareComponent extends VueMarkdown {
     this.fileContext = useFileContext(app, ctx);
   }
 
-  async onload() {
+  onload() {
     this.processAndRender();
     this.setupListeners();
   }
 
   protected abstract processAndRender(): void;
 
-  protected parseSource(): Record<string, any> {
-    return parse(this.source) || {};
+  protected parseSource<T>(): Partial<T> {
+    return parseYamlObject<T>(this.source) ?? {};
   }
 
   /**

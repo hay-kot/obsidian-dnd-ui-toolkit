@@ -38,6 +38,11 @@ class HealthMarkdown extends VueMarkdown {
   private originalHitdiceValues: Map<string, number | string> = new Map();
   private propsRef = ref<Record<string, unknown>>({});
   private mounted = false;
+  /**
+   * Resolves once the load kicked off by onload() has settled. Obsidian
+   * discards onload()'s return value, so this is the only handle on that work.
+   */
+  ready: Promise<void> = Promise.resolve();
 
   constructor(
     el: HTMLElement,
@@ -62,9 +67,13 @@ class HealthMarkdown extends VueMarkdown {
     }
   }
 
-  async onload() {
+  onload() {
     this.setupFrontmatterChangeListener();
-    await this.processAndRender();
+    // Component.onload() is typed void, so the render is kicked off here rather
+    // than awaited — otherwise a rejection surfaces as an unhandled rejection.
+    this.ready = this.processAndRender().catch((error: unknown) => {
+      console.error("Error loading health block:", error);
+    });
   }
 
   private async processAndRender() {
@@ -180,7 +189,7 @@ class HealthMarkdown extends VueMarkdown {
     this.addUnloadFn(
       this.fileContext.onFrontmatterChange(() => {
         if (this.hasTemplateValues()) {
-          this.handleFrontmatterChange();
+          void this.handleFrontmatterChange();
         }
       })
     );
@@ -192,7 +201,7 @@ class HealthMarkdown extends VueMarkdown {
     this.addUnloadFn(
       msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
         if (shouldResetOnEvent(resetOn, resetEvent.eventType)) {
-          this.handleResetEvent(healthBlock);
+          void this.handleResetEvent(healthBlock);
         }
       })
     );
@@ -248,7 +257,7 @@ class HealthMarkdown extends VueMarkdown {
       static: healthBlock,
       state: state,
       "onUpdate:state": (newState: HealthState) => {
-        this.handleStateChange(healthBlock, newState);
+        void this.handleStateChange(healthBlock, newState);
         this.renderComponent(healthBlock, newState);
       },
     };
