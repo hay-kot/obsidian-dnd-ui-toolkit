@@ -28,7 +28,7 @@ class EventButtonsMarkdown extends VueMarkdown {
     this.filePath = filePath;
   }
 
-  async onload() {
+  onload() {
     try {
       const eventButtonsBlock = EventButtonsService.parseEventButtonsBlock(this.source);
 

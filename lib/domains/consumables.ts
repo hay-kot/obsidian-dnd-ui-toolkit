@@ -1,6 +1,6 @@
 import * as Utils from "lib/utils/utils";
 import { ConsumableBlock, ParsedConsumableBlock } from "lib/types";
-import { parse } from "yaml";
+import { parseYamlObject } from "lib/utils/yaml";
 import { normalizeResetConfig } from "lib/domains/events";
 
 export interface ConsumableState {
@@ -25,7 +25,7 @@ export function parseConsumableBlock(yamlString: string): UnresolvedConsumableBl
     reset_on: undefined,
   };
 
-  const parsed = parse(yamlString);
+  const parsed = parseYamlObject<ConsumableBlock>(yamlString);
   const merged = Utils.mergeWithDefaults(parsed, def);
 
   // Normalize reset_on to always be an array of ResetConfig objects
@@ -38,7 +38,7 @@ export function parseConsumableBlock(yamlString: string): UnresolvedConsumableBl
 }
 
 export function parseConsumablesBlock(yamlString: string): ConsumablesBlock {
-  const parsed = parse(yamlString);
+  const parsed = parseYamlObject<{ items: Partial<ConsumableBlock>[] }>(yamlString);
 
   // If the parsed data already has an 'items' array, use it
   if (parsed && Array.isArray(parsed.items)) {
@@ -51,7 +51,7 @@ export function parseConsumablesBlock(yamlString: string): ConsumablesBlock {
 
     // Apply defaults to each item and normalize reset_on
     return {
-      items: parsed.items.map((item: any) => {
+      items: parsed.items.map((item) => {
         const merged = Utils.mergeWithDefaults(item, defItem);
         return {
           ...merged,

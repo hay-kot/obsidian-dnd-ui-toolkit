@@ -36,12 +36,14 @@ export function mergeWithDefaults<T extends Record<string, unknown>>(
         !Array.isArray(defaultValue)
       ) {
         // Recursively merge nested objects
-        // @ts-expect-error
+        // @ts-expect-error - T's value type is not known to be a Record here, but
+        // the branch guard has established both sides are plain objects.
         result[key] = mergeWithDefaults(sourceValue, defaultValue);
       } else {
         // For non-objects or arrays, use source value if it's not null/undefined,
         // otherwise use the default
-        // @ts-expect-error
+        // @ts-expect-error - Partial<T>[key] is not assignable to T[key] in the
+        // general case; the null/undefined check narrows it at runtime.
         result[key] = sourceValue !== undefined && sourceValue !== null ? sourceValue : defaultValue;
       }
     }
