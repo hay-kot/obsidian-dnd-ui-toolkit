@@ -34,12 +34,16 @@ The skills block automatically displays all 18 D&D 5e skills: Acrobatics, Animal
 
 ## Configuration
 
-| Property             | Type  | Default | Description                                               |
-| -------------------- | ----- | ------- | --------------------------------------------------------- |
-| `proficiencies`      | Array | —       | List of skills you are proficient in                      |
-| `expertise`          | Array | —       | List of skills you have expertise in (double proficiency) |
-| `half_proficiencies` | Array | —       | List of skills you have half proficiency in               |
-| `bonuses`            | Array | —       | List of bonuses to apply to specific skills               |
+| Property             | Type   | Default | Description                                                          |
+| -------------------- | ------ | ------- | ------------------------------------------------------------------- |
+| `proficiencies`      | Array  | —       | List of skills you are proficient in                                |
+| `expertise`          | Array  | —       | List of skills you have expertise in (double proficiency)           |
+| `half_proficiencies` | Array  | —       | List of skills you have half proficiency in                         |
+| `bonuses`            | Array  | —       | List of bonuses to apply to specific skills                         |
+| `advantage` †        | Object | —       | Map of skills to booleans; a `true` value colors that skill green   |
+| `disadvantage` †     | Object | —       | Map of skills to booleans; a `true` value colors that skill red     |
+
+† Supports [dynamic content](/concepts/dynamic-content) templates
 
 ### Bonus Object
 
@@ -48,3 +52,25 @@ The skills block automatically displays all 18 D&D 5e skills: Acrobatics, Animal
 | `name`   | String | Required | Name of the bonus (for display purposes) |
 | `target` | String | Required | Which skill the bonus applies to         |
 | `value`  | Number | Required | The bonus value to add                   |
+
+## Advantage & Disadvantage
+
+Highlight skills that currently have advantage or disadvantage. Keys are skill names (e.g. `perception`, `stealth`). A `true` value colors the skill name and value green (advantage) or red (disadvantage); a skill flagged as both, or neither, is left uncolored.
+
+````yaml
+```skills
+proficiencies:
+  - perception
+  - stealth
+
+advantage:
+  perception: true
+  # Bind the value to frontmatter so a Meta Bind toggle can flip it live
+  stealth: "{{frontmatter.stealthAdvantage}}"
+
+disadvantage:
+  athletics: "{{frontmatter.athleticsDisadvantage}}"
+```
+````
+
+Because the templated values read from frontmatter, a [Meta Bind](https://cwyther.gitbook.io/obsidian-meta-bind-plugin) toggle bound to `stealthAdvantage` (etc.) updates the coloring the moment it changes.

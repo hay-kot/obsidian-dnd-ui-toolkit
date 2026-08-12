@@ -10,6 +10,8 @@ export function parseSkillsBlock(yamlString: string): SkillsBlock {
     expertise: [],
     half_proficiencies: [],
     bonuses: [],
+    advantage: {},
+    disadvantage: {},
   };
 
   const parsed = parse(yamlString);

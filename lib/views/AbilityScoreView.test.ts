@@ -101,4 +101,28 @@ describe("AbilityScoreView", () => {
     // The abilities listener is never registered for this component regardless.
     expect(onAbilitiesChange).not.toHaveBeenCalled();
   });
+
+  it("marks saving throws with advantage/disadvantage flags", async () => {
+    const source = `abilities:
+  strength: 14
+  dexterity: 12
+advantage:
+  str: true
+disadvantage:
+  dexterity: true`;
+    abilityView.render(source, mockElement, mockContext);
+    await addedChild.onload();
+
+    const abilities = addedChild.mount.mock.calls[0][1].abilities;
+    const str = abilities.find((a: any) => a.label === "STR");
+    const dex = abilities.find((a: any) => a.label === "DEX");
+    const con = abilities.find((a: any) => a.label === "CON");
+
+    expect(str.hasAdvantage).toBe(true);
+    expect(str.hasDisadvantage).toBe(false);
+    expect(dex.hasDisadvantage).toBe(true);
+    expect(dex.hasAdvantage).toBe(false);
+    expect(con.hasAdvantage).toBe(false);
+    expect(con.hasDisadvantage).toBe(false);
+  });
 });

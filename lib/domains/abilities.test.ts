@@ -409,6 +409,45 @@ abilities:
       expect(result.bonuses).toEqual([{ name: "Racial", target: "strength", value: 2 }]);
       expect(result.proficiencies).toEqual(["strength"]);
     });
+
+    it("resolves literal advantage/disadvantage entries by full name and abbreviation", () => {
+      const raw: RawAbilityBlock = {
+        ...rawBlock({}),
+        advantage: { strength: true, dex: true },
+        disadvantage: { wisdom: true },
+      };
+
+      const result = resolveAbilityBlock(raw, null);
+
+      expect(result.advantage).toEqual({ strength: true, dexterity: true });
+      expect(result.disadvantage).toEqual({ wisdom: true });
+    });
+
+    it("resolves advantage from a frontmatter boolean template", () => {
+      const raw: RawAbilityBlock = {
+        ...rawBlock({}),
+        advantage: { strength: "{{frontmatter.strAdvantage}}" },
+        disadvantage: { dexterity: "{{frontmatter.dexDisadvantage}}" },
+      };
+      const fm: Frontmatter = { proficiency_bonus: 2, strAdvantage: true, dexDisadvantage: false };
+
+      const result = resolveAbilityBlock(raw, fm);
+
+      expect(result.advantage).toEqual({ strength: true });
+      // false-valued entries are omitted rather than stored as false.
+      expect(result.disadvantage).toEqual({});
+    });
+
+    it("omits falsy entries and ignores unknown ability keys", () => {
+      const raw: RawAbilityBlock = {
+        ...rawBlock({}),
+        advantage: { strength: false, bogus: true },
+      };
+
+      const result = resolveAbilityBlock(raw, null);
+
+      expect(result.advantage).toEqual({});
+    });
   });
 
   describe("calculateModifier", () => {

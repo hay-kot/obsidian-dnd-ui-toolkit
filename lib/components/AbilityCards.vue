@@ -6,6 +6,8 @@ interface AbilityCardItem {
   modifier: string;
   isProficient: boolean;
   savingThrow: string;
+  hasAdvantage?: boolean;
+  hasDisadvantage?: boolean;
 }
 
 withDefaults(
@@ -30,7 +32,10 @@ withDefaults(
           <p v-if="item.total" class="dnd-ui-ability-value">{{ item.total }}</p>
         </div>
         <p class="dnd-ui-ability-modifier">{{ item.modifier }}</p>
-        <div class="dnd-ui-ability-modifier-saving">
+        <div
+          class="dnd-ui-ability-modifier-saving"
+          :class="{ 'dnd-ui-advantage': item.hasAdvantage, 'dnd-ui-disadvantage': item.hasDisadvantage }"
+        >
           <em>{{ showSavingPrefix ? `Saving ${item.savingThrow}` : item.savingThrow }}</em>
         </div>
       </div>

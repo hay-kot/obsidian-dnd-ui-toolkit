@@ -6,6 +6,7 @@ import * as AbilityService from "lib/domains/abilities";
 import * as SkillsService from "lib/domains/skills";
 import { AbilityBlock, AbilityScores, SkillItem } from "lib/types";
 import { extractFirstCodeBlock } from "../utils/codeblock-extractor";
+import { coerceBooleanTemplate, TemplateContext } from "../utils/template";
 
 export class SkillsView extends BaseView {
   public codeblock = "skills";
@@ -24,7 +25,7 @@ class SkillsComponent extends TemplateAwareComponent {
     const documentText = sectionInfo?.text || "";
     const abilityBlockSrc = extractFirstCodeBlock(documentText, "ability") ?? "";
 
-    this.setupTemplates([this.source, abilityBlockSrc]);
+    const templateContext = this.setupTemplates([this.source, abilityBlockSrc]);
 
     const frontmatter = this.fileContext.frontmatter();
     let abilityBlock: AbilityBlock;
@@ -47,6 +48,12 @@ class SkillsComponent extends TemplateAwareComponent {
     }
 
     const items: SkillItem[] = [];
+
+    const skillFlag = (map: Record<string, string | boolean> | undefined, label: string): boolean => {
+      if (!map) return false;
+      const entry = Object.entries(map).find(([key]) => key.toLowerCase() === label.toLowerCase());
+      return entry ? coerceBooleanTemplate(entry[1], templateContext as TemplateContext | null) : false;
+    };
 
     for (const skill of SkillsService.Skills) {
       const isHalfProficient = skillsBlock.half_proficiencies.some(
@@ -78,6 +85,9 @@ class SkillsComponent extends TemplateAwareComponent {
 
       const abbreviation = skill.ability.substring(0, 3).toUpperCase();
 
+      const advantage = skillFlag(skillsBlock.advantage, skill.label);
+      const disadvantage = skillFlag(skillsBlock.disadvantage, skill.label);
+
       items.push({
         label: skill.label,
         ability: abbreviation,
@@ -85,6 +95,8 @@ class SkillsComponent extends TemplateAwareComponent {
         isProficient,
         isExpert,
         isHalfProficient,
+        hasAdvantage: advantage && !disadvantage,
+        hasDisadvantage: disadvantage && !advantage,
       });
     }
 

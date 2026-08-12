@@ -73,6 +73,22 @@ export function coerceNumericTemplate(processed: string, source: string): number
   return 0;
 }
 
+/**
+ * Coerces a (possibly template-processed) value into a boolean for boolean
+ * component fields such as advantage/disadvantage flags. Accepts native YAML
+ * booleans, and the strings "true"/"false" produced by Handlebars when a
+ * frontmatter boolean is interpolated (e.g. `{{frontmatter.strAdvantage}}`).
+ * Anything else resolves to false. A context is only needed when the value is a
+ * template string; literal booleans are handled without one.
+ */
+export function coerceBooleanTemplate(value: unknown, context?: TemplateContext | null): boolean {
+  if (typeof value === "boolean") return value;
+  if (value == null) return false;
+  const str = String(value);
+  const processed = context && hasTemplateVariables(str) ? processTemplate(str, context) : str;
+  return processed.trim().toLowerCase() === "true";
+}
+
 export function createTemplateContext(el: HTMLElement, fileContext: FileContext): TemplateContext {
   const frontmatter = fileContext.frontmatter();
 

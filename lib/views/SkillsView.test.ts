@@ -270,4 +270,76 @@ describe("SkillsView", () => {
 
     parseAbilityBlockSpy.mockRestore();
   });
+
+  it("flags advantage and disadvantage on the matching skills", async () => {
+    const parseAbilityBlockSpy = vi.spyOn(AbilityService, "parseAbilityBlockFromDocument");
+    parseAbilityBlockSpy.mockReturnValue({
+      abilities: {
+        strength: 10,
+        dexterity: 10,
+        constitution: 10,
+        intelligence: 10,
+        wisdom: 10,
+        charisma: 10,
+      },
+      bonuses: [],
+      proficiencies: [],
+    });
+
+    const skillsYaml = `proficiencies:
+  - athletics
+advantage:
+  perception: true
+disadvantage:
+  stealth: true`;
+
+    skillsView.render(skillsYaml, mockElement, mockContext);
+    await addedChild.onload();
+
+    const props = addedChild.mount.mock.calls[0][1];
+    const perception = props.items.find((i: any) => i.label.toLowerCase() === "perception");
+    const stealth = props.items.find((i: any) => i.label.toLowerCase() === "stealth");
+    const athletics = props.items.find((i: any) => i.label.toLowerCase() === "athletics");
+
+    expect(perception.hasAdvantage).toBe(true);
+    expect(perception.hasDisadvantage).toBe(false);
+    expect(stealth.hasDisadvantage).toBe(true);
+    expect(stealth.hasAdvantage).toBe(false);
+    // Untouched skills carry neither flag.
+    expect(athletics.hasAdvantage).toBe(false);
+    expect(athletics.hasDisadvantage).toBe(false);
+
+    parseAbilityBlockSpy.mockRestore();
+  });
+
+  it("cancels out a skill flagged as both advantage and disadvantage", async () => {
+    const parseAbilityBlockSpy = vi.spyOn(AbilityService, "parseAbilityBlockFromDocument");
+    parseAbilityBlockSpy.mockReturnValue({
+      abilities: {
+        strength: 10,
+        dexterity: 10,
+        constitution: 10,
+        intelligence: 10,
+        wisdom: 10,
+        charisma: 10,
+      },
+      bonuses: [],
+      proficiencies: [],
+    });
+
+    const skillsYaml = `advantage:
+  perception: true
+disadvantage:
+  perception: true`;
+
+    skillsView.render(skillsYaml, mockElement, mockContext);
+    await addedChild.onload();
+
+    const props = addedChild.mount.mock.calls[0][1];
+    const perception = props.items.find((i: any) => i.label.toLowerCase() === "perception");
+    expect(perception.hasAdvantage).toBe(false);
+    expect(perception.hasDisadvantage).toBe(false);
+
+    parseAbilityBlockSpy.mockRestore();
+  });
 });
