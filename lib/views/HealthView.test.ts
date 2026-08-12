@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { HealthView } from "./HealthView";
 import { App, MarkdownPostProcessorContext } from "obsidian";
 import { KeyValueStore } from "lib/services/kv/kv";
+import { msgbus } from "lib/services/event-bus";
+import { useFileContext } from "./filecontext";
 
 const processTemplateMock = vi.fn((text: string, _context?: any) => text);
 
@@ -85,6 +87,18 @@ describe("HealthView template resolution", () => {
     const child = (mockContext.addChild as any).mock.calls[0][0];
     await child.onload();
     return child;
+  }
+
+  async function publishReset(eventType: string) {
+    const calls = (msgbus.subscribe as any).mock.calls;
+    const handler = calls[calls.length - 1][2];
+    await handler({ eventType });
+  }
+
+  async function publishFrontmatterChange() {
+    const results = (useFileContext as any).mock.results;
+    const handler = results[results.length - 1].value.onFrontmatterChange.mock.calls[0][0];
+    await handler();
   }
 
   describe("health value resolution", () => {
@@ -264,6 +278,175 @@ hitdice:
 
       const state = await kv.get("hp_both");
       expect(state).toMatchObject({ current: 40, temporary: 0 });
+    });
+  });
+
+  describe("temp max health resolution", () => {
+    it("should add a numeric temp max health to the starting health", async () => {
+      const yaml = `state_key: hp_temp_max
+health: 24
+temp_max_health: 5`;
+
+      await renderAndGetChild(yaml);
+
+      expect(await kv.get("hp_temp_max")).toMatchObject({ current: 29 });
+    });
+
+    it("should resolve a template string in temp max health", async () => {
+      processTemplateMock.mockReturnValue("7");
+
+      const yaml = `state_key: hp_temp_max_template
+health: 24
+temp_max_health: "{{frontmatter.aid}}"`;
+
+      await renderAndGetChild(yaml);
+
+      expect(processTemplateMock).toHaveBeenCalledWith("{{frontmatter.aid}}", expect.any(Object));
+      expect(await kv.get("hp_temp_max_template")).toMatchObject({ current: 31 });
+    });
+
+    it("should fall back to 0 when temp max health resolves to a non-number", async () => {
+      processTemplateMock.mockReturnValue("not-a-number");
+
+      const yaml = `state_key: hp_temp_max_nan
+health: 24
+temp_max_health: "{{frontmatter.missing}}"`;
+
+      const consoleSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+      await renderAndGetChild(yaml);
+      consoleSpy.mockRestore();
+
+      expect(await kv.get("hp_temp_max_nan")).toMatchObject({ current: 24 });
+    });
+
+    it("should cap current health when a temp max health effect ends", async () => {
+      processTemplateMock.mockReturnValue("5");
+
+      await renderAndGetChild(`state_key: hp_temp_expires
+health: 24
+temp_max_health: "{{frontmatter.aid}}"`);
+
+      expect(await kv.get("hp_temp_expires")).toMatchObject({ current: 29 });
+
+      processTemplateMock.mockReturnValue("0");
+      await publishFrontmatterChange();
+
+      expect(await kv.get("hp_temp_expires")).toMatchObject({ current: 24 });
+    });
+
+    it("should cap saved health that exceeds a shrunken maximum", async () => {
+      await kv.set("hp_over_max", {
+        current: 29,
+        temporary: 0,
+        hitdiceUsed: 0,
+        deathSaveSuccesses: 0,
+        deathSaveFailures: 0,
+      });
+
+      await renderAndGetChild(`state_key: hp_over_max
+health: 24`);
+
+      expect(await kv.get("hp_over_max")).toMatchObject({ current: 24 });
+    });
+  });
+
+  describe("reset events", () => {
+    it("should restore all hit dice on the block reset event", async () => {
+      await kv.set("hp_reset_all", {
+        current: 5,
+        temporary: 2,
+        hitdiceUsed: 4,
+        deathSaveSuccesses: 1,
+        deathSaveFailures: 1,
+      });
+
+      await renderAndGetChild(`state_key: hp_reset_all
+health: 24
+hitdice:
+  dice: d6
+  value: 4`);
+
+      await publishReset("long-rest");
+
+      expect(await kv.get("hp_reset_all")).toMatchObject({
+        current: 24,
+        temporary: 0,
+        hitdiceUsed: 0,
+        deathSaveSuccesses: 0,
+        deathSaveFailures: 0,
+      });
+    });
+
+    it("should restore only the configured number of hit dice", async () => {
+      await kv.set("hp_reset_partial", {
+        current: 5,
+        temporary: 0,
+        hitdiceUsed: 4,
+        deathSaveSuccesses: 0,
+        deathSaveFailures: 0,
+      });
+
+      await renderAndGetChild(`state_key: hp_reset_partial
+health: 24
+hitdice:
+  dice: d6
+  value: 4
+  reset_on:
+    - event: long-rest
+      amount: 1`);
+
+      await publishReset("long-rest");
+
+      expect(await kv.get("hp_reset_partial")).toMatchObject({ current: 24, hitdiceUsed: 3 });
+    });
+
+    it("should resolve a template in the hit dice reset amount", async () => {
+      processTemplateMock.mockImplementation((text: string) => (text === "{{frontmatter.level}}" ? "6" : "3"));
+
+      await kv.set("hp_reset_template", {
+        current: 5,
+        temporary: 0,
+        hitdiceUsed: 6,
+        deathSaveSuccesses: 0,
+        deathSaveFailures: 0,
+      });
+
+      await renderAndGetChild(`state_key: hp_reset_template
+health: 24
+hitdice:
+  dice: d6
+  value: "{{frontmatter.level}}"
+  reset_on:
+    - event: long-rest
+      amount: "{{floor (divide frontmatter.level 2)}}"`);
+
+      await publishReset("long-rest");
+
+      expect(processTemplateMock).toHaveBeenCalledWith("{{floor (divide frontmatter.level 2)}}", expect.any(Object));
+      expect(await kv.get("hp_reset_template")).toMatchObject({ hitdiceUsed: 3 });
+    });
+
+    it("should restore hit dice on an event the block itself ignores", async () => {
+      await kv.set("hp_reset_short", {
+        current: 5,
+        temporary: 0,
+        hitdiceUsed: 4,
+        deathSaveSuccesses: 0,
+        deathSaveFailures: 0,
+      });
+
+      await renderAndGetChild(`state_key: hp_reset_short
+health: 24
+hitdice:
+  dice: d6
+  value: 4
+  reset_on:
+    - event: short-rest
+      amount: 2`);
+
+      await publishReset("short-rest");
+
+      expect(await kv.get("hp_reset_short")).toMatchObject({ current: 5, hitdiceUsed: 2 });
     });
   });
 

@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import type { ParsedHealthBlock } from "lib/types";
-import { HealthState, isSingleHitDiceState, isMultiHitDiceState, hasSingleHitDice } from "lib/domains/healthpoints";
+import {
+  HealthState,
+  isSingleHitDiceState,
+  isMultiHitDiceState,
+  hasSingleHitDice,
+  getBaseHealth,
+  getTempMaxHealth,
+  getMaxHealth,
+  getHitDiceUsed,
+} from "lib/domains/healthpoints";
 import Checkbox from "lib/components/Checkbox.vue";
 
 const props = defineProps<{
@@ -15,7 +24,9 @@ const emit = defineEmits<{
 
 const inputValue = ref("1");
 
-const maxHealth = computed(() => (typeof props.static.health === "number" ? props.static.health : 6));
+const baseHealth = computed(() => getBaseHealth(props.static));
+const tempMaxHealth = computed(() => getTempMaxHealth(props.static));
+const maxHealth = computed(() => getMaxHealth(props.static));
 
 const hitDiceLabelWidth = computed(() => {
   if (!props.static.hitdice || props.static.hitdice.length <= 1) return undefined;
@@ -23,7 +34,15 @@ const hitDiceLabelWidth = computed(() => {
   return `${longest * 0.6}em`;
 });
 
-const healthPercentage = computed(() => Math.max(0, Math.min(100, (props.state.current / maxHealth.value) * 100)));
+function toPercentage(value: number): number {
+  if (maxHealth.value <= 0) return 0;
+  return Math.max(0, Math.min(100, (value / maxHealth.value) * 100));
+}
+
+// The bar is split so health above the base maximum reads as the temporary bonus rather than as normal HP
+const healthPercentage = computed(() => toPercentage(Math.min(props.state.current, baseHealth.value)));
+const tempMaxFilledPercentage = computed(() => toPercentage(Math.max(0, props.state.current - baseHealth.value)));
+const tempMaxTrackPercentage = computed(() => toPercentage(tempMaxHealth.value));
 
 function handleHeal() {
   const value = parseInt(inputValue.value) || 0;
@@ -128,13 +147,8 @@ function toggleDeathSave(type: "success" | "failure", index: number) {
   emit("update:state", newState);
 }
 
-function getHitDiceUsed(hd: { dice: string; value: number }): number {
-  if (hasSingleHitDice(props.static) && isSingleHitDiceState(props.state)) {
-    return props.state.hitdiceUsed;
-  } else if (isMultiHitDiceState(props.state)) {
-    return props.state.hitdiceUsed[hd.dice] || 0;
-  }
-  return 0;
+function usedHitDice(hd: { dice: string }): number {
+  return getHitDiceUsed(props.static, props.state, hd.dice);
 }
 </script>
 
@@ -145,12 +159,23 @@ function getHitDiceUsed(hd: { dice: string; value: number }): number {
       <div class="dnd-ui-health-value">
         {{ props.state.current }}
         <span class="dnd-ui-health-max">/ {{ maxHealth }}</span>
-        <span v-if="props.state.temporary > 0" class="dnd-ui-health-temp">+{{ props.state.temporary }} temp</span>
+        <span v-if="tempMaxHealth > 0" class="dnd-ui-health-max-bonus">incl. +{{ tempMaxHealth }} max</span>
+        <span v-if="props.state.temporary > 0" class="dnd-ui-health-temp-value">+{{ props.state.temporary }} temp</span>
       </div>
     </div>
 
     <div class="dnd-ui-health-progress-container">
+      <div
+        v-if="tempMaxHealth > 0"
+        class="dnd-ui-health-progress-bonus-track"
+        :style="{ width: `${tempMaxTrackPercentage}%` }"
+      />
       <div class="dnd-ui-health-progress-bar" :style="{ width: `${healthPercentage}%` }" />
+      <div
+        v-if="tempMaxFilledPercentage > 0"
+        class="dnd-ui-health-progress-bar-bonus"
+        :style="{ width: `${tempMaxFilledPercentage}%` }"
+      />
     </div>
 
     <div class="dnd-ui-health-controls">
@@ -180,7 +205,7 @@ function getHitDiceUsed(hd: { dice: string; value: number }): number {
               <Checkbox
                 v-for="i in hd.value"
                 :key="`${hd.dice}-${i - 1}`"
-                :checked="i - 1 < getHitDiceUsed(hd)"
+                :checked="i - 1 < usedHitDice(hd)"
                 :id="`hit-dice-${hd.dice}-${i - 1}`"
                 @toggle="toggleHitDie(hasSingleHitDice(props.static) ? null : hd.dice, i - 1)"
               />
