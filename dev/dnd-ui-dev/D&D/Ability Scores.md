@@ -92,9 +92,10 @@ bonuses:
 
 ## Advantage and Disadvantage
 
-Saving throw advantage colors the save green, disadvantage red. Keys accept full
-ability names or 3-letter abbreviations. Expect: STR and DEX green, CON and INT
-red, WIS uncolored (flagged both), CHA uncolored (flagged neither).
+Saving throw advantage marks the save with a teal up-chevron, disadvantage with a
+red down-chevron. Hover an indicator for a tooltip. Keys accept full ability names or
+3-letter abbreviations. Expect: STR and DEX up-chevrons, CON and INT
+down-chevrons, WIS and CHA no indicator (flagged both / flagged neither).
 
 ```ability
 abilities:
@@ -123,8 +124,8 @@ disadvantage:
 ## Reactive Advantage
 
 Advantage bound to frontmatter. Edit `dexAdvantage`, `wisDisadvantage`, or
-`conAdvantage` in this file's frontmatter — the coloring should update without a
-reload. Initial state: DEX green, WIS red, CON uncolored.
+`conAdvantage` in this file's frontmatter — the indicators should update without a
+reload. Initial state: DEX up-chevron, WIS down-chevron, CON none.
 
 ```ability
 abilities:
@@ -148,8 +149,8 @@ disadvantage:
 
 ## No Advantage Keys
 
-Regression check: a block with no advantage/disadvantage keys must render every
-save uncolored.
+Regression check: a block with no advantage/disadvantage keys must render no
+indicators at all.
 
 ```ability
 abilities:

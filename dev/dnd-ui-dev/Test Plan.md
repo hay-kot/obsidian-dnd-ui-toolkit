@@ -7,20 +7,26 @@ install into this vault, then work through each section.
 ## #70 — Advantage and Disadvantage
 
 Adds optional `advantage`/`disadvantage` maps to the `ability` and `skills`
-blocks. Advantage colors green, disadvantage red, both-or-neither stays uncolored.
+blocks. Advantage shows a teal up-chevron icon, disadvantage a red down-chevron,
+both-or-neither shows an empty slot (which keeps the values column-aligned). Each indicator carries a tooltip naming the ability/skill and which
+applies — hover to check the wording, not just the glyph.
 
-- [[Ability Scores]] → *Advantage and Disadvantage*: STR and DEX green, CON and
-  INT red, WIS uncolored (flagged both), CHA uncolored. Confirms full names and
-  3-letter abbreviations both resolve.
+- [[Ability Scores]] → *Advantage and Disadvantage*: STR and DEX up-chevron, CON and
+  INT down-chevron, WIS and CHA no icon. Confirms full names and 3-letter abbreviations
+  both resolve.
 - [[Ability Scores]] → *Reactive Advantage*: edit `dexAdvantage`,
   `wisDisadvantage`, or `conAdvantage` in that file's frontmatter and watch the
-  coloring change without a reload.
-- [[Ability Scores]] → *No Advantage Keys*: every save uncolored.
-- [[Skills]] → *Advantage and Disadvantage*: Perception and Stealth green,
-  Athletics and Deception red, Insight uncolored.
-- [[Skills]] → *Reactive Advantage*: edit the frontmatter toggles, coloring
-  follows.
-- [[Skills]] → *Multi-word Skill Keys*: Sleight of Hand green, Animal Handling red.
+  indicators change without a reload.
+- [[Ability Scores]] → *No Advantage Keys*: no indicators at all.
+- [[Skills]] → *Advantage and Disadvantage*: Perception and Stealth up-chevron,
+  Athletics and Deception down-chevron, Insight none.
+- [[Skills]] → *Reactive Advantage*: edit the frontmatter toggles, indicators
+  follow.
+- [[Skills]] → *Multi-word Skill Keys*: Sleight of Hand up-chevron, Animal Handling down-chevron.
+- Confirm the skill name and modifier are no longer tinted — the icon is now the
+  only signal, so the text stays the normal color.
+- Tooltips are set to appear instantly (no hover delay); confirm they do.
+- Confirm modifier values line up in a column whether or not a row has an icon.
 - Regression: the earlier sections of both pages, plus [[Generic/Ability Cards]]
   and [[Generic/Skill Cards]], must render exactly as before — the raw card
   blocks share the same components and take the new props as optional.

@@ -68,15 +68,6 @@
     line-height: 1.1;
 }
 
-.dnd-ui-skill-card.dnd-ui-advantage .dnd-ui-skill-name,
-.dnd-ui-skill-card.dnd-ui-advantage .dnd-ui-skill-value {
-    color: var(--dnd-ui-color-accent-teal);
-}
-
-.dnd-ui-skill-card.dnd-ui-disadvantage .dnd-ui-skill-name,
-.dnd-ui-skill-card.dnd-ui-disadvantage .dnd-ui-skill-value {
-    color: var(--dnd-ui-color-accent-red);
-}
 
 .dnd-ui-skills-values-container {
     display: flex;

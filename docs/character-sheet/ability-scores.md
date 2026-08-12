@@ -35,8 +35,8 @@ proficiencies:
 | `abilities`      | Object | Required | Ability score values (strength, dexterity, constitution, intelligence, wisdom, charisma) |
 | `bonuses`        | Array  | —        | List of bonuses to apply to ability scores or saving throws                              |
 | `proficiencies`  | Array  | —        | List of abilities you are proficient in for saving throws                                |
-| `advantage` †    | Object | —        | Map of abilities to booleans; a `true` value colors that saving throw green              |
-| `disadvantage` † | Object | —        | Map of abilities to booleans; a `true` value colors that saving throw red                |
+| `advantage` †    | Object | —        | Map of abilities to booleans; a `true` value marks that saving throw with an up-chevron icon  |
+| `disadvantage` † | Object | —        | Map of abilities to booleans; a `true` value marks that saving throw with a down-chevron icon  |
 
 † Supports [dynamic content](/concepts/dynamic-content) templates
 
@@ -51,7 +51,7 @@ proficiencies:
 
 ## Advantage & Disadvantage
 
-Highlight saving throws that currently have advantage or disadvantage. Keys accept the full ability name (`strength`) or its abbreviation (`str`). A `true` value colors the save green (advantage) or red (disadvantage); if a save is both, or neither, it is left uncolored.
+Highlight saving throws that currently have advantage or disadvantage. Keys accept the full ability name (`strength`) or its abbreviation (`str`). A `true` value marks the save with an up-chevron (advantage) or down-chevron (disadvantage) icon; hovering it shows a tooltip naming the ability and which one applies. A save flagged as both, or as neither, gets no indicator.
 
 ````yaml
 ```ability

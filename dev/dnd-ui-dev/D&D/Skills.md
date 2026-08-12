@@ -65,9 +65,10 @@ half_proficiencies:
 
 ## Advantage and Disadvantage
 
-Skill advantage colors the skill green, disadvantage red. Expect: Perception and
-Stealth green, Athletics and Deception red, Insight uncolored (flagged both), and
-every other skill uncolored.
+Skill advantage marks the skill with a teal up-chevron, disadvantage with a red
+down-chevron. Hover an indicator for a tooltip. Expect: Perception and Stealth
+up-chevrons, Athletics and Deception down-chevrons, Insight no indicator
+(flagged both), and every other skill no indicator.
 
 ```skills
 proficiencies:
@@ -89,8 +90,8 @@ disadvantage:
 ## Reactive Advantage
 
 Advantage bound to frontmatter. Edit `stealthAdvantage`, `athleticsDisadvantage`,
-or `arcanaAdvantage` above — coloring should update without a reload. Initial
-state: Stealth green, Athletics red, Arcana uncolored.
+or `arcanaAdvantage` above — indicators should update without a reload. Initial
+state: Stealth up-chevron, Athletics down-chevron, Arcana none.
 
 ```skills
 proficiencies:
@@ -108,8 +109,8 @@ disadvantage:
 ## Multi-word Skill Keys
 
 Skills whose names contain a space. Keys are matched against the full skill label,
-so they must be spelled with spaces, not underscores. Expect Sleight of Hand green
-and Animal Handling red.
+so they must be spelled with spaces, not underscores. Expect Sleight of Hand with
+an up-chevron and Animal Handling with a down-chevron.
 
 ```skills
 proficiencies:

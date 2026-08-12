@@ -1,8 +1,13 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { mount } from "@vue/test-utils";
+import { setTooltip } from "obsidian";
 import SkillCards from "./SkillCards.vue";
 
 describe("SkillCards", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("renders skill items", () => {
     const wrapper = mount(SkillCards, {
       props: {
@@ -70,5 +75,57 @@ describe("SkillCards", () => {
     });
 
     expect(wrapper.text()).toContain("+0");
+  });
+
+  it("marks advantage with an icon and an instant tooltip", () => {
+    const wrapper = mount(SkillCards, {
+      props: {
+        items: [{ label: "Stealth", ability: "DEX", modifier: 5, hasAdvantage: true }],
+      },
+    });
+
+    const indicator = wrapper.find(".dnd-ui-adv-indicator");
+    expect(indicator.classes()).toContain("dnd-ui-advantage");
+    expect(indicator.find(".svg-icon").attributes("data-icon")).toBe("chevrons-up");
+    expect(setTooltip).toHaveBeenCalledWith(expect.anything(), "Advantage on Stealth checks", { delay: 0 });
+  });
+
+  it("marks disadvantage with an icon and an instant tooltip", () => {
+    const wrapper = mount(SkillCards, {
+      props: {
+        items: [{ label: "Athletics", ability: "STR", modifier: 1, hasDisadvantage: true }],
+      },
+    });
+
+    const indicator = wrapper.find(".dnd-ui-adv-indicator");
+    expect(indicator.classes()).toContain("dnd-ui-disadvantage");
+    expect(indicator.find(".svg-icon").attributes("data-icon")).toBe("chevrons-down");
+    expect(setTooltip).toHaveBeenCalledWith(expect.anything(), "Disadvantage on Athletics checks", { delay: 0 });
+  });
+
+  it("keeps an empty indicator slot when neither flag is set so values stay aligned", () => {
+    const wrapper = mount(SkillCards, {
+      props: {
+        items: [{ label: "Arcana", ability: "INT", modifier: 3 }],
+      },
+    });
+
+    const indicator = wrapper.find(".dnd-ui-adv-indicator");
+    expect(indicator.exists()).toBe(true);
+    expect(indicator.classes()).not.toContain("dnd-ui-advantage");
+    expect(indicator.classes()).not.toContain("dnd-ui-disadvantage");
+    expect(indicator.find(".svg-icon").exists()).toBe(false);
+    expect(setTooltip).not.toHaveBeenCalled();
+  });
+
+  it("no longer tints the skill name or value", () => {
+    const wrapper = mount(SkillCards, {
+      props: {
+        items: [{ label: "Stealth", ability: "DEX", modifier: 5, hasAdvantage: true }],
+      },
+    });
+
+    const card = wrapper.find(".dnd-ui-skill-card");
+    expect(card.classes()).not.toContain("dnd-ui-advantage");
   });
 });

@@ -40,8 +40,8 @@ The skills block automatically displays all 18 D&D 5e skills: Acrobatics, Animal
 | `expertise`          | Array  | —       | List of skills you have expertise in (double proficiency)           |
 | `half_proficiencies` | Array  | —       | List of skills you have half proficiency in                         |
 | `bonuses`            | Array  | —       | List of bonuses to apply to specific skills                         |
-| `advantage` †        | Object | —       | Map of skills to booleans; a `true` value colors that skill green   |
-| `disadvantage` †     | Object | —       | Map of skills to booleans; a `true` value colors that skill red     |
+| `advantage` †        | Object | —       | Map of skills to booleans; a `true` value marks that skill with an up-chevron icon |
+| `disadvantage` †     | Object | —       | Map of skills to booleans; a `true` value marks that skill with a down-chevron icon |
 
 † Supports [dynamic content](/concepts/dynamic-content) templates
 
@@ -55,7 +55,7 @@ The skills block automatically displays all 18 D&D 5e skills: Acrobatics, Animal
 
 ## Advantage & Disadvantage
 
-Highlight skills that currently have advantage or disadvantage. Keys are skill names (e.g. `perception`, `stealth`). A `true` value colors the skill name and value green (advantage) or red (disadvantage); a skill flagged as both, or neither, is left uncolored.
+Highlight skills that currently have advantage or disadvantage. Keys are skill names matched against the full label, so multi-word skills are written with spaces (`sleight of hand`). A `true` value marks the skill with an up-chevron (advantage) or down-chevron (disadvantage) icon; hovering it shows a tooltip naming the skill and which one applies. A skill flagged as both, or as neither, gets no indicator.
 
 ````yaml
 ```skills
