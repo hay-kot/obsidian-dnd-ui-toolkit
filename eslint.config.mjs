@@ -11,10 +11,37 @@ export default tsEslint.config(
 	tsEslint.configs.eslintRecommended,
 	tsEslint.configs.recommended,
 	{
+		plugins: {
+			"@typescript-eslint": tsEslint.plugin,
+		},
+		languageOptions: {
+			globals: {
+				...globals.node,
+			},
+			parser: tsEslint.parser,
+			sourceType: "module",
+		},
+		rules: {
+			"no-prototype-builtins": "off",
+			"no-unused-vars": "off",
+
+			"@typescript-eslint/ban-ts-comment": "off",
+			"@typescript-eslint/no-empty-function": "off",
+			"@typescript-eslint/no-explicit-any": "off",
+			"@typescript-eslint/no-unused-vars": ["error", { args: "none" }],
+			"@typescript-eslint/no-unused-expressions": ["error", { allowShortCircuit: true, allowTernary: true }],
+		},
+	},
+	{
 		// Obsidian plugin-review rules (the same checks the community
 		// plugin directory's automated review runs), scoped to shipped code.
+		// Type-aware rules run here too, matching the directory's review
+		// config — they need the same `projectService` parser setup, and
+		// keeping this block last lets it re-enable what the base config
+		// turns off repo-wide.
 		files: ["main.ts", "settings.ts", "lib/**/*.ts"],
 		ignores: ["**/*.test.ts"],
+		extends: [tsEslint.configs.recommendedTypeChecked],
 		plugins: {
 			obsidianmd,
 		},
@@ -26,6 +53,7 @@ export default tsEslint.config(
 			},
 		},
 		rules: {
+			"@typescript-eslint/no-explicit-any": "error",
 			"obsidianmd/commands/no-command-in-command-id": "error",
 			"obsidianmd/commands/no-command-in-command-name": "error",
 			"obsidianmd/commands/no-default-hotkeys": "error",
@@ -57,28 +85,6 @@ export default tsEslint.config(
 			"obsidianmd/no-unsupported-api": "error",
 			"obsidianmd/prefer-file-manager-trash-file": "warn",
 			"obsidianmd/prefer-instanceof": "error",
-		},
-	},
-	{
-		plugins: {
-			"@typescript-eslint": tsEslint.plugin,
-		},
-		languageOptions: {
-			globals: {
-				...globals.node,
-			},
-			parser: tsEslint.parser,
-			sourceType: "module",
-		},
-		rules: {
-			"no-prototype-builtins": "off",
-			"no-unused-vars": "off",
-
-			"@typescript-eslint/ban-ts-comment": "off",
-			"@typescript-eslint/no-empty-function": "off",
-			"@typescript-eslint/no-explicit-any": "off",
-			"@typescript-eslint/no-unused-vars": ["error", { args: "none" }],
-			"@typescript-eslint/no-unused-expressions": ["error", { allowShortCircuit: true, allowTernary: true }],
 		},
 	}
 );

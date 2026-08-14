@@ -23,7 +23,7 @@ class AbilityScoreComponent extends TemplateAwareComponent {
     const frontmatter = this.fileContext.frontmatter();
     const abilityBlock = AbilityService.resolveAbilityBlock(raw, frontmatter);
 
-    const abilities = (Object.entries(abilityBlock.abilities) as [string, number][]).map(([key, value]) => {
+    const abilities = Object.entries(abilityBlock.abilities).map(([key, value]) => {
       const isProficient = abilityBlock.proficiencies.includes(key);
       const label = key.charAt(0).toUpperCase() + key.slice(1);
       const totalScore = AbilityService.getTotalScore(

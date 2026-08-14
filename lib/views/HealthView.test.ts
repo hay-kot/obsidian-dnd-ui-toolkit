@@ -83,7 +83,8 @@ describe("HealthView template resolution", () => {
   async function renderAndGetChild(yaml: string) {
     view.render(yaml, mockElement, mockContext);
     const child = (mockContext.addChild as any).mock.calls[0][0];
-    await child.onload();
+    child.onload();
+    await child.ready;
     return child;
   }
 

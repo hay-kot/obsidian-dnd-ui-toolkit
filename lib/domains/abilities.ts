@@ -1,7 +1,7 @@
 import { AbilityBlock, AbilityScores, Frontmatter, GenericBonus } from "lib/types";
 import { MarkdownPostProcessorContext } from "obsidian";
 import * as Utils from "lib/utils/utils";
-import { parse } from "yaml";
+import { parseYamlObject } from "lib/utils/yaml";
 import { extractFirstCodeBlock } from "../utils/codeblock-extractor";
 import { coerceBooleanTemplate, processTemplate, TemplateContext } from "../utils/template";
 
@@ -95,7 +95,7 @@ export function parseAbilityBlock(yamlString: string): RawAbilityBlock {
     disadvantage: {},
   };
 
-  const parsed = parse(yamlString);
+  const parsed = parseYamlObject<RawAbilityBlock>(yamlString);
   return Utils.mergeWithDefaults(parsed, def);
 }
 

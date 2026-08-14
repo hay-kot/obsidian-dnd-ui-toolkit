@@ -15,7 +15,10 @@ type Topics = {
 type Callbacks<T extends keyof Topics> = (data: Topics[T]) => void;
 
 class EventBus<T extends keyof Topics> {
-  private subscribers: { [scopedKey: string]: Callbacks<any>[] } = {};
+  // Keyed by "<filepath>:<topic>", so the topic — and therefore the callback's
+  // payload type — is only recoverable at the subscribe/publish call sites,
+  // which re-narrow it via their own K parameter.
+  private subscribers: { [scopedKey: string]: Callbacks<keyof Topics>[] } = {};
 
   keybuilder<K extends T>(filepath: string, topic: K): string {
     // Remove leading slashes and normalize path separators

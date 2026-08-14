@@ -3,7 +3,7 @@ import { VueMarkdown } from "./VueMarkdown";
 import SpellComponents from "../components/SpellComponents.vue";
 import { MarkdownPostProcessorContext, TFile } from "obsidian";
 import { AbilityScores, Frontmatter, SpellComponentsBlock } from "lib/types";
-import { parse } from "yaml";
+import { parseYamlObject } from "lib/utils/yaml";
 import { useFileContext } from "./filecontext";
 import * as AbilityService from "lib/domains/abilities";
 import * as Fm from "lib/domains/frontmatter";
@@ -35,7 +35,7 @@ export class SpellComponentsView extends BaseView {
   }
 
   private async renderAsync(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): Promise<void> {
-    const parsed = parse(source);
+    const parsed = parseYamlObject<SpellComponentsBlock & { castingTime: string }>(source) ?? {};
     const data: SpellComponentsBlock = {
       casting_time: parsed.casting_time || parsed.castingTime,
       range: parsed.range,
@@ -63,7 +63,7 @@ export class SpellComponentsView extends BaseView {
     const localFm = fc.frontmatter();
 
     // Resolve character file if specified, otherwise use current file
-    const characterFile = localFm.character_file as string | undefined;
+    const characterFile = localFm.character_file;
     let frontmatter: Frontmatter;
     let abilityBlockContent: string | null = null;
 

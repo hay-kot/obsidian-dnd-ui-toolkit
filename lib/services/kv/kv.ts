@@ -1,11 +1,15 @@
 export interface DataStore {
-  loadData(): Promise<any>;
-  saveData(data: any): Promise<void>;
+  loadData(): Promise<unknown>;
+  saveData(data: unknown): Promise<void>;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 export class KeyValueStore {
   private store: DataStore;
-  private cache: Record<string, any> | null = null;
+  private cache: Record<string, unknown> | null = null;
 
   constructor(store: DataStore) {
     this.store = store;
@@ -14,12 +18,14 @@ export class KeyValueStore {
   /**
    * Initialize the cache from the data store
    */
-  private async ensureCache(): Promise<Record<string, any>> {
+  private async ensureCache(): Promise<Record<string, unknown>> {
     if (this.cache === null) {
+      // The state file is user-writable and may have been hand-edited or
+      // truncated, so anything that isn't a keyed `state` object starts over
+      // rather than propagating a broken shape to every caller.
       const data = await this.store.loadData();
-      this.cache = data?.state || {};
+      this.cache = isRecord(data) && isRecord(data.state) ? data.state : {};
     }
-    // @ts-expect-error - we've provided that it is not null at this point so we can safely return it
     return this.cache;
   }
 
