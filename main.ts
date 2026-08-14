@@ -1,5 +1,5 @@
 import "lib/styles/index.css";
-import { App, Platform, Plugin, PluginSettingTab, Setting } from "obsidian";
+import { App, Platform, Plugin, PluginSettingTab, Setting, SettingDefinitionItem } from "obsidian";
 import { AbilityScoreView } from "lib/views/AbilityScoreView";
 import { BaseView } from "lib/views/BaseView";
 import { SkillsView } from "lib/views/SkillsView";
@@ -145,6 +145,33 @@ export default class DndUIToolkitPlugin extends Plugin {
   }
 }
 
+const COLOR_SETTINGS: { name: string; key: keyof DndUIToolkitSettings }[] = [
+  { name: "Background primary", key: "colorBgPrimary" },
+  { name: "Background secondary", key: "colorBgSecondary" },
+  { name: "Background tertiary", key: "colorBgTertiary" },
+  { name: "Background hover", key: "colorBgHover" },
+  { name: "Background darker", key: "colorBgDarker" },
+  { name: "Background group", key: "colorBgGroup" },
+  { name: "Background proficient", key: "colorBgProficient" },
+
+  { name: "Text primary", key: "colorTextPrimary" },
+  { name: "Text secondary", key: "colorTextSecondary" },
+  { name: "Text sublabel", key: "colorTextSublabel" },
+  { name: "Text bright", key: "colorTextBright" },
+  { name: "Text muted", key: "colorTextMuted" },
+  { name: "Text group", key: "colorTextGroup" },
+
+  { name: "Border primary", key: "colorBorderPrimary" },
+  { name: "Border active", key: "colorBorderActive" },
+  { name: "Border focus", key: "colorBorderFocus" },
+
+  { name: "Accent teal", key: "colorAccentTeal" },
+  { name: "Accent red", key: "colorAccentRed" },
+  { name: "Accent purple", key: "colorAccentPurple" },
+];
+
+const COLOR_SETTING_KEYS = new Set<string>(COLOR_SETTINGS.map((c) => c.key));
+
 class DndSettingsTab extends PluginSettingTab {
   plugin: DndUIToolkitPlugin;
 
@@ -153,91 +180,84 @@ class DndSettingsTab extends PluginSettingTab {
     this.plugin = plugin;
   }
 
-  display(): void {
-    const { containerEl } = this;
-    containerEl.empty();
-
-    new Setting(containerEl)
-      .setName("State file path")
-      .setDesc(
-        "Relative path (from vault root) where the state file is stored. Interactive components save their state to this JSON file."
-      )
-      .addText((text) =>
-        text
-          .setPlaceholder(".dnd-ui-toolkit-state.json")
-          .setValue(this.plugin.settings.statePath)
-          .onChange(async (value) => {
-            this.plugin.settings.statePath = value;
-            await this.plugin.saveSettings();
-          })
-      );
-
-    new Setting(containerEl).setName("Styles").setHeading();
-
-    // Theme selector
-    new Setting(containerEl)
-      .setName("Theme preset")
-      .setDesc("Choose a predefined color theme. Selecting a theme will update all color values.")
-      .addDropdown((dropdown) => {
-        Object.entries(THEMES).forEach(([key, theme]) => {
-          dropdown.addOption(key, theme.name);
-        });
-        dropdown.setValue(this.plugin.settings.selectedTheme).onChange(async (value) => {
-          this.plugin.settings.selectedTheme = value;
-          const theme = THEMES[value];
-          if (theme) {
-            Object.assign(this.plugin.settings, theme.colors);
-            await this.plugin.saveSettings();
-            this.plugin.applyColorSettings();
-            this.display(); // Refresh the settings display
-          }
-        });
-      });
-
-    // Add color inputs for each color variable
-    this.addColorSetting(containerEl, "Background primary", "colorBgPrimary");
-    this.addColorSetting(containerEl, "Background secondary", "colorBgSecondary");
-    this.addColorSetting(containerEl, "Background tertiary", "colorBgTertiary");
-    this.addColorSetting(containerEl, "Background hover", "colorBgHover");
-    this.addColorSetting(containerEl, "Background darker", "colorBgDarker");
-    this.addColorSetting(containerEl, "Background group", "colorBgGroup");
-    this.addColorSetting(containerEl, "Background proficient", "colorBgProficient");
-
-    this.addColorSetting(containerEl, "Text primary", "colorTextPrimary");
-    this.addColorSetting(containerEl, "Text secondary", "colorTextSecondary");
-    this.addColorSetting(containerEl, "Text sublabel", "colorTextSublabel");
-    this.addColorSetting(containerEl, "Text bright", "colorTextBright");
-    this.addColorSetting(containerEl, "Text muted", "colorTextMuted");
-    this.addColorSetting(containerEl, "Text group", "colorTextGroup");
-
-    this.addColorSetting(containerEl, "Border primary", "colorBorderPrimary");
-    this.addColorSetting(containerEl, "Border active", "colorBorderActive");
-    this.addColorSetting(containerEl, "Border focus", "colorBorderFocus");
-
-    this.addColorSetting(containerEl, "Accent teal", "colorAccentTeal");
-    this.addColorSetting(containerEl, "Accent red", "colorAccentRed");
-    this.addColorSetting(containerEl, "Accent purple", "colorAccentPurple");
-
-    new Setting(containerEl).setName("Reset styles").addButton((b) => {
-      b.setButtonText("Reset").onClick(async () => {
-        this.plugin.settings.selectedTheme = "default";
-        const defaultTheme = THEMES.default;
-        Object.assign(this.plugin.settings, defaultTheme.colors);
-        await this.plugin.saveSettings();
-        this.plugin.applyColorSettings();
-        this.display();
-      });
-    });
+  // Declarative definitions rather than an imperative display(), so Obsidian
+  // can index these for settings search. The base class ignores display()
+  // entirely once this returns a non-empty array.
+  getSettingDefinitions(): SettingDefinitionItem[] {
+    return [
+      {
+        name: "State file path",
+        desc: "Relative path (from vault root) where the state file is stored. Interactive components save their state to this JSON file.",
+        control: {
+          type: "text",
+          key: "statePath",
+          placeholder: DEFAULT_SETTINGS.statePath,
+        },
+      },
+      {
+        type: "group",
+        heading: "Styles",
+        items: [
+          {
+            name: "Theme preset",
+            desc: "Choose a predefined color theme. Selecting a theme will update all color values.",
+            control: {
+              type: "dropdown",
+              key: "selectedTheme",
+              options: Object.fromEntries(Object.entries(THEMES).map(([key, theme]) => [key, theme.name])),
+            },
+          },
+          ...COLOR_SETTINGS.map(({ name, key }) => ({
+            name,
+            control: { type: "color" as const, key },
+          })),
+          {
+            name: "Reset styles",
+            // Rendered imperatively to keep the button affordance; an `action`
+            // definition would make the whole row a click target instead.
+            render: (setting: Setting) => {
+              setting.addButton((b) =>
+                b.setButtonText("Reset").onClick(() => {
+                  void this.applyTheme("default");
+                })
+              );
+            },
+          },
+        ],
+      },
+    ];
   }
 
-  // Helper method to add color picker setting
-  private addColorSetting(containerEl: HTMLElement, name: string, settingKey: keyof DndUIToolkitSettings): void {
-    new Setting(containerEl).setName(name).addColorPicker((colorPicker) =>
-      colorPicker.setValue(this.plugin.settings[settingKey]).onChange(async (value) => {
-        this.plugin.settings[settingKey] = value;
-        await this.plugin.saveSettings();
-        this.plugin.applyColorSettings();
-      })
-    );
+  // getControlValue is not overridden: every control key above is also a
+  // settings key, which is exactly what the default implementation reads.
+  async setControlValue(key: string, value: unknown): Promise<void> {
+    if (key === "selectedTheme") {
+      await this.applyTheme(String(value));
+      return;
+    }
+
+    // Every field on DndUIToolkitSettings is a string, and the text and color
+    // controls above are its only writers, so anything else is not ours.
+    if (typeof value !== "string") return;
+
+    this.plugin.settings[key as keyof DndUIToolkitSettings] = value;
+    await this.plugin.saveSettings();
+
+    if (COLOR_SETTING_KEYS.has(key)) {
+      this.plugin.applyColorSettings();
+    }
+  }
+
+  private async applyTheme(themeKey: string): Promise<void> {
+    const theme = THEMES[themeKey];
+    if (!theme) return;
+
+    this.plugin.settings.selectedTheme = themeKey;
+    Object.assign(this.plugin.settings, theme.colors);
+    await this.plugin.saveSettings();
+    this.plugin.applyColorSettings();
+    // The color controls read their values from settings, so the tab has to
+    // re-render for the swatches to pick up the theme's palette.
+    this.update();
   }
 }
