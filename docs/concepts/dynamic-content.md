@@ -116,9 +116,12 @@ The template system includes several built-in functions for calculations:
 | `subtract` | Subtract two numbers | `{{ subtract 15 3 }}` → 12 |
 | `multiply` | Multiply two numbers | `{{ multiply 4 3 }}` → 12 |
 | `divide` | Divide two numbers | `{{ divide 20 4 }}` → 5 |
+| `mod` | Remainder of a division | `{{ mod 17 5 }}` → 2 |
 | `floor` | Round down to nearest integer | `{{ floor 3.7 }}` → 3 |
 | `ceil` | Round up to nearest integer | `{{ ceil 3.2 }}` → 4 |
 | `round` | Round to nearest integer | `{{ round 3.6 }}` → 4 |
+
+`mod` wraps negative numbers into the positive range, so `{{ mod -1 5 }}` is 4 rather than -1. That keeps it usable for cycling values, where the input can dip below zero.
 :::
 
 ### D&D Specific Functions

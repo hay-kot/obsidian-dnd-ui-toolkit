@@ -44,6 +44,7 @@ describe("template", () => {
       expect(processTemplate("{{subtract 10 4}}", mockContext)).toBe("6");
       expect(processTemplate("{{multiply 3 4}}", mockContext)).toBe("12");
       expect(processTemplate("{{divide 15 3}}", mockContext)).toBe("5");
+      expect(processTemplate("{{mod 17 5}}", mockContext)).toBe("2");
       expect(processTemplate("{{floor 3.7}}", mockContext)).toBe("3");
       expect(processTemplate("{{ceil 3.2}}", mockContext)).toBe("4");
       expect(processTemplate("{{round 3.6}}", mockContext)).toBe("4");
@@ -55,6 +56,13 @@ describe("template", () => {
       expect(processTemplate("{{add abilities.strength frontmatter.proficiency_bonus}}", mockContext)).toBe("17");
       expect(processTemplate("STR modifier: {{modifier abilities.strength}}", mockContext)).toBe("STR modifier: 2");
       expect(processTemplate("CHA modifier: {{modifier abilities.charisma}}", mockContext)).toBe("CHA modifier: -1");
+    });
+
+    it("should wrap negative dividends into the positive range in mod", () => {
+      expect(processTemplate("{{mod -1 5}}", mockContext)).toBe("4");
+      expect(processTemplate("{{mod -5 5}}", mockContext)).toBe("0");
+      expect(processTemplate("{{mod 0 5}}", mockContext)).toBe("0");
+      expect(processTemplate("{{mod (subtract frontmatter.proficiency_bonus 3) 6}}", mockContext)).toBe("5");
     });
 
     it("should return original text when no template variables", () => {
