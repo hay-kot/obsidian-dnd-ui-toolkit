@@ -25,6 +25,14 @@ function init() {
   Handlebars.registerHelper("subtract", (a: number, b: number) => a - b);
   Handlebars.registerHelper("multiply", (a: number, b: number) => a * b);
   Handlebars.registerHelper("divide", (a: number, b: number) => a / b);
+  // Floored modulo, so the result always carries the sign of the divisor. Sheet math
+  // is nearly always cycling an index (e.g. stepping a damage die every N levels),
+  // where JS remainder semantics would hand back a negative index.
+  Handlebars.registerHelper("mod", (a: number, b: number) => {
+    const dividend = Number(a);
+    const divisor = Number(b);
+    return dividend - divisor * Math.floor(dividend / divisor);
+  });
   Handlebars.registerHelper("floor", (a: number) => Math.floor(a));
   Handlebars.registerHelper("ceil", (a: number) => Math.ceil(a));
   Handlebars.registerHelper("round", (a: number) => Math.round(a));
