@@ -5,7 +5,15 @@ import * as HealthService from "lib/domains/healthpoints";
 import HealthCard from "lib/components/HealthCard.vue";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { HealthState } from "lib/domains/healthpoints";
-import { ParsedHealthBlock, UnresolvedHealthBlock, HitDice, RawHitDice, RawResetConfig, ResetConfig } from "lib/types";
+import {
+  ParsedHealthBlock,
+  UnresolvedHealthBlock,
+  HitDice,
+  RawHitDice,
+  RawResetConfig,
+  ResetConfig,
+  TempMaxHealth,
+} from "lib/types";
 import { msgbus } from "lib/services/event-bus";
 import { hasTemplateVariables, processTemplate, createTemplateContext } from "lib/utils/template";
 import { useFileContext, FileContext } from "./filecontext";
@@ -105,17 +113,16 @@ class HealthMarkdown extends VueMarkdown {
   private processTemplates(healthBlock: UnresolvedHealthBlock): ParsedHealthBlock {
     let templateContext: ReturnType<typeof createTemplateContext> | null = null;
 
+    const resolveText = (value: string): string => {
+      if (!hasTemplateVariables(value)) return value;
+      templateContext ??= createTemplateContext(this.containerEl, this.fileContext);
+      return processTemplate(value, templateContext);
+    };
+
     // Resolves templates and plain numeric strings, returning undefined when the result isn't a number
     const resolveNumber = (value: number | string): number | undefined => {
       if (typeof value === "number") return value;
-
-      let text = value;
-      if (hasTemplateVariables(value)) {
-        templateContext ??= createTemplateContext(this.containerEl, this.fileContext);
-        text = processTemplate(value, templateContext);
-      }
-
-      const parsed = parseInt(text, 10);
+      const parsed = parseInt(resolveText(value), 10);
       return isNaN(parsed) ? undefined : parsed;
     };
 
@@ -129,13 +136,15 @@ class HealthMarkdown extends VueMarkdown {
       }
     }
 
-    let tempMaxHealth: number | undefined;
-    if (healthBlock.temp_max_health !== undefined) {
-      tempMaxHealth = resolveNumber(healthBlock.temp_max_health);
-      if (tempMaxHealth === undefined) {
-        console.warn(`Temp max health value "${healthBlock.temp_max_health}" is not a valid number, using 0`);
-        tempMaxHealth = 0;
+    let tempMaxHealth: TempMaxHealth | undefined;
+    const rawTempMax = healthBlock.temp_max_health;
+    if (rawTempMax !== undefined) {
+      let hp = resolveNumber(rawTempMax.hp);
+      if (hp === undefined) {
+        console.warn(`Temp max health value "${rawTempMax.hp}" is not a valid number, using 0`);
+        hp = 0;
       }
+      tempMaxHealth = { hp, note: rawTempMax.note ? resolveText(rawTempMax.note) : undefined };
     }
 
     const hitdice = healthBlock.hitdice?.map((hd) => this.resolveHitDice(hd, resolveNumber));
@@ -186,7 +195,8 @@ class HealthMarkdown extends VueMarkdown {
   private hasTemplateValues(): boolean {
     const isTemplate = (value: number | string | undefined) => typeof value === "string" && hasTemplateVariables(value);
 
-    if (isTemplate(this.unresolvedBlock.health) || isTemplate(this.unresolvedBlock.temp_max_health)) {
+    const tempMax = this.unresolvedBlock.temp_max_health;
+    if (isTemplate(this.unresolvedBlock.health) || isTemplate(tempMax?.hp) || isTemplate(tempMax?.note)) {
       return true;
     }
 

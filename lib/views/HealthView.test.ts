@@ -4,6 +4,8 @@ import { App, MarkdownPostProcessorContext } from "obsidian";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { msgbus } from "lib/services/event-bus";
 import { useFileContext } from "./filecontext";
+import type { ParsedHealthBlock } from "lib/types";
+import type { HealthState } from "lib/domains/healthpoints";
 
 const processTemplateMock = vi.fn((text: string, _context?: any) => text);
 
@@ -87,6 +89,11 @@ describe("HealthView template resolution", () => {
     const child = (mockContext.addChild as any).mock.calls[0][0];
     await child.onload();
     return child;
+  }
+
+  // The view keeps the props it renders with in a ref rather than passing them to a spy
+  function propsOf(child: any): { static: ParsedHealthBlock; state: HealthState } {
+    return child.propsRef.value;
   }
 
   async function publishReset(eventType: string) {
@@ -303,6 +310,31 @@ temp_max_health: "{{frontmatter.aid}}"`;
 
       expect(processTemplateMock).toHaveBeenCalledWith("{{frontmatter.aid}}", expect.any(Object));
       expect(await kv.get("hp_temp_max_template")).toMatchObject({ current: 31 });
+    });
+
+    it("should resolve the object form and keep its note", async () => {
+      processTemplateMock.mockReturnValue("10");
+
+      const child = await renderAndGetChild(`state_key: hp_temp_max_note
+health: 45
+temp_max_health:
+  hp: "{{frontmatter.aid}}"
+  note: Aid`);
+
+      expect(await kv.get("hp_temp_max_note")).toMatchObject({ current: 55 });
+      expect(propsOf(child).static).toMatchObject({ temp_max_health: { hp: 10, note: "Aid" } });
+    });
+
+    it("should resolve a template in the note", async () => {
+      processTemplateMock.mockImplementation((tpl: string) => (tpl.includes("aid_source") ? "Aid from Cleric" : "10"));
+
+      const child = await renderAndGetChild(`state_key: hp_temp_max_note_tpl
+health: 45
+temp_max_health:
+  hp: "{{frontmatter.aid}}"
+  note: "{{frontmatter.aid_source}}"`);
+
+      expect(propsOf(child).static).toMatchObject({ temp_max_health: { hp: 10, note: "Aid from Cleric" } });
     });
 
     it("should fall back to 0 when temp max health resolves to a non-number", async () => {

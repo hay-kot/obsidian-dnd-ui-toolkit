@@ -76,11 +76,33 @@ temp_max_health: '{{ frontmatter.aid }}'
 ```
 ````
 
+Use the object form to record what granted the bonus. The note renders as a tooltip on the header
+label and the purple section of the bar, so a character sheet carrying several effects still says
+which one is which.
+
+````yaml
+```healthpoints
+state_key: din_health
+health: 24
+temp_max_health:
+  hp: 10
+  note: Aid
+```
+````
+
 ::: tip
 The bonus only raises the maximum — it does not fill itself in. Heal to claim it, the way _Aid_ grants both
 current and maximum HP. When the effect ends and the property goes back to `0`, current health is capped at
 the base maximum.
 :::
+
+### Temporary HP in the Bar
+
+Temporary HP is a separate pool rather than part of the maximum, so the **Temp HP** button adds a teal section
+past the end of the bar and the rest of the bar scales down to make room. Damage comes off that pool first, and
+the section shrinks as it absorbs hits.
+
+The three sections read left to right: normal health, temporary max health, then temporary HP.
 
 ### Partial Hit Dice Recovery
 
@@ -107,11 +129,22 @@ hitdice:
 | ------------- | ---------------- | ------------ | ---------------------------------------------------------------------------------- |
 | `state_key`   | String           | Required     | Unique identifier for state storage                                                |
 | `health` †    | Number           | Required     | Maximum health points                                                              |
-| `temp_max_health` † | Number     | 0            | Bonus maximum health from a temporary effect, shown separately in the health bar   |
+| `temp_max_health` † | Number/Object | 0         | Bonus maximum health from a temporary effect, shown separately in the health bar   |
 | `label`       | String           | "Hit Points" | Custom label for the component                                                     |
 | `hitdice`     | Object/Array     | —            | Hit dice configuration (single object or array for multiclass)                     |
 | `death_saves` | Boolean/"always" | true         | Show death saves (`true` = at 0 HP only, `"always"` = at any HP, `false` = never) |
 | `reset_on`    | String/Array/Object | "long-rest" | Events that restore health, temp HP, death saves and hit dice                     |
+
+† Supports [dynamic content](/concepts/dynamic-content) templates
+
+### Temp Max Health Object
+
+Only the object form takes a note. A bare number renders no tooltip.
+
+| Property | Type   | Default  | Description                                            |
+| -------- | ------ | -------- | ------------------------------------------------------ |
+| `hp` †   | Number | Required | Bonus maximum health                                   |
+| `note` † | String | —        | What granted the bonus, shown as a tooltip             |
 
 † Supports [dynamic content](/concepts/dynamic-content) templates
 

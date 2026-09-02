@@ -8,10 +8,12 @@ import {
   hasSingleHitDice,
   getBaseHealth,
   getTempMaxHealth,
+  getTempMaxHealthNote,
   getMaxHealth,
   getHitDiceUsed,
 } from "lib/domains/healthpoints";
 import Checkbox from "lib/components/Checkbox.vue";
+import { vTooltip } from "lib/directives/tooltip";
 
 const props = defineProps<{
   static: ParsedHealthBlock;
@@ -26,6 +28,7 @@ const inputValue = ref("1");
 
 const baseHealth = computed(() => getBaseHealth(props.static));
 const tempMaxHealth = computed(() => getTempMaxHealth(props.static));
+const tempMaxNote = computed(() => getTempMaxHealthNote(props.static));
 const maxHealth = computed(() => getMaxHealth(props.static));
 
 const hitDiceLabelWidth = computed(() => {
@@ -34,15 +37,23 @@ const hitDiceLabelWidth = computed(() => {
   return `${longest * 0.6}em`;
 });
 
-function toPercentage(value: number): number {
-  if (maxHealth.value <= 0) return 0;
-  return Math.max(0, Math.min(100, (value / maxHealth.value) * 100));
+// Temp HP is a pool on top of the maximum rather than part of it, so the bar widens to fit it.
+// With no temp HP this is just the maximum and the segments below lay out as they would have.
+const barTotal = computed(() => Math.max(maxHealth.value + props.state.temporary, 1));
+
+// The bar reads left to right as base health, then temp max headroom, then the temp HP pool
+function segment(start: number, size: number): { left: string; width: string } {
+  const scale = 100 / barTotal.value;
+  const percent = (value: number) => `${Math.round(Math.max(0, value) * scale * 1e4) / 1e4}%`;
+  return { left: percent(start), width: percent(size) };
 }
 
-// The bar is split so health above the base maximum reads as the temporary bonus rather than as normal HP
-const healthPercentage = computed(() => toPercentage(Math.min(props.state.current, baseHealth.value)));
-const tempMaxFilledPercentage = computed(() => toPercentage(Math.max(0, props.state.current - baseHealth.value)));
-const tempMaxTrackPercentage = computed(() => toPercentage(tempMaxHealth.value));
+const healthSegment = computed(() => segment(0, Math.min(props.state.current, baseHealth.value)));
+const tempMaxTrackSegment = computed(() => segment(baseHealth.value, tempMaxHealth.value));
+const tempMaxFilledSegment = computed(() =>
+  segment(baseHealth.value, Math.min(Math.max(0, props.state.current - baseHealth.value), tempMaxHealth.value))
+);
+const tempHealthSegment = computed(() => segment(maxHealth.value, props.state.temporary));
 
 function handleHeal() {
   const value = parseInt(inputValue.value) || 0;
@@ -159,7 +170,13 @@ function usedHitDice(hd: { dice: string }): number {
       <div class="dnd-ui-health-value">
         {{ props.state.current }}
         <span class="dnd-ui-health-max">/ {{ maxHealth }}</span>
-        <span v-if="tempMaxHealth > 0" class="dnd-ui-health-max-bonus">incl. +{{ tempMaxHealth }} max</span>
+        <span
+          v-if="tempMaxHealth > 0"
+          class="dnd-ui-health-max-bonus"
+          :class="{ 'dnd-ui-health-has-note': tempMaxNote }"
+          v-tooltip="tempMaxNote"
+          >incl. +{{ tempMaxHealth }} max</span
+        >
         <span v-if="props.state.temporary > 0" class="dnd-ui-health-temp-value">+{{ props.state.temporary }} temp</span>
       </div>
     </div>
@@ -168,13 +185,16 @@ function usedHitDice(hd: { dice: string }): number {
       <div
         v-if="tempMaxHealth > 0"
         class="dnd-ui-health-progress-bonus-track"
-        :style="{ width: `${tempMaxTrackPercentage}%` }"
+        :style="tempMaxTrackSegment"
+        v-tooltip="tempMaxNote"
       />
-      <div class="dnd-ui-health-progress-bar" :style="{ width: `${healthPercentage}%` }" />
+      <div v-if="props.state.temporary > 0" class="dnd-ui-health-progress-temp" :style="tempHealthSegment" />
+      <div class="dnd-ui-health-progress-bar" :style="healthSegment" />
       <div
-        v-if="tempMaxFilledPercentage > 0"
+        v-if="tempMaxHealth > 0"
         class="dnd-ui-health-progress-bar-bonus"
-        :style="{ width: `${tempMaxFilledPercentage}%` }"
+        :style="tempMaxFilledSegment"
+        v-tooltip="tempMaxNote"
       />
     </div>
 

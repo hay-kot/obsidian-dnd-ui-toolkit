@@ -9,6 +9,7 @@ import {
   hasMultipleHitDice,
   getBaseHealth,
   getTempMaxHealth,
+  getTempMaxHealthNote,
   getMaxHealth,
   getHitDiceUsed,
   computeResetState,
@@ -84,7 +85,7 @@ reset_on: short-rest
 state_key: test_health
 health: 20
 `);
-      expect(result.temp_max_health).toBe(0);
+      expect(result.temp_max_health).toEqual({ hp: 0 });
     });
 
     it("should parse temp max health", () => {
@@ -93,7 +94,23 @@ state_key: test_health
 health: 20
 temp_max_health: 5
 `);
-      expect(result.temp_max_health).toBe(5);
+      expect(result.temp_max_health).toEqual({ hp: 5 });
+    });
+
+    it("parses the object form of temp_max_health with a note", () => {
+      const result = parseHealthBlock(`health: 45
+temp_max_health:
+  hp: 10
+  note: Aid`);
+      expect(result.temp_max_health).toEqual({ hp: 10, note: "Aid" });
+    });
+
+    it("keeps a template amount in the object form for the view to resolve", () => {
+      const result = parseHealthBlock(`health: 45
+temp_max_health:
+  hp: "{{frontmatter.aid}}"
+  note: Aid`);
+      expect(result.temp_max_health).toEqual({ hp: "{{frontmatter.aid}}", note: "Aid" });
     });
 
     it("should normalize hit dice reset configuration", () => {
@@ -133,7 +150,7 @@ hitdice:
       state_key: "test",
       label: "Hit Points",
       health: 24,
-      temp_max_health: 5,
+      temp_max_health: { hp: 5 },
       death_saves: true,
     };
 
@@ -144,11 +161,17 @@ hitdice:
     });
 
     it("should ignore negative temp max health", () => {
-      expect(getMaxHealth({ ...block, temp_max_health: -5 })).toBe(24);
+      expect(getMaxHealth({ ...block, temp_max_health: { hp: -5 } })).toBe(24);
     });
 
     it("should treat missing temp max health as 0", () => {
       expect(getMaxHealth({ ...block, temp_max_health: undefined })).toBe(24);
+    });
+
+    it("should return the note only when the object form supplied one", () => {
+      expect(getTempMaxHealthNote(block)).toBeUndefined();
+      expect(getTempMaxHealthNote({ ...block, temp_max_health: { hp: 5, note: "Aid" } })).toBe("Aid");
+      expect(getTempMaxHealthNote({ ...block, temp_max_health: { hp: 5, note: "" } })).toBeUndefined();
     });
 
     it("should fall back to 6 when health is unresolved", () => {
@@ -181,7 +204,7 @@ hitdice:
     });
 
     it("should leave state alone when current health fits", () => {
-      expect(clampHealthState(state, { ...block, temp_max_health: 5 })).toBe(state);
+      expect(clampHealthState(state, { ...block, temp_max_health: { hp: 5 } })).toBe(state);
     });
 
     it("should leave state alone when health is unresolved", () => {
@@ -221,7 +244,7 @@ hitdice:
     });
 
     it("should restore up to the temp max health", () => {
-      const reset = computeResetState(stateWith(), { ...block, temp_max_health: 5 }, "long-rest");
+      const reset = computeResetState(stateWith(), { ...block, temp_max_health: { hp: 5 } }, "long-rest");
       expect(reset.current).toBe(29);
     });
 

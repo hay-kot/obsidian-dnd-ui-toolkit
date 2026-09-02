@@ -117,6 +117,31 @@ hitdice:
   value: 5
 ```
 
+The object form adds a note. Hover the `incl. +10 max` label or the purple part of the bar to see it.
+
+```healthpoints
+state_key: test_health_temp_max_note
+health: 45
+temp_max_health:
+  hp: 10
+  note: Aid (Cleric, 8h)
+```
+
+## Temp HP In The Bar
+
+Add temp HP with the Temp HP button and watch the teal section appear past the end of the bar while the rest
+scales down. Damage should eat the teal section first. Combined with a temp max bonus, the bar reads: normal
+health, purple temp max, teal temp HP.
+
+```healthpoints
+state_key: test_health_temp_hp_bar
+health: 30
+temp_max_health: 6
+hitdice:
+  dice: d8
+  value: 4
+```
+
 ## Partial Hit Dice Recovery
 
 Half of the character's hit dice come back on a long rest (level 7 -> 3 dice). Check some boxes, then use the

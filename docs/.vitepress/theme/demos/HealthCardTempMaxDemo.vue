@@ -8,7 +8,7 @@ const block: ParsedHealthBlock = {
   label: "Hit Points",
   state_key: "demo_temp_max_health",
   health: 24,
-  temp_max_health: 5,
+  temp_max_health: { hp: 5, note: "Aid" },
   death_saves: true,
 };
 

@@ -1,5 +1,5 @@
 import * as Utils from "lib/utils/utils";
-import { HealthBlock, ParsedHealthBlock, UnresolvedHealthBlock } from "lib/types";
+import { HealthBlock, ParsedHealthBlock, RawTempMaxHealth, UnresolvedHealthBlock } from "lib/types";
 import { parse } from "yaml";
 import { getResetAmount, normalizeResetConfig, shouldResetOnEvent } from "lib/domains/events";
 
@@ -57,9 +57,16 @@ export function parseHealthBlock(yamlString: string): UnresolvedHealthBlock {
     ...merged,
     reset_on: normalizeResetConfig(merged.reset_on),
     hitdice: normalizedHitdice,
+    temp_max_health: normalizeTempMaxHealth(merged.temp_max_health),
   };
 
   return normalized;
+}
+
+/** Accepts either a bare amount or the object form, so only the object form can carry a note. */
+function normalizeTempMaxHealth(value: HealthBlock["temp_max_health"]): RawTempMaxHealth | undefined {
+  if (value === undefined || value === null) return undefined;
+  return typeof value === "object" ? value : { hp: value };
 }
 
 /** Maximum health from the `health` property alone, excluding any temporary bonus. */
@@ -69,7 +76,13 @@ export function getBaseHealth(block: ParsedHealthBlock): number {
 
 /** Bonus maximum health from temporary effects such as Aid. */
 export function getTempMaxHealth(block: ParsedHealthBlock): number {
-  return Math.max(0, block.temp_max_health ?? 0);
+  return Math.max(0, block.temp_max_health?.hp ?? 0);
+}
+
+/** What granted the bonus, when the block used the object form. */
+export function getTempMaxHealthNote(block: ParsedHealthBlock): string | undefined {
+  const note = block.temp_max_health?.note;
+  return note ? note : undefined;
 }
 
 /** Maximum health a character can be healed to, including any temporary bonus. */

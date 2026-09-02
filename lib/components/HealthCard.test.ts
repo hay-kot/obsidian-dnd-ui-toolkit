@@ -1,5 +1,6 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
+import { setTooltip } from "obsidian";
 import HealthCard from "./HealthCard.vue";
 import type { ParsedHealthBlock } from "lib/types";
 import type { HealthState } from "lib/domains/healthpoints";
@@ -26,6 +27,10 @@ function makeProps(overrides?: { static?: Partial<ParsedHealthBlock>; state?: Pa
 }
 
 describe("HealthCard", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("renders current and max health", () => {
     const wrapper = mount(HealthCard, { props: makeProps() });
 
@@ -45,6 +50,55 @@ describe("HealthCard", () => {
     const wrapper = mount(HealthCard, { props: makeProps() });
 
     expect(wrapper.text()).not.toContain("temp");
+  });
+
+  describe("progress bar", () => {
+    const bar = ".dnd-ui-health-progress-bar";
+    const temp = ".dnd-ui-health-progress-temp";
+    const bonusTrack = ".dnd-ui-health-progress-bonus-track";
+
+    it("fills the whole bar at full health with no bonuses", () => {
+      const wrapper = mount(HealthCard, { props: makeProps() });
+
+      expect(wrapper.find(bar).attributes("style")).toContain("width: 100%");
+      expect(wrapper.find(temp).exists()).toBe(false);
+      expect(wrapper.find(bonusTrack).exists()).toBe(false);
+    });
+
+    it("scales health down to make room for the temp HP pool", () => {
+      // 20 max + 5 temp = 25 wide, so health is 20/25 and temp is the last 5/25
+      const wrapper = mount(HealthCard, { props: makeProps({ state: { temporary: 5 } }) });
+
+      expect(wrapper.find(bar).attributes("style")).toContain("width: 80%");
+      expect(wrapper.find(temp).attributes("style")).toContain("width: 20%");
+    });
+
+    it("places the temp HP pool after the temp max headroom", () => {
+      // 20 base + 5 temp max + 5 temp HP = 30 wide, so temp HP starts at 25/30
+      const wrapper = mount(HealthCard, {
+        props: makeProps({ static: { temp_max_health: { hp: 5 } }, state: { temporary: 5 } }),
+      });
+
+      const style = wrapper.find(temp).attributes("style");
+      expect(style).toContain("left: 83.3333%");
+      expect(style).toContain("width: 16.6667%");
+    });
+
+    it("leaves a gap when health is below the base maximum", () => {
+      const wrapper = mount(HealthCard, {
+        props: makeProps({ static: { temp_max_health: { hp: 5 } }, state: { current: 10 } }),
+      });
+
+      // Health stops at 10/25 but the headroom still sits at its own offset
+      expect(wrapper.find(bar).attributes("style")).toContain("width: 40%");
+      expect(wrapper.find(bonusTrack).attributes("style")).toContain("left: 80%");
+    });
+
+    it("does not divide by zero at 0 max health", () => {
+      const wrapper = mount(HealthCard, { props: makeProps({ static: { health: 0 }, state: { current: 0 } }) });
+
+      expect(wrapper.find(bar).attributes("style")).toContain("width: 0%");
+    });
   });
 
   it("emits update:state on heal", async () => {
@@ -133,7 +187,7 @@ describe("HealthCard", () => {
 
   it("includes temp max health in the maximum", () => {
     const wrapper = mount(HealthCard, {
-      props: makeProps({ static: { temp_max_health: 5 } }),
+      props: makeProps({ static: { temp_max_health: { hp: 5 } } }),
     });
 
     expect(wrapper.text()).toContain("/ 25");
@@ -149,7 +203,7 @@ describe("HealthCard", () => {
 
   it("heals into temp max health", async () => {
     const wrapper = mount(HealthCard, {
-      props: makeProps({ static: { temp_max_health: 5 }, state: { current: 20 } }),
+      props: makeProps({ static: { temp_max_health: { hp: 5 } }, state: { current: 20 } }),
     });
 
     await wrapper.find(".dnd-ui-health-heal").trigger("click");
@@ -160,7 +214,7 @@ describe("HealthCard", () => {
 
   it("does not heal past base plus temp max health", async () => {
     const wrapper = mount(HealthCard, {
-      props: makeProps({ static: { temp_max_health: 5 }, state: { current: 25 } }),
+      props: makeProps({ static: { temp_max_health: { hp: 5 } }, state: { current: 25 } }),
     });
 
     await wrapper.find(".dnd-ui-health-heal").trigger("click");
@@ -171,21 +225,50 @@ describe("HealthCard", () => {
 
   it("splits the progress bar between base health and temp max health", () => {
     const wrapper = mount(HealthCard, {
-      props: makeProps({ static: { temp_max_health: 5 }, state: { current: 22 } }),
+      props: makeProps({ static: { temp_max_health: { hp: 5 } }, state: { current: 22 } }),
     });
 
     // 20 base + 5 bonus = 25 total; 20 filled base, 2 filled bonus
     expect(wrapper.find(".dnd-ui-health-progress-bar").attributes("style")).toContain("width: 80%");
     expect(wrapper.find(".dnd-ui-health-progress-bar-bonus").attributes("style")).toContain("width: 8%");
-    expect(wrapper.find(".dnd-ui-health-progress-bonus-track").attributes("style")).toContain("width: 20%");
+
+    const track = wrapper.find(".dnd-ui-health-progress-bonus-track").attributes("style");
+    expect(track).toContain("left: 80%");
+    expect(track).toContain("width: 20%");
   });
 
-  it("does not render a bonus fill while current health is within base health", () => {
+  it("registers the note as a tooltip on the temp max label and bar", () => {
     const wrapper = mount(HealthCard, {
-      props: makeProps({ static: { temp_max_health: 5 }, state: { current: 20 } }),
+      props: makeProps({ static: { temp_max_health: { hp: 5, note: "Aid" } }, state: { current: 22 } }),
+      attachTo: document.body,
     });
 
-    expect(wrapper.find(".dnd-ui-health-progress-bar-bonus").exists()).toBe(false);
+    // The label plus both purple bar sections, so the note is reachable from either
+    const tipped = (sel: string) => wrapper.find(sel).element;
+    expect(setTooltip).toHaveBeenCalledWith(tipped(".dnd-ui-health-max-bonus"), "Aid");
+    expect(setTooltip).toHaveBeenCalledWith(tipped(".dnd-ui-health-progress-bonus-track"), "Aid");
+    expect(setTooltip).toHaveBeenCalledWith(tipped(".dnd-ui-health-progress-bar-bonus"), "Aid");
+
+    expect(wrapper.find(".dnd-ui-health-max-bonus").classes()).toContain("dnd-ui-health-has-note");
+  });
+
+  it("registers no tooltip for the bare amount form", () => {
+    const wrapper = mount(HealthCard, {
+      props: makeProps({ static: { temp_max_health: { hp: 5 } }, state: { current: 22 } }),
+      attachTo: document.body,
+    });
+
+    expect(setTooltip).not.toHaveBeenCalled();
+    expect(wrapper.find(".dnd-ui-health-max-bonus").classes()).not.toContain("dnd-ui-health-has-note");
+  });
+
+  it("keeps the bonus fill empty while current health is within base health", () => {
+    const wrapper = mount(HealthCard, {
+      props: makeProps({ static: { temp_max_health: { hp: 5 } }, state: { current: 20 } }),
+    });
+
+    // Stays mounted at zero width rather than unmounting, so healing into it animates
+    expect(wrapper.find(".dnd-ui-health-progress-bar-bonus").attributes("style")).toContain("width: 0%");
     expect(wrapper.find(".dnd-ui-health-progress-bonus-track").exists()).toBe(true);
   });
 
