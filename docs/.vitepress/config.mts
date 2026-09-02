@@ -81,6 +81,7 @@ export default withMermaid(
 				alias: {
 					dayjs: "dayjs/",
 					lib: path.resolve(__dirname, "../../lib"),
+					obsidian: path.resolve(__dirname, "obsidian-shim.ts"),
 				},
 			},
 		},
