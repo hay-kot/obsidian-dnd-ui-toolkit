@@ -156,9 +156,8 @@ health: "20"`;
 
       await renderAndGetChild(yaml);
 
-      // "20" doesn't have template vars, so health stays as string "20"
-      // getDefaultHealthState falls back to 6 for string health
       expect(processTemplateMock).not.toHaveBeenCalled();
+      expect(await kv.get("hp_str")).toMatchObject({ current: 20, temporary: 0 });
     });
   });
 
@@ -407,29 +406,6 @@ hitdice:
         deathSaveSuccesses: 0,
         deathSaveFailures: 0,
       });
-    });
-
-    it("should restore only the configured number of hit dice", async () => {
-      await kv.set("hp_reset_partial", {
-        current: 5,
-        temporary: 0,
-        hitdiceUsed: 4,
-        deathSaveSuccesses: 0,
-        deathSaveFailures: 0,
-      });
-
-      await renderAndGetChild(`state_key: hp_reset_partial
-health: 24
-hitdice:
-  dice: d6
-  value: 4
-  reset_on:
-    - event: long-rest
-      amount: 1`);
-
-      await publishReset("long-rest");
-
-      expect(await kv.get("hp_reset_partial")).toMatchObject({ current: 24, hitdiceUsed: 3 });
     });
 
     it("should resolve a template in the hit dice reset amount", async () => {

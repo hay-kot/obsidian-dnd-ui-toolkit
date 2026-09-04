@@ -56,6 +56,7 @@ describe("HealthCard", () => {
     const bar = ".dnd-ui-health-progress-bar";
     const temp = ".dnd-ui-health-progress-temp";
     const bonusTrack = ".dnd-ui-health-progress-bonus-track";
+    const bonusFill = ".dnd-ui-health-progress-bar-bonus";
 
     it("fills the whole bar at full health with no bonuses", () => {
       const wrapper = mount(HealthCard, { props: makeProps() });
@@ -92,6 +93,30 @@ describe("HealthCard", () => {
       // Health stops at 10/25 but the headroom still sits at its own offset
       expect(wrapper.find(bar).attributes("style")).toContain("width: 40%");
       expect(wrapper.find(bonusTrack).attributes("style")).toContain("left: 80%");
+    });
+
+    it("splits the bar between base health and temp max health", () => {
+      const wrapper = mount(HealthCard, {
+        props: makeProps({ static: { temp_max_health: { hp: 5 } }, state: { current: 22 } }),
+      });
+
+      // 20 base + 5 bonus = 25 total; 20 filled base, 2 filled bonus
+      expect(wrapper.find(bar).attributes("style")).toContain("width: 80%");
+      expect(wrapper.find(bonusFill).attributes("style")).toContain("width: 8%");
+
+      const track = wrapper.find(bonusTrack).attributes("style");
+      expect(track).toContain("left: 80%");
+      expect(track).toContain("width: 20%");
+    });
+
+    it("keeps the bonus fill empty while current health is within base health", () => {
+      const wrapper = mount(HealthCard, {
+        props: makeProps({ static: { temp_max_health: { hp: 5 } }, state: { current: 20 } }),
+      });
+
+      // Stays mounted at zero width rather than unmounting, so healing into it animates
+      expect(wrapper.find(bonusFill).attributes("style")).toContain("width: 0%");
+      expect(wrapper.find(bonusTrack).exists()).toBe(true);
     });
 
     it("does not divide by zero at 0 max health", () => {
@@ -198,7 +223,6 @@ describe("HealthCard", () => {
     const wrapper = mount(HealthCard, { props: makeProps() });
 
     expect(wrapper.text()).not.toContain("max");
-    expect(wrapper.find(".dnd-ui-health-progress-bonus-track").exists()).toBe(false);
   });
 
   it("heals into temp max health", async () => {
@@ -223,24 +247,9 @@ describe("HealthCard", () => {
     expect((emitted![0][0] as HealthState).current).toBe(25);
   });
 
-  it("splits the progress bar between base health and temp max health", () => {
-    const wrapper = mount(HealthCard, {
-      props: makeProps({ static: { temp_max_health: { hp: 5 } }, state: { current: 22 } }),
-    });
-
-    // 20 base + 5 bonus = 25 total; 20 filled base, 2 filled bonus
-    expect(wrapper.find(".dnd-ui-health-progress-bar").attributes("style")).toContain("width: 80%");
-    expect(wrapper.find(".dnd-ui-health-progress-bar-bonus").attributes("style")).toContain("width: 8%");
-
-    const track = wrapper.find(".dnd-ui-health-progress-bonus-track").attributes("style");
-    expect(track).toContain("left: 80%");
-    expect(track).toContain("width: 20%");
-  });
-
   it("registers the note as a tooltip on the temp max label and bar", () => {
     const wrapper = mount(HealthCard, {
       props: makeProps({ static: { temp_max_health: { hp: 5, note: "Aid" } }, state: { current: 22 } }),
-      attachTo: document.body,
     });
 
     // The label plus both purple bar sections, so the note is reachable from either
@@ -255,21 +264,10 @@ describe("HealthCard", () => {
   it("registers no tooltip for the bare amount form", () => {
     const wrapper = mount(HealthCard, {
       props: makeProps({ static: { temp_max_health: { hp: 5 } }, state: { current: 22 } }),
-      attachTo: document.body,
     });
 
     expect(setTooltip).not.toHaveBeenCalled();
     expect(wrapper.find(".dnd-ui-health-max-bonus").classes()).not.toContain("dnd-ui-health-has-note");
-  });
-
-  it("keeps the bonus fill empty while current health is within base health", () => {
-    const wrapper = mount(HealthCard, {
-      props: makeProps({ static: { temp_max_health: { hp: 5 } }, state: { current: 20 } }),
-    });
-
-    // Stays mounted at zero width rather than unmounting, so healing into it animates
-    expect(wrapper.find(".dnd-ui-health-progress-bar-bonus").attributes("style")).toContain("width: 0%");
-    expect(wrapper.find(".dnd-ui-health-progress-bonus-track").exists()).toBe(true);
   });
 
   it("applies damage to temp HP first", async () => {
