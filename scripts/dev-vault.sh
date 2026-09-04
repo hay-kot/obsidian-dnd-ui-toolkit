@@ -115,7 +115,6 @@ sys.exit(1)
 PY
 }
 
-cmd_slot()       { claim_slot; }
 cmd_plugin_dir() { echo "$(claim_slot)/.obsidian/plugins/$PLUGIN_ID"; }
 cmd_setup()      { setup_slot >/dev/null; echo "slot ready: $(claim_slot)"; }
 
@@ -184,12 +183,11 @@ cmd_release() {
 }
 
 case "${1:-}" in
-  slot)       cmd_slot ;;
   plugin-dir) cmd_plugin_dir ;;
   setup)      cmd_setup ;;
   open)       cmd_open ;;
   register)   cmd_register ;;
   status)     cmd_status ;;
   release)    cmd_release ;;
-  *) die "usage: dev-vault.sh {slot|plugin-dir|setup|open|register|status|release}" ;;
+  *) die "usage: dev-vault.sh {plugin-dir|setup|open|register|status|release}" ;;
 esac
