@@ -108,10 +108,13 @@ export type ParsedConsumableBlock = Omit<ConsumableBlock, "reset_on" | "uses"> &
   reset_on?: RawResetConfig[]; // Normalized to always be an array of objects
 };
 
+// After parsing — reset_on is normalized to objects, but value and amounts may still be template strings
+export type UnresolvedHitDice = Omit<RawHitDice, "reset_on"> & { reset_on?: RawResetConfig[] };
+
 // Before template resolution — hitdice values may still be template strings
 export type UnresolvedHealthBlock = Omit<HealthBlock, "reset_on" | "hitdice" | "temp_max_health"> & {
   reset_on?: RawResetConfig[];
-  hitdice?: RawHitDice[];
+  hitdice?: UnresolvedHitDice[];
   temp_max_health?: RawTempMaxHealth; // Normalized from the bare-amount form at parse time
 };
 

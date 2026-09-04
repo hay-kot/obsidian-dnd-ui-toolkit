@@ -9,10 +9,10 @@ import {
   ParsedHealthBlock,
   UnresolvedHealthBlock,
   HitDice,
-  RawHitDice,
   RawResetConfig,
   ResetConfig,
   TempMaxHealth,
+  UnresolvedHitDice,
 } from "lib/types";
 import { msgbus } from "lib/services/event-bus";
 import { hasTemplateVariables, processTemplate, createTemplateContext } from "lib/utils/template";
@@ -158,7 +158,10 @@ class HealthMarkdown extends VueMarkdown {
     };
   }
 
-  private resolveHitDice(hd: RawHitDice, resolveNumber: (value: number | string) => number | undefined): HitDice {
+  private resolveHitDice(
+    hd: UnresolvedHitDice,
+    resolveNumber: (value: number | string) => number | undefined
+  ): HitDice {
     const value = resolveNumber(hd.value);
     if (value === undefined || value <= 0) {
       console.warn(`Hitdice value "${hd.value}" for ${hd.dice} is not a valid positive number, using 1`);
@@ -172,13 +175,11 @@ class HealthMarkdown extends VueMarkdown {
   }
 
   private resolveResetConfigs(
-    configs: RawResetConfig[] | string | string[] | undefined,
+    configs: RawResetConfig[] | undefined,
     label: string,
     resolveNumber: (value: number | string) => number | undefined
   ): ResetConfig[] | undefined {
-    if (!Array.isArray(configs)) return undefined;
-
-    return (configs as RawResetConfig[]).map((config) => {
+    return configs?.map((config) => {
       if (config.amount === undefined) return { event: config.event };
 
       const amount = resolveNumber(config.amount);
@@ -201,9 +202,7 @@ class HealthMarkdown extends VueMarkdown {
     }
 
     return (this.unresolvedBlock.hitdice ?? []).some(
-      (hd) =>
-        isTemplate(hd.value) ||
-        (Array.isArray(hd.reset_on) && (hd.reset_on as RawResetConfig[]).some((config) => isTemplate(config.amount)))
+      (hd) => isTemplate(hd.value) || hd.reset_on?.some((config) => isTemplate(config.amount))
     );
   }
 
