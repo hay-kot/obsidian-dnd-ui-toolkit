@@ -185,7 +185,7 @@ class HealthMarkdown extends VueMarkdown {
       const amount = resolveNumber(config.amount);
       if (amount === undefined) {
         console.warn(
-          `Reset amount "${config.amount}" for ${label} on ${config.event} is not a valid number, falling back to a full reset`
+          `Reset amount "${config.amount}" for ${label} on ${config.event} is not a valid number and is ignored`
         );
       }
 
