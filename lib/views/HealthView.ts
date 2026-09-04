@@ -219,7 +219,7 @@ class HealthMarkdown extends VueMarkdown {
         const healthBlock = this.currentHealthBlock;
         if (!healthBlock) return;
 
-        const resetOn = healthBlock.reset_on || [{ event: "long-rest" }];
+        const resetOn = healthBlock.reset_on;
         const affectsHitDice = (healthBlock.hitdice ?? []).some((hd) =>
           shouldResetOnEvent(hd.reset_on, resetEvent.eventType)
         );

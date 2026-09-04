@@ -65,7 +65,7 @@ export function parseHealthBlock(yamlString: string): UnresolvedHealthBlock {
 
 /** Accepts either a bare amount or the object form, so only the object form can carry a note. */
 function normalizeTempMaxHealth(value: HealthBlock["temp_max_health"]): RawTempMaxHealth | undefined {
-  if (value === undefined || value === null) return undefined;
+  if (value === undefined) return undefined;
   return typeof value === "object" ? value : { hp: value };
 }
 
@@ -120,7 +120,7 @@ export function getHitDiceUsed(block: ParsedHealthBlock, state: HealthState, dic
   return 0;
 }
 
-export function withHitDiceUsed(block: ParsedHealthBlock, state: HealthState, dice: string, used: number): HealthState {
+function withHitDiceUsed(block: ParsedHealthBlock, state: HealthState, dice: string, used: number): HealthState {
   if (hasSingleHitDice(block) && isSingleHitDiceState(state)) {
     return { ...state, hitdiceUsed: used };
   }

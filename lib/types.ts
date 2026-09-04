@@ -100,7 +100,7 @@ export type ConsumableBlock = {
   label: string;
   state_key: string;
   uses: number | string; // Allow string for template support (e.g., "{{modifier abilities.charisma}}")
-  reset_on?: string | string[] | { event: string; amount: number }[]; // Event type(s) that trigger a reset (e.g., 'long-rest', ['short-rest', 'long-rest'], [{event: 'short-rest', amount: 1}])
+  reset_on?: string | string[] | RawResetConfig[]; // Event type(s) that trigger a reset (e.g., 'long-rest', ['short-rest', 'long-rest'], [{event: 'short-rest', amount: 1}])
 };
 
 export type ParsedConsumableBlock = Omit<ConsumableBlock, "reset_on" | "uses"> & {
