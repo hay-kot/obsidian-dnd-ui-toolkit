@@ -61,7 +61,7 @@ items:
 Any component with a `reset_on` field supports listening for events.
 
 - [Consumables](../components/consumables.md) - Supports partial and complete resets
-- [Health Points](../character-sheet/healthpoints.md) - Complete resets only
+- [Health Points](../character-sheet/healthpoints.md) - Complete resets, with partial recovery for hit dice
 
 ### Reset Types
 

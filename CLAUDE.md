@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run test:watch` - Run tests in watch mode
 - `npm run docs:dev` - Start VitePress documentation server
 - `npm run docs:build` - Build documentation
-- `task build` - Build and optionally copy to plugin directory (if PLUGIN_DIR is set)
+- `task dev` - Build and install into this clone's dev vault slot (see Development Workflow)
 - `task check` - Run all checks (format, lint, type check, and test)
 - Releases are done via GitHub Actions: `gh workflow run release.yml -f bump=patch|minor|major`
 
@@ -98,5 +98,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Workflow
 
-- **Plugin Development:** Set PLUGIN_DIR environment variable to auto-copy built files to Obsidian plugin directory
-- **State File:** Plugin creates `.dnd-ui-toolkit-state.json` (configurable) for persistent component state
+- **Dev Vault Slots:** The dev vault is not in the repo. `scripts/dev-vault.sh` manages a fixed set of vaults under `~/obsidian-dev/`, and each clone claims one. This lets several clones be tested in Obsidian at once, which a vault checked into the repo cannot do: every clone's copy has the same name, and `obsidian://open?vault=<name>` resolves by name.
+- **First-time setup:** `task dev:register` (Obsidian closed) creates the slots and adds them to Obsidian's vault list. Obsidian cannot register a vault by URI, so this is the one manual-ish step, and it is per machine rather than per clone.
+- **Test Notes:** Live in `dev/notes/` and are symlinked into the claimed slot, so notes edited in Obsidian land in the clone's working tree. `dev/vault-seed/.obsidian/` seeds a new slot's config and is never written back to.
+- **Plugin Development:** `task dev` builds and installs into the claimed slot. Set PLUGIN_DIR to install into a real vault instead.
+- **State File:** Plugin creates `.dnd-ui-toolkit-state.json` (configurable) for persistent component state. It lives in the slot, so each clone has independent component state.

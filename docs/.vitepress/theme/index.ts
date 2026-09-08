@@ -7,6 +7,7 @@ import ConsumablesDemo from "./demos/ConsumablesDemo.vue";
 import DaggerHeartAbilityDemo from "./demos/DaggerHeartAbilityDemo.vue";
 import DaggerHeartSkillDemo from "./demos/DaggerHeartSkillDemo.vue";
 import HealthCardDemo from "./demos/HealthCardDemo.vue";
+import HealthCardTempMaxDemo from "./demos/HealthCardTempMaxDemo.vue";
 import InitiativeDemo from "./demos/InitiativeDemo.vue";
 import SkillCardsDemo from "./demos/SkillCardsDemo.vue";
 import SpellComponentsDemo from "./demos/SpellComponentsDemo.vue";
@@ -23,6 +24,7 @@ export default {
     app.component("DaggerHeartAbilityDemo", DaggerHeartAbilityDemo);
     app.component("DaggerHeartSkillDemo", DaggerHeartSkillDemo);
     app.component("HealthCardDemo", HealthCardDemo);
+    app.component("HealthCardTempMaxDemo", HealthCardTempMaxDemo);
     app.component("InitiativeDemo", InitiativeDemo);
     app.component("SkillCardsDemo", SkillCardsDemo);
     app.component("SpellComponentsDemo", SpellComponentsDemo);

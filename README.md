@@ -61,33 +61,41 @@ Interactive state (HP, spell slots, consumables) persists across sessions in a J
 
 ```bash
 npm install
-task dev:setup
+task dev:register   # once per machine, with Obsidian closed
 ```
 
-`task dev:setup` prepares the dev environment by:
-- Installing the [hot-reload](https://github.com/pjeby/hot-reload) plugin into the dev vault
-- Creating a `.hotreload` marker so changes are picked up automatically
-- Configuring `community-plugins.json` to enable both plugins
+The dev vault does not live in the repo. It lives in a fixed set of "slots" under
+`~/obsidian-dev/`, and each clone of this repo claims one. `task dev:register` creates
+the slots and adds them to Obsidian's vault list, which is why Obsidian has to be closed
+-- it rewrites that file on quit. A backup is written next to it.
 
-After setup, open the dev vault in Obsidian for the first time:
+Slots exist because Obsidian resolves `obsidian://` URIs by vault name and cannot register
+a vault on its own. A vault checked into the repo gives every clone a vault with the same
+name, so Obsidian silently opens whichever copy it saw first. Slots give each clone a
+distinct, permanent vault path instead.
 
-1. Open Obsidian
-2. Open the vault switcher
-3. Select "Open folder as vault" and choose `dev/dnd-ui-dev`
-
-Once registered, you can use `task dev:open` to open it.
+The test notes stay in the repo under `dev/notes/` and are symlinked into the slot, so
+notes you edit in Obsidian are edited in your working tree and show up in `git status`.
 
 ### Dev Workflow
 
 ```bash
-task dev           # Build and install plugin to dev vault
+task dev           # Build and install the plugin into this clone's slot
 task dev --watch   # Rebuild and install on file changes
-task dev:open      # Open the dev vault in Obsidian
+task dev:open      # Open this clone's slot in Obsidian
+task dev:status    # Show which clone holds each slot
+task dev:release   # Give up this clone's slot
 ```
 
-`task dev` builds the plugin and copies it to `PLUGIN_DIR`. By default this is the included dev vault at `dev/dnd-ui-dev/.obsidian/plugins/dnd-ui-toolkit/`. Use `--watch` to automatically rebuild on file changes. With hot-reload installed, Obsidian will automatically reload the plugin after each rebuild.
+`task dev` claims a slot on first run, installs [hot-reload](https://github.com/pjeby/hot-reload)
+into it, symlinks `dev/notes/` in, and copies the build to the slot's plugin directory. Use
+`--watch` to rebuild on file changes; hot-reload picks each rebuild up without a restart.
 
-To install to a different vault, set `PLUGIN_DIR` in a `.env` file:
+Slots are claimed by writing the clone's path to `<slot>/.claim`. A claim whose clone no
+longer exists counts as free, so deleted clones release their slot on their own. Three
+slots are created by default; set `DND_SLOT_COUNT` (and `DND_SLOT_ROOT`) to change that.
+
+To install to a real vault instead of a slot, set `PLUGIN_DIR` in a `.env` file:
 
 ```bash
 # .env

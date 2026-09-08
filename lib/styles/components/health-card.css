@@ -34,12 +34,25 @@
     color: var(--dnd-ui-color-text-muted);
 }
 
-.dnd-ui-health-temp {
+.dnd-ui-health-temp-value {
     font-size: 0.8rem;
     color: var(--dnd-ui-color-accent-teal);
 }
 
+.dnd-ui-health-max-bonus {
+    font-size: 0.8rem;
+    color: var(--dnd-ui-color-accent-purple);
+}
+
+/* A tooltip nobody knows is there is no use, so a note gets a visible hover affordance */
+.dnd-ui-health-has-note {
+    text-decoration: underline dotted;
+    text-underline-offset: 0.15rem;
+    cursor: help;
+}
+
 .dnd-ui-health-progress-container {
+    position: relative;
     width: 100%;
     height: 0.5rem;
     background-color: var(--dnd-ui-color-bg-secondary);
@@ -48,10 +61,40 @@
     margin: 0.3rem 0;
 }
 
+/* Segments are positioned rather than packed: health can stop short of the base maximum while
+   the temp max and temp HP sections still have to sit at their own offsets further along. */
+.dnd-ui-health-progress-bar,
+.dnd-ui-health-progress-bar-bonus,
+.dnd-ui-health-progress-bonus-track,
+.dnd-ui-health-progress-temp {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    box-sizing: border-box;
+    transition:
+        left 0.3s ease,
+        width 0.3s ease;
+}
+
 .dnd-ui-health-progress-bar {
-    height: 100%;
     background-color: var(--dnd-ui-color-border-active);
-    transition: width 0.3s ease;
+}
+
+/* Marks the slice of the bar that only exists while a temp max health effect is active */
+.dnd-ui-health-progress-bonus-track {
+    background-color: var(--dnd-ui-color-accent-purple);
+    border-left: 1px solid var(--dnd-ui-color-bg-primary);
+    opacity: 0.25;
+}
+
+.dnd-ui-health-progress-bar-bonus {
+    background-color: var(--dnd-ui-color-accent-purple);
+}
+
+/* Temp HP is a separate pool past the maximum, so it takes the teal of the temp HP label */
+.dnd-ui-health-progress-temp {
+    background-color: var(--dnd-ui-color-accent-teal);
+    border-left: 1px solid var(--dnd-ui-color-bg-primary);
 }
 
 .dnd-ui-health-controls {

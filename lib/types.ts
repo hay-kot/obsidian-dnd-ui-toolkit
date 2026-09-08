@@ -55,20 +55,40 @@ export type SkillsBlockBonus = GenericBonus;
 export type HitDice = {
   dice: string;
   value: number;
+  reset_on?: ResetConfig[];
 };
 
 export type RawHitDice = {
   dice: string;
   value: number | string; // Allow string for template support (e.g., "{{frontmatter.level}}")
+  reset_on?: string | string[] | RawResetConfig[]; // Recovery rules for this dice type, overrides the block-level reset
 };
 
 export type HealthBlock = {
   label: string;
   state_key: string;
   health: number | string; // Allow string for template support
+  temp_max_health?: number | string | RawTempMaxHealth; // Bare amount, or an object carrying a note
   hitdice?: RawHitDice | RawHitDice[]; // Support both single and multiple hit dice
   death_saves?: boolean | "always";
   reset_on?: string | string[]; // Event type(s) that trigger a reset, defaults to 'long-rest'
+};
+
+// As authored — hp and note may still be template strings
+export type RawTempMaxHealth = {
+  hp: number | string;
+  note?: string; // What granted the bonus, shown as a tooltip. A bare amount has no note.
+};
+
+export type TempMaxHealth = {
+  hp: number;
+  note?: string;
+};
+
+// As authored — amounts may still be template strings (e.g. "{{floor (divide frontmatter.level 2)}}")
+export type RawResetConfig = {
+  event: string;
+  amount?: number | string;
 };
 
 export type ResetConfig = {
@@ -80,23 +100,28 @@ export type ConsumableBlock = {
   label: string;
   state_key: string;
   uses: number | string; // Allow string for template support (e.g., "{{modifier abilities.charisma}}")
-  reset_on?: string | string[] | { event: string; amount: number }[]; // Event type(s) that trigger a reset (e.g., 'long-rest', ['short-rest', 'long-rest'], [{event: 'short-rest', amount: 1}])
+  reset_on?: string | string[] | RawResetConfig[]; // Event type(s) that trigger a reset (e.g., 'long-rest', ['short-rest', 'long-rest'], [{event: 'short-rest', amount: 1}])
 };
 
 export type ParsedConsumableBlock = Omit<ConsumableBlock, "reset_on" | "uses"> & {
   uses: number; // Always resolved to a number after template processing
-  reset_on?: ResetConfig[]; // Normalized to always be an array of objects
+  reset_on?: RawResetConfig[]; // Normalized to always be an array of objects
 };
 
+// After parsing — reset_on is normalized to objects, but value and amounts may still be template strings
+export type UnresolvedHitDice = Omit<RawHitDice, "reset_on"> & { reset_on?: RawResetConfig[] };
+
 // Before template resolution — hitdice values may still be template strings
-export type UnresolvedHealthBlock = Omit<HealthBlock, "reset_on" | "hitdice"> & {
-  reset_on?: ResetConfig[];
-  hitdice?: RawHitDice[];
+export type UnresolvedHealthBlock = Omit<HealthBlock, "reset_on" | "hitdice" | "temp_max_health"> & {
+  reset_on?: RawResetConfig[];
+  hitdice?: UnresolvedHitDice[];
+  temp_max_health?: RawTempMaxHealth; // Normalized from the bare-amount form at parse time
 };
 
 // After template resolution — all values are numbers
-export type ParsedHealthBlock = Omit<HealthBlock, "reset_on" | "hitdice" | "health"> & {
+export type ParsedHealthBlock = Omit<HealthBlock, "reset_on" | "hitdice" | "health" | "temp_max_health"> & {
   health: number | string;
+  temp_max_health?: TempMaxHealth;
   reset_on?: ResetConfig[];
   hitdice?: HitDice[];
 };

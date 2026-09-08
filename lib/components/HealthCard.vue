@@ -1,8 +1,19 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import type { ParsedHealthBlock } from "lib/types";
-import { HealthState, isSingleHitDiceState, isMultiHitDiceState, hasSingleHitDice } from "lib/domains/healthpoints";
+import {
+  HealthState,
+  isSingleHitDiceState,
+  isMultiHitDiceState,
+  hasSingleHitDice,
+  getBaseHealth,
+  getTempMaxHealth,
+  getTempMaxHealthNote,
+  getMaxHealth,
+  getHitDiceUsed,
+} from "lib/domains/healthpoints";
 import Checkbox from "lib/components/Checkbox.vue";
+import { vTooltip } from "lib/directives/tooltip";
 
 const props = defineProps<{
   static: ParsedHealthBlock;
@@ -15,7 +26,10 @@ const emit = defineEmits<{
 
 const inputValue = ref("1");
 
-const maxHealth = computed(() => (typeof props.static.health === "number" ? props.static.health : 6));
+const baseHealth = computed(() => getBaseHealth(props.static));
+const tempMaxHealth = computed(() => getTempMaxHealth(props.static));
+const tempMaxNote = computed(() => getTempMaxHealthNote(props.static));
+const maxHealth = computed(() => getMaxHealth(props.static));
 
 const hitDiceLabelWidth = computed(() => {
   if (!props.static.hitdice || props.static.hitdice.length <= 1) return undefined;
@@ -23,7 +37,23 @@ const hitDiceLabelWidth = computed(() => {
   return `${longest * 0.6}em`;
 });
 
-const healthPercentage = computed(() => Math.max(0, Math.min(100, (props.state.current / maxHealth.value) * 100)));
+// Temp HP is a pool on top of the maximum rather than part of it, so the bar widens to fit it.
+// With no temp HP this is just the maximum and the segments below lay out as they would have.
+const barTotal = computed(() => Math.max(maxHealth.value + props.state.temporary, 1));
+
+// The bar reads left to right as base health, then temp max headroom, then the temp HP pool
+function segment(start: number, size: number): { left: string; width: string } {
+  const scale = 100 / barTotal.value;
+  const percent = (value: number) => `${Math.round(Math.max(0, value) * scale * 1e4) / 1e4}%`;
+  return { left: percent(start), width: percent(size) };
+}
+
+const healthSegment = computed(() => segment(0, Math.min(props.state.current, baseHealth.value)));
+const tempMaxTrackSegment = computed(() => segment(baseHealth.value, tempMaxHealth.value));
+const tempMaxFilledSegment = computed(() =>
+  segment(baseHealth.value, Math.min(Math.max(0, props.state.current - baseHealth.value), tempMaxHealth.value))
+);
+const tempHealthSegment = computed(() => segment(maxHealth.value, props.state.temporary));
 
 function handleHeal() {
   const value = parseInt(inputValue.value) || 0;
@@ -128,13 +158,8 @@ function toggleDeathSave(type: "success" | "failure", index: number) {
   emit("update:state", newState);
 }
 
-function getHitDiceUsed(hd: { dice: string; value: number }): number {
-  if (hasSingleHitDice(props.static) && isSingleHitDiceState(props.state)) {
-    return props.state.hitdiceUsed;
-  } else if (isMultiHitDiceState(props.state)) {
-    return props.state.hitdiceUsed[hd.dice] || 0;
-  }
-  return 0;
+function usedHitDice(hd: { dice: string }): number {
+  return getHitDiceUsed(props.static, props.state, hd.dice);
 }
 </script>
 
@@ -145,12 +170,32 @@ function getHitDiceUsed(hd: { dice: string; value: number }): number {
       <div class="dnd-ui-health-value">
         {{ props.state.current }}
         <span class="dnd-ui-health-max">/ {{ maxHealth }}</span>
-        <span v-if="props.state.temporary > 0" class="dnd-ui-health-temp">+{{ props.state.temporary }} temp</span>
+        <span
+          v-if="tempMaxHealth > 0"
+          class="dnd-ui-health-max-bonus"
+          :class="{ 'dnd-ui-health-has-note': tempMaxNote }"
+          v-tooltip="tempMaxNote"
+          >incl. +{{ tempMaxHealth }} max</span
+        >
+        <span v-if="props.state.temporary > 0" class="dnd-ui-health-temp-value">+{{ props.state.temporary }} temp</span>
       </div>
     </div>
 
     <div class="dnd-ui-health-progress-container">
-      <div class="dnd-ui-health-progress-bar" :style="{ width: `${healthPercentage}%` }" />
+      <div
+        v-if="tempMaxHealth > 0"
+        class="dnd-ui-health-progress-bonus-track"
+        :style="tempMaxTrackSegment"
+        v-tooltip="tempMaxNote"
+      />
+      <div v-if="props.state.temporary > 0" class="dnd-ui-health-progress-temp" :style="tempHealthSegment" />
+      <div class="dnd-ui-health-progress-bar" :style="healthSegment" />
+      <div
+        v-if="tempMaxHealth > 0"
+        class="dnd-ui-health-progress-bar-bonus"
+        :style="tempMaxFilledSegment"
+        v-tooltip="tempMaxNote"
+      />
     </div>
 
     <div class="dnd-ui-health-controls">
@@ -180,7 +225,7 @@ function getHitDiceUsed(hd: { dice: string; value: number }): number {
               <Checkbox
                 v-for="i in hd.value"
                 :key="`${hd.dice}-${i - 1}`"
-                :checked="i - 1 < getHitDiceUsed(hd)"
+                :checked="i - 1 < usedHitDice(hd)"
                 :id="`hit-dice-${hd.dice}-${i - 1}`"
                 @toggle="toggleHitDie(hasSingleHitDice(props.static) ? null : hd.dice, i - 1)"
               />
