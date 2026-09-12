@@ -1,7 +1,7 @@
 {
   "id": "dnd-ui-toolkit",
   "name": "Dnd UI Toolkit",
-  "version": "0.24.0",
+  "version": "0.25.0",
   "minAppVersion": "1.4.4",
   "description": "Build interactive character sheets for Dungeons and Dragons with health trackers, ability scores, skills, and spell slots.",
   "author": "hay-kot",
