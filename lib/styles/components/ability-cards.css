@@ -9,12 +9,10 @@
     align-items: start;
 }
 
-.dnd-ui-ability-score-card p {
-    margin-block-start: 0 !important;
-    margin-block-end: 0 !important;
-}
-
 .dnd-ui-ability-score-card {
+    /* See health-card.css: zero --p-spacing rather than out-specify Obsidian's
+     * `.markdown-rendered p` margin rule. */
+    --p-spacing: 0;
     display: flex;
     flex-direction: column;
     align-items: center;

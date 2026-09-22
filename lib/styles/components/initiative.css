@@ -112,7 +112,9 @@
 	position: relative;
 }
 
-.dnd-ui-initiative-input {
+/* Scoped through the parent to outrank Obsidian's `input[type='number']` rule,
+ * which sets font-size and would otherwise win against a lone class. */
+.dnd-ui-initiative-roll .dnd-ui-initiative-input {
 	width: 100%;
 	background-color: var(--dnd-ui-color-bg-primary);
 	border: 1px solid var(--dnd-ui-color-border-primary);
@@ -120,9 +122,9 @@
 	color: var(--dnd-ui-color-text-primary);
 	padding: 0.3rem 0.5rem;
 	text-align: center;
-	font-size: 1.2rem !important;
-	height: 100% !important;
-	/* Larger initiative font */
+	/* Larger than the surrounding row: initiative order is what you scan for */
+	font-size: 1.2rem;
+	height: 100%;
 }
 
 .dnd-ui-initiative-name {
@@ -146,7 +148,10 @@
 .dnd-ui-initiative-link {
 	font-weight: bold;
 	color: var(--dnd-ui-color-text-bright);
-	text-decoration: none !important;
+	/* Obsidian's `a` rule reads text-decoration-line from --link-decoration, so
+	 * clearing the variable undoes the underline at its source. Setting
+	 * text-decoration here would compete with a theme's own `a` rule instead. */
+	--link-decoration: none;
 }
 
 .dnd-ui-initiative-ac {
