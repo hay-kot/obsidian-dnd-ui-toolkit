@@ -25,7 +25,7 @@ export class SpellComponentsView extends BaseView {
     this.renderAsync(source, el, ctx).catch((e) => {
       console.error("Error rendering spell components", e);
       const errorMessage = e instanceof Error ? e.message : String(e);
-      const errorDiv = el.createEl("div", { cls: "notice" });
+      const errorDiv = el.createDiv({ cls: "notice" });
       errorDiv.textContent = `Error parsing spell components: ${errorMessage}`;
     });
   }

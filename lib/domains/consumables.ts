@@ -56,7 +56,7 @@ export function parseConsumablesBlock(yamlString: string): ConsumablesBlock {
         return {
           ...merged,
           reset_on: normalizeResetConfig(merged.reset_on),
-        } as UnresolvedConsumableBlock;
+        };
       }),
     };
   }

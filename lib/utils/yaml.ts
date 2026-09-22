@@ -5,7 +5,8 @@ import { parse } from "yaml";
  *
  * The `yaml` package types `parse` as `any`, which silently spreads through
  * every block parser and defeats type checking on the shapes in lib/types.ts.
- * Routing all block parsing through here confines the cast to one place.
+ * Routing all block parsing through here confines that `any` to one place,
+ * where annotating it `unknown` forces the guard below.
  *
  * Block bodies are user-authored and may be empty, a bare scalar, or a
  * sequence where a mapping is expected. Every caller merges the result over a
@@ -20,5 +21,5 @@ export function parseYamlObject<T>(yamlString: string): Partial<T> | null {
     return null;
   }
 
-  return parsed as Partial<T>;
+  return parsed;
 }
