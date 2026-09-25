@@ -112,9 +112,7 @@
 	position: relative;
 }
 
-/* Scoped through the parent to outrank Obsidian's `input[type='number']` rule,
- * which sets font-size and would otherwise win against a lone class. */
-.dnd-ui-initiative-roll .dnd-ui-initiative-input {
+.dnd-ui-initiative-input {
 	width: 100%;
 	background-color: var(--dnd-ui-color-bg-primary);
 	border: 1px solid var(--dnd-ui-color-border-primary);
@@ -122,6 +120,13 @@
 	color: var(--dnd-ui-color-text-primary);
 	padding: 0.3rem 0.5rem;
 	text-align: center;
+}
+
+/* Obsidian's `input[type='number']` rule outranks a lone class, so the two
+ * properties that have to beat it are scoped through the parent. Only these
+ * two: widening the whole rule above would also promote its padding and
+ * colors, which Obsidian currently wins, and silently restyle the input. */
+.dnd-ui-initiative-roll .dnd-ui-initiative-input {
 	/* Larger than the surrounding row: initiative order is what you scan for */
 	font-size: 1.2rem;
 	height: 100%;
