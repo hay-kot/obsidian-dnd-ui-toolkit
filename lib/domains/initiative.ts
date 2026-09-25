@@ -1,6 +1,6 @@
 import * as Utils from "lib/utils/utils";
 import { InitiativeBlock, InitiativeItem } from "lib/types";
-import { parse } from "yaml";
+import { parseYamlObject } from "lib/utils/yaml";
 
 export interface InitiativeState {
   activeIndex: number;
@@ -18,12 +18,12 @@ export function parseInitiativeBlock(yamlString: string): InitiativeBlock & { st
     consumables: [],
   };
 
-  const parsed = parse(yamlString);
+  const parsed = parseYamlObject<InitiativeBlock>(yamlString);
   const merged = Utils.mergeWithDefaults(parsed, def);
 
   // Apply defaults to consumables
   if (merged.consumables) {
-    merged.consumables = merged.consumables.map((consumable: any) => ({
+    merged.consumables = merged.consumables.map((consumable) => ({
       ...consumable,
       reset_on_round: consumable.reset_on_round ?? false,
     }));
@@ -47,7 +47,7 @@ export function getDefaultInitiativeState(block: InitiativeBlock): InitiativeSta
       hp[key]["main"] = item.hp;
     } else if (item.hp && typeof item.hp === "object") {
       Object.entries(item.hp).forEach(([k, value]) => {
-        hp[key][k] = value as number;
+        hp[key][k] = value;
       });
     }
   });
@@ -118,9 +118,9 @@ export function getMaxHp(item: InitiativeItem, monsterKey?: string): number {
     return item.hp;
   } else if (item.hp && typeof item.hp === "object") {
     if (monsterKey && monsterKey in item.hp) {
-      return item.hp[monsterKey] as number;
+      return item.hp[monsterKey];
     } else if (Object.keys(item.hp).length === 1) {
-      return Object.values(item.hp)[0] as number;
+      return Object.values(item.hp)[0];
     }
   }
   return 0;

@@ -28,11 +28,11 @@ class EventButtonsMarkdown extends VueMarkdown {
     this.filePath = filePath;
   }
 
-  async onload() {
+  onload() {
     try {
       const eventButtonsBlock = EventButtonsService.parseEventButtonsBlock(this.source);
 
-      const wrapper = document.createElement("div");
+      const wrapper = createDiv();
       wrapper.className = "dnd-ui-event-buttons-wrapper";
       this.containerEl.appendChild(wrapper);
 
@@ -63,7 +63,7 @@ class EventButtonsMarkdown extends VueMarkdown {
     } catch (error) {
       console.error("Error parsing event buttons block:", error);
       const errorMessage = error instanceof Error ? error.message : String(error);
-      const errorDiv = this.containerEl.createEl("div", { cls: "notice" });
+      const errorDiv = this.containerEl.createDiv({ cls: "notice" });
       errorDiv.textContent = `Error parsing event buttons block: ${errorMessage}`;
     }
   }

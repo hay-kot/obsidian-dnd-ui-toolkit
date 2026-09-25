@@ -35,6 +35,11 @@ class ConsumableMarkdown extends VueMarkdown {
   private fileContext: FileContext;
   private propsRef = ref<Record<string, unknown>>({});
   private mounted = false;
+  /**
+   * Resolves once the load kicked off by onload() has settled. Obsidian
+   * discards onload()'s return value, so this is the only handle on that work.
+   */
+  ready: Promise<void> = Promise.resolve();
   private consumables: ParsedConsumableBlock[] = [];
   private states: Record<string, ConsumableState> = {};
   private originalUsesValues: Map<string, number | string> = new Map();
@@ -54,7 +59,16 @@ class ConsumableMarkdown extends VueMarkdown {
     this.fileContext = useFileContext(baseView.app, ctx);
   }
 
-  async onload() {
+  onload() {
+    // Component.onload() is typed void, so the async work is kicked off here
+    // rather than declared on onload — otherwise a rejection (the missing
+    // state_key throw below included) surfaces as an unhandled rejection.
+    this.ready = this.initialize().catch((error: unknown) => {
+      console.error("Error loading consumable block:", error);
+    });
+  }
+
+  private async initialize() {
     const consumablesBlock = ConsumableService.parseConsumablesBlock(this.source);
     this.consumables = consumablesBlock.items.map((item) => this.processTemplateInConsumable(item));
 
@@ -102,7 +116,7 @@ class ConsumableMarkdown extends VueMarkdown {
             msgbus.subscribe(this.filePath, "reset", (resetEvent) => {
               if (shouldResetOnEvent(consumableBlock.reset_on, resetEvent.eventType)) {
                 const resetAmount = getResetAmount(consumableBlock.reset_on, resetEvent.eventType) || resetEvent.amount;
-                this.handleResetEvent(consumableBlock, resetAmount);
+                void this.handleResetEvent(consumableBlock, resetAmount);
               }
             })
           );
@@ -159,7 +173,7 @@ class ConsumableMarkdown extends VueMarkdown {
     );
   }
 
-  private async handleFrontmatterChange() {
+  private handleFrontmatterChange() {
     let changed = false;
 
     this.consumables = this.consumables.map((consumable) => {
@@ -192,7 +206,9 @@ class ConsumableMarkdown extends VueMarkdown {
       states: { ...this.states },
       "onUpdate:stateChange": (stateKey: string, newState: ConsumableState) => {
         this.states[stateKey] = newState;
-        this.kv.set(stateKey, newState);
+        this.kv.set(stateKey, newState).catch((error: unknown) => {
+          console.error(`Error saving consumable state for ${stateKey}:`, error);
+        });
         this.renderAll();
       },
     };

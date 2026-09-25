@@ -1,9 +1,9 @@
 import * as Utils from "lib/utils/utils";
 import { EventButtonsBlock, EventButtonItem } from "lib/types";
-import { parse } from "yaml";
+import { parseYamlObject } from "lib/utils/yaml";
 
 export function parseEventButtonsBlock(yamlString: string): EventButtonsBlock {
-  const parsed = parse(yamlString);
+  const parsed = parseYamlObject<{ items: Partial<EventButtonItem>[] }>(yamlString);
 
   // Validate that we have items array
   if (!parsed || !Array.isArray(parsed.items)) {
@@ -16,7 +16,7 @@ export function parseEventButtonsBlock(yamlString: string): EventButtonsBlock {
   };
 
   // Apply defaults to each item and validate required fields
-  const items = parsed.items.map((item: any, index: number) => {
+  const items = parsed.items.map((item, index) => {
     const processedItem = Utils.mergeWithDefaults(item, defItem);
 
     // Validate required fields

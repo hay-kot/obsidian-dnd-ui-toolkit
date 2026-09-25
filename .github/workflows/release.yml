@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@v4
 
@@ -75,6 +77,11 @@ jobs:
           git tag -a "$VERSION" -m "Release $VERSION"
           git push origin HEAD
           git push origin "$VERSION"
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: "main.js, styles.css"
 
       - name: Create GitHub release
         env:

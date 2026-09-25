@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import builtins from "builtin-modules";
+import { builtinModules } from "node:module";
 import path from "path";
 
 export default defineConfig(({ mode }) => ({
@@ -40,7 +40,10 @@ export default defineConfig(({ mode }) => ({
         "@lezer/common",
         "@lezer/highlight",
         "@lezer/lr",
-        ...builtins,
+        // Both spellings: a bare `fs` and a prefixed `node:fs` are distinct
+        // specifiers to rollup, and `builtin-modules` only listed the former.
+        ...builtinModules,
+        ...builtinModules.map((name) => `node:${name}`),
       ],
       output: {
         assetFileNames: (info) => (info.name?.endsWith(".css") ? "styles.css" : (info.name ?? "asset")),

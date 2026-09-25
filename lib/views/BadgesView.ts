@@ -29,20 +29,16 @@ class StatsLikeComponent extends TemplateAwareComponent {
   layout: "badges" | "cards" = "badges";
 
   protected processAndRender() {
-    const parsed = this.parseSource();
+    const parsed = this.parseSource<{ items: Partial<BadgeItem>[]; grid: { columns?: unknown }; dense: unknown }>();
     const items = Array.isArray(parsed.items) ? parsed.items : [];
-    const grid = parsed.grid || {};
+    const grid = parsed.grid ?? {};
 
     const templateContext = this.setupTemplates(
-      items.flatMap((item: Partial<BadgeItem>) => [
-        String(item.label ?? ""),
-        String(item.value ?? ""),
-        String(item.sublabel ?? ""),
-      ])
+      items.flatMap((item) => [String(item.label ?? ""), String(item.value ?? ""), String(item.sublabel ?? "")])
     );
 
     const badgesBlock: BadgesBlock = {
-      items: items.map((item: Partial<BadgeItem>) => {
+      items: items.map((item) => {
         let label = String(item.label ?? "");
         let value = String(item.value ?? "");
         let sublabel = String(item.sublabel ?? "");

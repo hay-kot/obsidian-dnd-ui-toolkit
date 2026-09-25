@@ -120,9 +120,16 @@
 	color: var(--dnd-ui-color-text-primary);
 	padding: 0.3rem 0.5rem;
 	text-align: center;
-	font-size: 1.2rem !important;
-	height: 100% !important;
-	/* Larger initiative font */
+}
+
+/* Obsidian's `input[type='number']` rule outranks a lone class, so the two
+ * properties that have to beat it are scoped through the parent. Only these
+ * two: widening the whole rule above would also promote its padding and
+ * colors, which Obsidian currently wins, and silently restyle the input. */
+.dnd-ui-initiative-roll .dnd-ui-initiative-input {
+	/* Larger than the surrounding row: initiative order is what you scan for */
+	font-size: 1.2rem;
+	height: 100%;
 }
 
 .dnd-ui-initiative-name {
@@ -146,7 +153,10 @@
 .dnd-ui-initiative-link {
 	font-weight: bold;
 	color: var(--dnd-ui-color-text-bright);
-	text-decoration: none !important;
+	/* Obsidian's `a` rule reads text-decoration-line from --link-decoration, so
+	 * clearing the variable undoes the underline at its source. Setting
+	 * text-decoration here would compete with a theme's own `a` rule instead. */
+	--link-decoration: none;
 }
 
 .dnd-ui-initiative-ac {

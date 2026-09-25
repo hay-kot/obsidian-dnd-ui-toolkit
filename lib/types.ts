@@ -6,7 +6,7 @@ export type Frontmatter = {
   level?: number;
   spellcasting_ability?: string;
   character_file?: string;
-  [key: string]: any; // Allow other frontmatter properties
+  [key: string]: unknown; // Allow other frontmatter properties
 };
 
 export type AbilityBlock = {

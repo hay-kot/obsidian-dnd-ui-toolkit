@@ -1,16 +1,17 @@
 /* Health Card Styles */
 .dnd-ui-health-card {
+    /* Obsidian spaces paragraphs with `.markdown-rendered p { margin-block:
+     * var(--p-spacing) }`. That selector and `.dnd-ui-health-card p` have equal
+     * specificity, so which one won came down to stylesheet order — unstable
+     * whenever a theme reloads. Zeroing the variable instead lets Obsidian's own
+     * rule compute to 0, with no override to lose. */
+    --p-spacing: 0;
     display: flex;
     height: fit-content;
     flex-direction: column;
     gap: var(--dnd-ui-std-gap);
     padding: 0.75rem;
     width: 100%;
-}
-
-.dnd-ui-health-card p {
-    margin-block-start: 0 !important;
-    margin-block-end: 0 !important;
 }
 
 .dnd-ui-health-card-header {
@@ -178,7 +179,7 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--dnd-ui-color-text-secondary);
-    margin: 0 !important;
+    margin: 0;
     text-align: left;
     flex-shrink: 0;
     min-width: var(--hit-dice-label-width);
@@ -223,10 +224,10 @@
 /* Death Save Checkbox Styles */
 .dnd-ui-checkbox-button.dnd-ui-death-save-failure[aria-pressed="true"] {
     --dnd-ui-checkbox-fill: var(--dnd-ui-color-accent-red);
-    border-color: var(--dnd-ui-color-accent-red) !important;
+    border-color: var(--dnd-ui-color-accent-red);
 }
 
 .dnd-ui-checkbox-button.dnd-ui-death-save-success[aria-pressed="true"] {
     --dnd-ui-checkbox-fill: var(--dnd-ui-color-accent-teal);
-    border-color: var(--dnd-ui-color-accent-teal) !important;
+    border-color: var(--dnd-ui-color-accent-teal);
 }
