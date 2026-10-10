@@ -12,13 +12,13 @@ I built this plugin because I was tired of working with PDFs and online tools to
 
 For complete documentation, examples, and guides, visit our documentation site:
 
-**[📚 https://hay-kot.github.io/obsidian-dnd-ui-toolkit/](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/)**
+**[📚 https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/)**
 
 The documentation includes:
-- [Quick Start Guide](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/getting-started/quick-start) - Get up and running in minutes
-- [Component Reference](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/character-sheet/ability-scores) - Detailed docs for all components
-- [Concepts & Guides](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/concepts/state-storage) - Understanding state storage, events, and dynamic content
-- [Examples](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/examples/wizard) - Complete character sheet examples
+- [Quick Start Guide](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/getting-started/quick-start) - Get up and running in minutes
+- [Component Reference](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/character-sheet/ability-scores) - Detailed docs for all components
+- [Concepts & Guides](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/concepts/state-storage) - Understanding state storage, events, and dynamic content
+- [Examples](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/examples/wizard) - Complete character sheet examples
 
 ## Quick Example
 
@@ -48,7 +48,7 @@ abilities:
 ```
 ````
 
-Interactive state (HP, spell slots, consumables) persists across sessions in a JSON state file in your vault. See the [Quick Start Guide](https://hay-kot.github.io/obsidian-dnd-ui-toolkit/getting-started/quick-start) for the full component list.
+Interactive state (HP, spell slots, consumables) persists across sessions in a JSON state file in your vault. See the [Quick Start Guide](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/getting-started/quick-start) for the full component list.
 
 ## Development
 

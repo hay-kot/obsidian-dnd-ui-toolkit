@@ -7,8 +7,8 @@ export default withMermaid(
 	defineConfig({
 		title: "Obsidian DnD UI Toolkit",
 		description: "Modern UI elements for tabletop RPGs in Obsidian",
-		base: "/obsidian-dnd-ui-toolkit/",
-		head: [["link", { rel: "icon", type: "image/svg+xml", href: "/obsidian-dnd-ui-toolkit/favicon.svg" }]],
+		base: "/obsidian-ttrpg-ui-toolkit/",
+		head: [["link", { rel: "icon", type: "image/svg+xml", href: "/obsidian-ttrpg-ui-toolkit/favicon.svg" }]],
 		themeConfig: {
 			// https://vitepress.dev/reference/default-theme-config
 			search: {
@@ -71,7 +71,7 @@ export default withMermaid(
 				message: 'Icons by <a href="https://game-icons.net">game-icons.net</a> under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>. By Delapouite, Lorc, and Willdabeast.',
 			},
 
-			socialLinks: [{ icon: "github", link: "https://github.com/hay-kot/obsidian-dnd-ui-toolkit" }],
+			socialLinks: [{ icon: "github", link: "https://github.com/hay-kot/obsidian-ttrpg-ui-toolkit" }],
 		},
 		vite: {
 			optimizeDeps: {

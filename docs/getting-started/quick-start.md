@@ -12,7 +12,7 @@ We haven't published to the Obsidian Community Plugin store yet. You need to use
 
 1. Install the [BRAT plugin](https://github.com/TfTHacker/obsidian42-brat) in Obsidian
 2. Open BRAT settings and add a new plugin
-3. Enter the repository URL: `hay-kot/obsidian-dnd-ui-toolkit`
+3. Enter the repository URL: `hay-kot/obsidian-ttrpg-ui-toolkit`
 4. If you have issues, try pinning to the latest release version
 
 ## Your First Character Sheet

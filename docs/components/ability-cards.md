@@ -3,7 +3,7 @@
 Ability Cards are a headless, system-agnostic card component for displaying ability-style data. Each card shows a label, a value, and an optional sublabel. No automatic modifier calculation is performed — you supply the exact values to display. All text properties support [dynamic content](/concepts/dynamic-content) templates for frontmatter integration and calculations.
 
 ::: info System-Agnostic Components
-System-agnostic component support is limited but will continue to improve in future releases. Join the [discussion on GitHub](https://github.com/hay-kot/obsidian-dnd-ui-toolkit/discussions/56) to share feedback and ideas.
+System-agnostic component support is limited but will continue to improve in future releases. Join the [discussion on GitHub](https://github.com/hay-kot/obsidian-ttrpg-ui-toolkit/discussions/56) to share feedback and ideas.
 :::
 
 ::: tip When to use Ability Cards vs. D&D 5e Ability Scores
