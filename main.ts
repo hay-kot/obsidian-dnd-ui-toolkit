@@ -118,7 +118,7 @@ export default class TtrpgUIToolkitPlugin extends Plugin {
     }
 
     // This adds a settings tab so the user can configure various aspects of the plugin
-    this.addSettingTab(new DndSettingsTab(this.app, this));
+    this.addSettingTab(new TtrpgSettingsTab(this.app, this));
   }
 
   /**
@@ -172,7 +172,7 @@ const COLOR_SETTINGS: { name: string; key: keyof TtrpgUIToolkitSettings }[] = [
 
 const COLOR_SETTING_KEYS = new Set<string>(COLOR_SETTINGS.map((c) => c.key));
 
-class DndSettingsTab extends PluginSettingTab {
+class TtrpgSettingsTab extends PluginSettingTab {
   plugin: TtrpgUIToolkitPlugin;
 
   constructor(app: App, plugin: TtrpgUIToolkitPlugin) {
