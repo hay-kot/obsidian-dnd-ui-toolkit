@@ -1,6 +1,6 @@
 import * as Utils from "lib/utils/utils";
 import { HealthBlock, ParsedHealthBlock, RawTempMaxHealth, UnresolvedHealthBlock } from "lib/types";
-import { parse } from "yaml";
+import { parseYamlObject } from "lib/utils/yaml";
 import { getResetAmount, normalizeResetConfig, shouldResetOnEvent } from "lib/domains/events";
 
 export interface HealthState {
@@ -42,7 +42,7 @@ export function parseHealthBlock(yamlString: string): UnresolvedHealthBlock {
     reset_on: "long-rest", // Default to long rest for health recovery
   };
 
-  const parsed = parse(yamlString);
+  const parsed = parseYamlObject<HealthBlock>(yamlString);
   const merged = Utils.mergeWithDefaults(parsed, def);
 
   // Normalize hitdice to always be an array

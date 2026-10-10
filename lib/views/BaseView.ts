@@ -18,7 +18,7 @@ export abstract class BaseView {
   public abstract render(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext): HTMLElement | void;
 
   public register(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
-    const div = el.createEl("div");
+    const div = el.createDiv();
     try {
       const result = this.render(source, el, ctx);
       if (result instanceof HTMLElement) {
@@ -28,7 +28,7 @@ export abstract class BaseView {
       console.error("Error rendering code block", e);
       // Using a type assertion to handle the potential error type mismatch
       const errorMessage = e instanceof Error ? e.message : String(e);
-      const errorDiv = div.createEl("div", { cls: "notice" });
+      const errorDiv = div.createDiv({ cls: "notice" });
       errorDiv.textContent = `Error parsing stats block: ${errorMessage}`;
     }
   }

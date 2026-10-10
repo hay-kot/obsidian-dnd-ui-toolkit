@@ -6,7 +6,7 @@ import * as AbilityService from "lib/domains/abilities";
 import * as SkillsService from "lib/domains/skills";
 import { AbilityBlock, AbilityScores, SkillItem } from "lib/types";
 import { extractFirstCodeBlock } from "../utils/codeblock-extractor";
-import { coerceBooleanTemplate, TemplateContext } from "../utils/template";
+import { coerceBooleanTemplate } from "../utils/template";
 
 export class SkillsView extends BaseView {
   public codeblock = "skills";
@@ -52,7 +52,7 @@ class SkillsComponent extends TemplateAwareComponent {
     const skillFlag = (map: Record<string, string | boolean> | undefined, label: string): boolean => {
       if (!map) return false;
       const entry = Object.entries(map).find(([key]) => key.toLowerCase() === label.toLowerCase());
-      return entry ? coerceBooleanTemplate(entry[1], templateContext as TemplateContext | null) : false;
+      return entry ? coerceBooleanTemplate(entry[1], templateContext) : false;
     };
 
     for (const skill of SkillsService.Skills) {

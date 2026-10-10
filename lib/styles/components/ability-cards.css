@@ -9,12 +9,10 @@
     align-items: start;
 }
 
-.dnd-ui-ability-score-card p {
-    margin-block-start: 0 !important;
-    margin-block-end: 0 !important;
-}
-
 .dnd-ui-ability-score-card {
+    /* See health-card.css: zero --p-spacing rather than out-specify Obsidian's
+     * `.markdown-rendered p` margin rule. */
+    --p-spacing: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -68,11 +66,15 @@
 .dnd-ui-ability-modifier-saving {
     font-size: 0.7rem;
     color: var(--dnd-ui-color-text-sublabel);
+    --dnd-ui-adv-indicator-size: 0.85rem;
+    --dnd-ui-saving-gap: 0.25rem;
     margin-top: var(--dnd-ui-std-gap);
     padding-bottom: var(--dnd-ui-ability-card-padding);
+    /* The indicator slot after the text is always present, even when empty, so
+     * an equal inset on the start side keeps the text itself centered. */
+    padding-inline-start: calc(var(--dnd-ui-adv-indicator-size) + var(--dnd-ui-saving-gap));
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.25rem;
-    --dnd-ui-adv-indicator-size: 0.85rem;
+    gap: var(--dnd-ui-saving-gap);
 }

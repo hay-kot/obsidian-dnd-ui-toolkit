@@ -13,12 +13,21 @@ export class RawAbilityView extends BaseView {
   }
 }
 
+// YAML scalars, not yet coerced — a user may write any of these as a number.
+type RawAbilityCardItem = {
+  label?: string | number;
+  label_short?: string | number;
+  header_value?: string | number;
+  value?: string | number;
+  sublabel?: string | number;
+};
+
 class RawAbilityComponent extends TemplateAwareComponent {
   protected processAndRender() {
-    const parsed = this.parseSource();
-    const items = Array.isArray(parsed?.items) ? parsed.items : [];
+    const parsed = this.parseSource<{ items: RawAbilityCardItem[] }>();
+    const items = Array.isArray(parsed.items) ? parsed.items : [];
 
-    const sources = items.map((item: any) => ({
+    const sources = items.map((item) => ({
       label: String(item.label ?? ""),
       labelShort: String(item.label_short ?? ""),
       headerValue: String(item.header_value ?? ""),
@@ -26,9 +35,9 @@ class RawAbilityComponent extends TemplateAwareComponent {
       sublabel: String(item.sublabel ?? ""),
     }));
 
-    const templateContext = this.setupTemplates(sources.flatMap((s: { [k: string]: string }) => Object.values(s)));
+    const templateContext = this.setupTemplates(sources.flatMap((s) => Object.values(s)));
 
-    const abilities = sources.map((s: { [k: string]: string }) => {
+    const abilities = sources.map((s) => {
       const label = templateContext ? processTemplate(s.label, templateContext) : s.label;
       const labelShort = templateContext ? processTemplate(s.labelShort, templateContext) : s.labelShort;
       const headerValue = templateContext ? processTemplate(s.headerValue, templateContext) : s.headerValue;

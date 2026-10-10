@@ -1,9 +1,5 @@
 import { normalizePath, Vault } from "obsidian";
-
-export interface DataStore {
-  loadData(): Promise<any>;
-  saveData(data: any): Promise<void>;
-}
+import { DataStore } from "./kv";
 
 export class JsonDataStore implements DataStore {
   private filePath: string;
@@ -27,7 +23,7 @@ export class JsonDataStore implements DataStore {
    * The adapter API is used instead of the Vault API because the default
    * state file path is a dotfile, which the vault index does not track.
    */
-  async loadData(): Promise<any> {
+  async loadData(): Promise<unknown> {
     const exists = await this.vault.adapter.exists(this.filePath);
 
     if (!exists) {
@@ -43,7 +39,7 @@ export class JsonDataStore implements DataStore {
    * Saves data to the JSON file
    * @param data The data to save
    */
-  async saveData(data: any): Promise<void> {
+  async saveData(data: unknown): Promise<void> {
     await this.vault.adapter.write(this.filePath, JSON.stringify(data, null, 2));
   }
 }
