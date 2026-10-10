@@ -38,7 +38,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture
 
-- **Plugin Structure:** Obsidian plugin with Vue components for D&D UI elements
+- **Plugin Structure:** Obsidian plugin with Vue components for TTRPG UI elements
 - **Code Block Processors:** Each View class processes specific YAML code blocks (ability, skills, stats, etc.)
 - **State Management:** Uses KeyValueStore with JsonDataStore for persistent state across sessions
 - **Component Architecture:**

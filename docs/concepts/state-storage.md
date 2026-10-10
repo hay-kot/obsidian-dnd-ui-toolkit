@@ -1,6 +1,6 @@
 # State Storage
 
-The DnD UI Toolkit uses a persistent state storage system to remember the current state of your character's resources, health, and other trackable values between Obsidian sessions.
+The TTRPG UI Toolkit uses a persistent state storage system to remember the current state of your character's resources, health, and other trackable values between Obsidian sessions.
 
 ## How State Storage Works
 

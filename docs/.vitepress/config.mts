@@ -5,7 +5,7 @@ import path from "path";
 // https://vitepress.dev/reference/site-config
 export default withMermaid(
 	defineConfig({
-		title: "Obsidian DnD UI Toolkit",
+		title: "TTRPG UI Toolkit",
 		description: "Modern UI elements for tabletop RPGs in Obsidian",
 		base: "/obsidian-ttrpg-ui-toolkit/",
 		head: [["link", { rel: "icon", type: "image/svg+xml", href: "/obsidian-ttrpg-ui-toolkit/favicon.svg" }]],

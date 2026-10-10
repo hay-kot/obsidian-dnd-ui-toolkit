@@ -1,6 +1,6 @@
 # Installation
 
-Learn how to install the Obsidian DnD UI Toolkit in your vault.
+Learn how to install the TTRPG UI Toolkit in your vault.
 
 ## Prerequisites
 
@@ -20,7 +20,7 @@ Since we haven't published to the Obsidian Community Plugin store yet, you'll ne
    - Browse and install "Obsidian42 - BRAT"
    - Enable the BRAT plugin
 
-2. **Add DnD UI Toolkit**
+2. **Add TTRPG UI Toolkit**
 
    - Open BRAT settings (in plugin settings)
    - Click "Add Beta Plugin"
@@ -29,7 +29,7 @@ Since we haven't published to the Obsidian Community Plugin store yet, you'll ne
 
 3. **Enable the Plugin**
    - Go to Community Plugins in settings
-   - Find "DnD UI Toolkit" and enable it
+   - Find "TTRPG UI Toolkit" and enable it
 
 ## Updating
 

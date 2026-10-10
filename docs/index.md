@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: "DnD UI Toolkit"
+  name: "TTRPG UI Toolkit"
   text: "An Obsidian Plugin for TTRPGs"
   tagline: Build beautiful markdown-driven character sheets and game tools in Obsidian
   actions:

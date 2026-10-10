@@ -1,6 +1,6 @@
 # Event Systems
 
-The DnD UI Toolkit includes a event system that allows components to communicate and reset their state based on in-game events like rests, level-ups, or custom triggers.
+The TTRPG UI Toolkit includes a event system that allows components to communicate and reset their state based on in-game events like rests, level-ups, or custom triggers.
 
 ## How Events Work
 
