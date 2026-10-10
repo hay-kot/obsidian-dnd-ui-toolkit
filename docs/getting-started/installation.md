@@ -24,7 +24,7 @@ Since we haven't published to the Obsidian Community Plugin store yet, you'll ne
 
    - Open BRAT settings (in plugin settings)
    - Click "Add Beta Plugin"
-   - Enter: `hay-kot/obsidian-dnd-ui-toolkit`
+   - Enter: `hay-kot/obsidian-ttrpg-ui-toolkit`
    - Click "Add Plugin"
 
 3. **Enable the Plugin**
