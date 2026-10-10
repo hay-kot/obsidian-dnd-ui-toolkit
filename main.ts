@@ -13,13 +13,13 @@ import { RawAbilityView } from "lib/views/RawAbilityView";
 import { RawSkillsView } from "lib/views/RawSkillsView";
 import { KeyValueStore } from "lib/services/kv/kv";
 import { JsonDataStore } from "./lib/services/kv/local-file-store";
-import { DEFAULT_SETTINGS, DndUIToolkitSettings } from "settings";
+import { DEFAULT_SETTINGS, TtrpgUIToolkitSettings } from "settings";
 import { THEMES } from "lib/themes";
 import { msgbus } from "lib/services/event-bus";
 import * as Fm from "lib/domains/frontmatter";
 
-export default class DndUIToolkitPlugin extends Plugin {
-  settings: DndUIToolkitSettings;
+export default class TtrpgUIToolkitPlugin extends Plugin {
+  settings: TtrpgUIToolkitSettings;
   dataStore: JsonDataStore;
 
   private colorCssVars(): [string, string][] {
@@ -134,7 +134,7 @@ export default class DndUIToolkitPlugin extends Plugin {
   }
 
   async loadSettings() {
-    const saved = (await this.loadData()) as Partial<DndUIToolkitSettings> | null;
+    const saved = (await this.loadData()) as Partial<TtrpgUIToolkitSettings> | null;
     this.settings = { ...DEFAULT_SETTINGS, ...saved };
   }
 
@@ -145,7 +145,7 @@ export default class DndUIToolkitPlugin extends Plugin {
   }
 }
 
-const COLOR_SETTINGS: { name: string; key: keyof DndUIToolkitSettings }[] = [
+const COLOR_SETTINGS: { name: string; key: keyof TtrpgUIToolkitSettings }[] = [
   { name: "Background primary", key: "colorBgPrimary" },
   { name: "Background secondary", key: "colorBgSecondary" },
   { name: "Background tertiary", key: "colorBgTertiary" },
@@ -173,9 +173,9 @@ const COLOR_SETTINGS: { name: string; key: keyof DndUIToolkitSettings }[] = [
 const COLOR_SETTING_KEYS = new Set<string>(COLOR_SETTINGS.map((c) => c.key));
 
 class DndSettingsTab extends PluginSettingTab {
-  plugin: DndUIToolkitPlugin;
+  plugin: TtrpgUIToolkitPlugin;
 
-  constructor(app: App, plugin: DndUIToolkitPlugin) {
+  constructor(app: App, plugin: TtrpgUIToolkitPlugin) {
     super(app, plugin);
     this.plugin = plugin;
   }
@@ -236,11 +236,11 @@ class DndSettingsTab extends PluginSettingTab {
       return;
     }
 
-    // Every field on DndUIToolkitSettings is a string, and the text and color
+    // Every field on TtrpgUIToolkitSettings is a string, and the text and color
     // controls above are its only writers, so anything else is not ours.
     if (typeof value !== "string") return;
 
-    this.plugin.settings[key as keyof DndUIToolkitSettings] = value;
+    this.plugin.settings[key as keyof TtrpgUIToolkitSettings] = value;
     await this.plugin.saveSettings();
 
     if (COLOR_SETTING_KEYS.has(key)) {

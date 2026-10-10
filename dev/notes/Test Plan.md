@@ -46,7 +46,7 @@ hide it.
 Mostly non-visual — manifest, tooling, and release plumbing. What is worth
 clicking through in-app:
 
-- Settings → D&D UI Toolkit: no plugin-name heading at the top, option names in
+- Settings → TTRPG UI Toolkit: no plugin-name heading at the top, option names in
   sentence case ("State file path", not "State File Path"), theme preset and
   color pickers still apply live.
 - Disable the plugin and confirm the `--dnd-ui-*` variables are removed — colors

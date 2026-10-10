@@ -1,6 +1,6 @@
 import { THEMES } from "lib/themes";
 
-export interface DndUIToolkitSettings {
+export interface TtrpgUIToolkitSettings {
   statePath: string;
   selectedTheme: string;
 
@@ -29,7 +29,7 @@ export interface DndUIToolkitSettings {
   colorAccentPurple: string;
 }
 
-export const DEFAULT_SETTINGS: DndUIToolkitSettings = {
+export const DEFAULT_SETTINGS: TtrpgUIToolkitSettings = {
   statePath: ".dnd-ui-toolkit-state.json",
   selectedTheme: "default",
 

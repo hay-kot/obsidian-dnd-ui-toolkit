@@ -1,10 +1,10 @@
 # Themes
 
-The D&D UI Toolkit includes a built-in theme system that lets you change the color scheme of all plugin components. You can select a preset theme or customize individual colors.
+The TTRPG UI Toolkit includes a built-in theme system that lets you change the color scheme of all plugin components. You can select a preset theme or customize individual colors.
 
 ## Selecting a Theme
 
-Open **Settings > D&D UI Toolkit > Styles** and choose a theme from the **Theme Preset** dropdown. All component colors update immediately.
+Open **Settings > TTRPG UI Toolkit > Styles** and choose a theme from the **Theme Preset** dropdown. All component colors update immediately.
 
 After selecting a theme, you can further customize any individual color using the color pickers below the dropdown. Use the **Reset** button to restore the default theme.
 
