@@ -32,6 +32,14 @@
   margin: 16px 0;
 }
 
+/* The plugin components zero paragraph margins through --p-spacing, which only
+ * Obsidian's `.markdown-rendered p` rule reads. Mirror that rule here so
+ * VitePress's own `.vp-doc p` spacing does not leak into the demos. */
+.vp-doc .dnd-ui-demo p {
+  margin-block: var(--p-spacing, 1rem);
+  line-height: 1.5;
+}
+
 /* VitePress theme overrides */
 :root {
   --vp-c-brand-1: #7a9bb5;
