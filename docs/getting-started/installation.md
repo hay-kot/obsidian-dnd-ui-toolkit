@@ -7,37 +7,22 @@ Learn how to install the TTRPG UI Toolkit in your vault.
 - [Obsidian](https://obsidian.md/) (latest version recommended)
 - Basic familiarity with Obsidian plugins
 
-## Installation Methods
+## Install from Community Plugins
 
-### Method 1: BRAT Plugin (Recommended)
+1. Open Obsidian Settings
+2. Go to **Community plugins** and turn off Restricted mode if it is on
+3. Click **Browse** and search for "TTRPG UI Toolkit"
+4. Click **Install**, then **Enable**
 
-Since we haven't published to the Obsidian Community Plugin store yet, you'll need to use BRAT:
-
-1. **Install BRAT**
-
-   - Open Obsidian Settings
-   - Go to Community Plugins
-   - Browse and install "Obsidian42 - BRAT"
-   - Enable the BRAT plugin
-
-2. **Add TTRPG UI Toolkit**
-
-   - Open BRAT settings (in plugin settings)
-   - Click "Add Beta Plugin"
-   - Enter: `hay-kot/obsidian-ttrpg-ui-toolkit`
-   - Click "Add Plugin"
-
-3. **Enable the Plugin**
-   - Go to Community Plugins in settings
-   - Find "TTRPG UI Toolkit" and enable it
+You can also open the [plugin page](https://obsidian.md/plugins?id=ttrpg-ui-toolkit) directly and install from there.
 
 ## Updating
 
-BRAT will automatically check for updates. You can also manually update:
+Obsidian checks for plugin updates for you. To update manually:
 
-1. Open BRAT settings
-2. Click "Check for updates"
-3. Update if a new version is available
+1. Open Obsidian Settings
+2. Go to **Community plugins**
+3. Click **Check for updates** and update TTRPG UI Toolkit if a new version is available
 
 ## Next Steps
 

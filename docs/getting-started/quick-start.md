@@ -6,14 +6,13 @@ This plugin is in early development. Things may be broken or change between vers
 
 ## Installation
 
-::: warning BRAT Required
-We haven't published to the Obsidian Community Plugin store yet. You need to use the [BRAT](https://github.com/TfTHacker/obsidian42-brat) plugin to install from the GitHub repository.
-:::
+Install TTRPG UI Toolkit from Obsidian's Community Plugins:
 
-1. Install the [BRAT plugin](https://github.com/TfTHacker/obsidian42-brat) in Obsidian
-2. Open BRAT settings and add a new plugin
-3. Enter the repository URL: `hay-kot/obsidian-ttrpg-ui-toolkit`
-4. If you have issues, try pinning to the latest release version
+1. Open Obsidian Settings and go to **Community plugins**
+2. Click **Browse** and search for "TTRPG UI Toolkit"
+3. Click **Install**, then **Enable**
+
+See [Installation](./installation.md) for more detail.
 
 ## Your First Character Sheet
 
@@ -97,7 +96,6 @@ thumb is to prefix whatever keys you have with your character's name
 
 - ❌ `level_1_spells`
 - ✅ `din_level_1_spells`
-
 
 ### File Scope
 
