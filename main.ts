@@ -12,6 +12,7 @@ import { EventButtonsView } from "lib/views/EventButtonsView";
 import { RawAbilityView } from "lib/views/RawAbilityView";
 import { RawSkillsView } from "lib/views/RawSkillsView";
 import { KeyValueStore } from "lib/services/kv/kv";
+import { readLegacySettings, resolveDefaultStatePath } from "lib/services/legacy";
 import { JsonDataStore } from "./lib/services/kv/local-file-store";
 import { DEFAULT_SETTINGS, TtrpgUIToolkitSettings } from "settings";
 import { THEMES } from "lib/themes";
@@ -134,8 +135,19 @@ export default class TtrpgUIToolkitPlugin extends Plugin {
   }
 
   async loadSettings() {
-    const saved = (await this.loadData()) as Partial<TtrpgUIToolkitSettings> | null;
+    const { adapter, configDir } = this.app.vault;
+
+    let saved = (await this.loadData()) as Partial<TtrpgUIToolkitSettings> | null;
+    if (!saved) {
+      saved = await readLegacySettings(adapter, configDir);
+      // Copied forward so settings survive the user deleting the old plugin folder.
+      if (saved) await this.saveData(saved);
+    }
+
     this.settings = { ...DEFAULT_SETTINGS, ...saved };
+    if (!saved?.statePath) {
+      this.settings.statePath = await resolveDefaultStatePath(adapter);
+    }
   }
 
   async saveSettings() {

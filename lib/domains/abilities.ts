@@ -157,7 +157,7 @@ export function resolveAbilityBlock(raw: RawAbilityBlock, frontmatter: Frontmatt
       resolved[key] = num;
     } else {
       console.warn(
-        `[dnd-ui-toolkit] Ability "${key}" template did not resolve to a number: ${JSON.stringify(processed)} (from ${JSON.stringify(value)})`
+        `[ttrpg-ui-toolkit] Ability "${key}" template did not resolve to a number: ${JSON.stringify(processed)} (from ${JSON.stringify(value)})`
       );
       resolved[key] = 0;
     }

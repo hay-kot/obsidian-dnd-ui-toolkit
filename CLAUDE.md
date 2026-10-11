@@ -102,4 +102,4 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **First-time setup:** `task dev:register` (Obsidian closed) creates the slots and adds them to Obsidian's vault list. Obsidian cannot register a vault by URI, so this is the one manual-ish step, and it is per machine rather than per clone.
 - **Test Notes:** Live in `dev/notes/` and are symlinked into the claimed slot, so notes edited in Obsidian land in the clone's working tree. `dev/vault-seed/.obsidian/` seeds a new slot's config and is never written back to.
 - **Plugin Development:** `task dev` builds and installs into the claimed slot. Set PLUGIN_DIR to install into a real vault instead.
-- **State File:** Plugin creates `.dnd-ui-toolkit-state.json` (configurable) for persistent component state. It lives in the slot, so each clone has independent component state.
+- **State File:** Plugin creates `.ttrpg-ui-toolkit-state.json` (configurable; an existing legacy `.dnd-ui-toolkit-state.json` is used instead) for persistent component state. It lives in the slot, so each clone has independent component state.

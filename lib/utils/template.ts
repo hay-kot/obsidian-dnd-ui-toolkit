@@ -75,7 +75,7 @@ export function coerceNumericTemplate(processed: string, source: string): number
   if (trimmed !== "" && Number.isFinite(n)) return n;
   if (hasTemplateVariables(source)) {
     console.warn(
-      `[dnd-ui-toolkit] Template did not resolve to a number: ${JSON.stringify(processed)} (from ${JSON.stringify(source)})`
+      `[ttrpg-ui-toolkit] Template did not resolve to a number: ${JSON.stringify(processed)} (from ${JSON.stringify(source)})`
     );
   }
   return 0;
