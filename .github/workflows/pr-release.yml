@@ -68,5 +68,5 @@ jobs:
             --prerelease \
             --notes "Pre-release build from PR #${PR} (\`${BRANCH}\`).
 
-          Install by downloading the assets below into your vault's \`.obsidian/plugins/dnd-ui-toolkit/\` directory." \
+          Install by downloading the assets below into your vault's \`.obsidian/plugins/ttrpg-ui-toolkit/\` directory." \
             main.js manifest.json styles.css

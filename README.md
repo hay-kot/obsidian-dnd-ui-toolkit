@@ -99,7 +99,7 @@ To install to a real vault instead of a slot, set `PLUGIN_DIR` in a `.env` file:
 
 ```bash
 # .env
-PLUGIN_DIR=/path/to/your/vault/.obsidian/plugins/dnd-ui-toolkit
+PLUGIN_DIR=/path/to/your/vault/.obsidian/plugins/ttrpg-ui-toolkit
 ```
 
 ### Testing

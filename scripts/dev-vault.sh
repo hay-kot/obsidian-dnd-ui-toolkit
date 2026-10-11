@@ -13,7 +13,7 @@ set -euo pipefail
 SLOT_ROOT="${DND_SLOT_ROOT:-$HOME/obsidian-dev}"
 SLOT_COUNT="${DND_SLOT_COUNT:-3}"
 SLOT_PREFIX="dnd-slot"
-PLUGIN_ID="dnd-ui-toolkit"
+PLUGIN_ID="ttrpg-ui-toolkit"
 HOT_RELOAD_REPO="https://github.com/pjeby/hot-reload.git"
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

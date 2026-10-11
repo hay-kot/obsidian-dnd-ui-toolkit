@@ -30,7 +30,7 @@ export interface TtrpgUIToolkitSettings {
 }
 
 export const DEFAULT_SETTINGS: TtrpgUIToolkitSettings = {
-  statePath: ".dnd-ui-toolkit-state.json",
+  statePath: ".ttrpg-ui-toolkit-state.json",
   selectedTheme: "default",
 
   ...THEMES.default.colors,
