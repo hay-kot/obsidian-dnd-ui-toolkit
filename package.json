@@ -1,6 +1,6 @@
 {
   "name": "ttrpg-ui-toolkit",
-  "version": "0.27.0",
+  "version": "0.28.0",
   "description": "Build interactive character sheets for D&D and other TTRPGs with health trackers, ability scores, skills, and spell slots.",
   "main": "main.js",
   "scripts": {
