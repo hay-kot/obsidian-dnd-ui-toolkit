@@ -1,9 +1,5 @@
 # Quick Start
 
-::: warning Development Status
-This plugin is in early development. Things may be broken or change between versions.
-:::
-
 ## Installation
 
 Install TTRPG UI Toolkit from Obsidian's Community Plugins:

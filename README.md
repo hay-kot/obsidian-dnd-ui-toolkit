@@ -1,121 +1,89 @@
 # TTRPG UI Toolkit
 
-This plugin provides modern UI elements for playing tabletop RPGs like Dungeons and Dragons that provide building blocks for you to build
-a beautiful markdown driven character sheet.
+Build interactive character sheets and game master tools inside your Obsidian notes. Each component is a small YAML code block, so a character sheet is still a plain markdown note that lives in your vault next to your spells, backstory, and session notes. HP, spell slots, and other trackers remember their state between sessions.
 
-I built this plugin because I was tired of working with PDFs and online tools to manage my characters. I wanted to keep my notes, spells, and character state (Spell Slots, HP, etc..) all in my notebook. I'm building this plugin to make that process easier.
+I built this because I was tired of juggling PDFs and web tools for my characters, and wanted my notes, spells, and current state all in one place.
 
-> [!WARNING]
-> This plugin is in early development, things may be broken or change.
+![A D&D character sheet built from TTRPG UI Toolkit code blocks](https://raw.githubusercontent.com/hay-kot/obsidian-ttrpg-ui-toolkit/main/docs/public/screenshots/character-sheet.png)
 
-## 📖 Documentation
+## Features
 
-For complete documentation, examples, and guides, visit our documentation site:
+- **Health tracking** with current HP, temporary HP, temporary max HP, hit dice, and death saves
+- **Ability scores and skills** with D&D 5e modifiers, saving throws, proficiency, and expertise calculated for you
+- **Consumables** for spell slots, class features, potions, and anything else with limited uses
+- **Rest buttons** that reset consumables and health in the same note with one click
+- **Badges and stat cards** for AC, level, initiative, spell DC, or any value you want on display
+- **Spell component panels** showing casting time, range, components, duration, save DC, and attack bonus
+- **Initiative tracker** with turn order, round counter, per-combatant HP, and per-round resources
+- **Frontmatter integration** that reads level and proficiency bonus from the note's properties
+- **Dynamic content** so any text field can reference frontmatter, ability scores, and skills with `{{ }}` templates
+- **System-agnostic cards** for Daggerheart and other systems beyond D&D 5e
+- **21 themes**, light and dark, including companions for the ITS theme, with every color adjustable in settings
 
-**[📚 https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/)**
+## Installation
 
-The documentation includes:
-- [Quick Start Guide](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/getting-started/quick-start) - Get up and running in minutes
-- [Component Reference](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/character-sheet/ability-scores) - Detailed docs for all components
-- [Concepts & Guides](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/concepts/state-storage) - Understanding state storage, events, and dynamic content
-- [Examples](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/examples/wizard) - Complete character sheet examples
+1. Open **Settings > Community plugins** in Obsidian
+2. Click **Browse** and search for "TTRPG UI Toolkit"
+3. Click **Install**, then **Enable**
+
+You can also open the [plugin page](https://obsidian.md/plugins?id=ttrpg-ui-toolkit) and install from there.
 
 ## Quick Example
 
-Components are defined with YAML code blocks in any note. For example, a health tracker with hit dice:
+Paste this into any note to get a health tracker and a set of ability scores:
 
 ````markdown
+---
+level: 3
+---
+
 ```healthpoints
-state_key: my-character-hp
-health: 25
+state_key: din_hp
+health: 24
 hitdice:
-  dice: d8
+  dice: d6
   value: 3
 ```
-````
 
-An ability score block that other components (skills, spell components, templates) read from:
-
-````markdown
 ```ability
 abilities:
-  strength: 10
-  dexterity: 15
+  strength: 9
+  dexterity: 14
   constitution: 14
-  intelligence: 12
-  wisdom: 13
-  charisma: 8
+  intelligence: 19
+  wisdom: 12
+  charisma: 10
+proficiencies:
+  - intelligence
+  - wisdom
 ```
 ````
 
-Interactive state (HP, spell slots, consumables) persists across sessions in a JSON state file in your vault. See the [Quick Start Guide](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/getting-started/quick-start) for the full component list.
+Every component that tracks something needs a `state_key` that is unique across your vault. State is saved to a JSON file in your vault (`.ttrpg-ui-toolkit-state.json` by default, configurable in settings).
 
-## Development
+The [Quick Start guide](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/getting-started/quick-start) walks through a full sheet with skills, spell slots, and rest buttons. The [character generator](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/examples/generator) can build a starting sheet for you.
 
-### Prerequisites
+## Running Combat
 
-- [Node.js](https://nodejs.org/) (v22+)
-- [Task](https://taskfile.dev/) (task runner)
+The initiative tracker keeps turn order, HP, and per-round resources for an encounter inside a note. Combatants can link to their own character or monster notes.
 
-### Setup
+![Initiative tracker with three combatants, one of them a group of goblins](https://raw.githubusercontent.com/hay-kot/obsidian-ttrpg-ui-toolkit/main/docs/public/screenshots/initiative-tracker.png)
 
-```bash
-npm install
-task dev:register   # once per machine, with Obsidian closed
-```
+## Themes
 
-The dev vault does not live in the repo. It lives in a fixed set of "slots" under
-`~/obsidian-dev/`, and each clone of this repo claims one. `task dev:register` creates
-the slots and adds them to Obsidian's vault list, which is why Obsidian has to be closed
--- it rewrites that file on quit. A backup is written next to it.
+Pick a preset under **Settings > TTRPG UI Toolkit > Styles**, or adjust individual colors. There are 21 built-in themes, including light themes and companions for the [ITS theme](https://github.com/SlRvb/Obsidian--ITS-Theme).
 
-Slots exist because Obsidian resolves `obsidian://` URIs by vault name and cannot register
-a vault on its own. A vault checked into the repo gives every clone a vault with the same
-name, so Obsidian silently opens whichever copy it saw first. Slots give each clone a
-distinct, permanent vault path instead.
+![The same components in four built-in themes](https://raw.githubusercontent.com/hay-kot/obsidian-ttrpg-ui-toolkit/main/docs/public/screenshots/themes.png)
 
-The test notes stay in the repo under `dev/notes/` and are symlinked into the slot, so
-notes you edit in Obsidian are edited in your working tree and show up in `git status`.
+## Documentation
 
-### Dev Workflow
+The [documentation site](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/) has a live demo of every component and the full configuration reference:
 
-```bash
-task dev           # Build and install the plugin into this clone's slot
-task dev --watch   # Rebuild and install on file changes
-task dev:open      # Open this clone's slot in Obsidian
-task dev:status    # Show which clone holds each slot
-task dev:release   # Give up this clone's slot
-```
+- [Quick Start](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/getting-started/quick-start)
+- [General components](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/components/ability-cards) and [D&D 5e components](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/character-sheet/ability-scores)
+- [State storage](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/concepts/state-storage), [events](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/concepts/event-systems), and [dynamic content](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/concepts/dynamic-content)
+- [Themes](https://hay-kot.github.io/obsidian-ttrpg-ui-toolkit/concepts/themes)
 
-`task dev` claims a slot on first run, installs [hot-reload](https://github.com/pjeby/hot-reload)
-into it, symlinks `dev/notes/` in, and copies the build to the slot's plugin directory. Use
-`--watch` to rebuild on file changes; hot-reload picks each rebuild up without a restart.
+## Contributing
 
-Slots are claimed by writing the clone's path to `<slot>/.claim`. A claim whose clone no
-longer exists counts as free, so deleted clones release their slot on their own. Three
-slots are created by default; set `DND_SLOT_COUNT` (and `DND_SLOT_ROOT`) to change that.
-
-To install to a real vault instead of a slot, set `PLUGIN_DIR` in a `.env` file:
-
-```bash
-# .env
-PLUGIN_DIR=/path/to/your/vault/.obsidian/plugins/ttrpg-ui-toolkit
-```
-
-### Testing
-
-```bash
-npm run test              # Run all tests
-npm run test:watch        # Run tests in watch mode
-npm run test -- path/to/file.test.ts  # Run a single test file
-```
-
-### Other Commands
-
-```bash
-npm run format        # Format code with Prettier
-npm run lint          # Lint with ESLint
-npm run typecheck     # Run TypeScript type checking
-task check            # Run all checks (format, lint, typecheck, test)
-npm run docs:dev      # Start documentation dev server
-```
+Bug reports and feature requests go in [GitHub issues](https://github.com/hay-kot/obsidian-ttrpg-ui-toolkit/issues). Ideas for system-agnostic components are collected in [this discussion](https://github.com/hay-kot/obsidian-ttrpg-ui-toolkit/discussions/56). For local development setup, see [CONTRIBUTING.md](https://github.com/hay-kot/obsidian-ttrpg-ui-toolkit/blob/main/CONTRIBUTING.md).
